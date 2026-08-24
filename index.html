@@ -14,23 +14,23 @@
 :root{--bg:#f7f8fa;--card:#fff;--text:#16181d;--muted:#747984;--line:#e7e9ee;--accent:#5b45f5;--accent2:#eeeaff;--danger:#d94b5b;--shadow:0 6px 24px rgba(25,28,38,.05)}
 *{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,Arial,sans-serif}
 button,input{font:inherit}button{border:0;background:none;color:inherit;cursor:pointer}
-.app{min-height:100vh;padding-bottom:96px}.top{position:sticky;top:0;z-index:10;background:rgba(247,248,250,.94);backdrop-filter:blur(18px);padding:calc(10px + env(safe-area-inset-top)) 16px 9px;border-bottom:1px solid rgba(231,233,238,.7)}
+.app{min-height:100vh;padding-bottom:84px}.top{position:sticky;top:0;z-index:10;background:rgba(247,248,250,.94);backdrop-filter:blur(18px);padding:calc(10px + env(safe-area-inset-top)) 16px 9px;border-bottom:1px solid rgba(231,233,238,.7)}
 .toprow{display:flex;align-items:center;justify-content:space-between}.title{font-size:24px;font-weight:750;letter-spacing:-.5px}.sub{font-size:13px;color:var(--muted);margin-top:3px}
-.content{max-width:720px;margin:0 auto;padding:12px 16px 24px}
+.content{max-width:720px;margin:0 auto;padding:10px 16px 18px}
 .iconbtn{width:40px;height:40px;border:1px solid var(--line);background:var(--card);border-radius:13px;display:grid;place-items:center;font-size:19px}
 .primary{background:var(--accent);color:#fff;border-radius:13px;padding:12px 15px;font-weight:700}
-.fab{position:fixed;z-index:30;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%);width:56px;height:56px;border-radius:19px;background:var(--accent);color:white;font-size:29px;box-shadow:0 10px 25px rgba(91,69,245,.25)}
+.fab{position:fixed;z-index:30;left:50%;bottom:calc(78px + env(safe-area-inset-bottom));transform:translateX(-50%);width:56px;height:56px;border-radius:19px;background:var(--accent);color:white;font-size:29px;box-shadow:0 10px 25px rgba(91,69,245,.25)}
 .nav{position:fixed;z-index:20;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);height:76px;padding:0 8px env(safe-area-inset-bottom);display:flex;justify-content:space-around;align-items:center}
 .nav button{width:20%;font-size:11px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:5px}.nav button.active{color:var(--accent);font-weight:700}.nav .navicon{font-size:20px;line-height:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px;margin-bottom:12px}
-.datebar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.datecenter{text-align:center}.date{font-size:18px;font-weight:750}.daylabel{font-size:12px;color:var(--muted);margin-top:2px}
-.workouthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.workoutname{font-weight:800;font-size:17px}.edit{color:var(--accent);font-size:13px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.datebar{display:flex;align-items:center;justify-content:space-between;margin:4px 0 10px}.datecenter{text-align:center}.date{font-size:18px;font-weight:750}.daylabel{font-size:12px;color:var(--muted);margin-top:2px}
+.workouthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.workout-card{cursor:pointer}.select-workout{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:var(--accent);font-weight:700;font-size:14px;text-align:center}.workoutname{font-weight:800;font-size:17px}.edit{color:var(--accent);font-size:13px;font-weight:700}
 .group{margin-top:15px}.group:first-child{margin-top:0}.groupname{color:var(--accent);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}.exercise-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line);font-size:15px}.weight{font-weight:750;color:var(--accent);white-space:nowrap}.empty{text-align:center;padding:40px 15px;color:var(--muted)}.empty b{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
 .calendar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.monthtitle{font-size:20px;font-weight:800}.dow,.grid{display:grid;grid-template-columns:repeat(7,1fr);text-align:center}.dow{font-size:11px;color:var(--muted);margin-bottom:6px}.cell{height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;position:relative;cursor:pointer}.cell.muted{color:#c5c7cd}.cell .num{width:34px;height:34px;display:grid;place-items:center;border-radius:50%}.cell.selected .num{background:var(--accent);color:white;font-weight:800}.dot{width:5px;height:5px;border-radius:50%;background:var(--accent);position:absolute;bottom:1px}.monthsummary{margin-top:10px}.summarytitle{font-weight:800}.summarysub{color:var(--muted);font-size:13px;margin-top:3px}
 .search{width:100%;height:45px;border:1px solid var(--line);border-radius:13px;background:var(--card);padding:0 13px;outline:none}.chips{display:flex;gap:7px;overflow:auto;margin:10px 0}.chip{padding:8px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;white-space:nowrap}.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
 .exercise-list .exercise-row{padding:14px 2px}.mini-chart{height:170px;margin-top:10px}.bars{height:100%;display:flex;align-items:end;gap:8px;padding:15px 6px 5px;border-bottom:1px solid var(--line)}.bar{flex:1;background:var(--accent);opacity:.78;border-radius:7px 7px 2px 2px;min-height:10px}.chartlabels{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:7px}
 .metricgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.metric{background:var(--bg);border-radius:12px;padding:11px}.metric small{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;font-size:18px;margin-top:4px}
-.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.35);display:none;align-items:end}.sheet{background:var(--card);width:100%;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom))}.modal.show{display:flex}.handle{width:38px;height:4px;border-radius:5px;background:#d8dae0;margin:0 auto 16px}.sheet h2{margin:0 0 5px;font-size:21px}.sheet .hint{font-size:13px;color:var(--muted);margin-bottom:18px}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.35);display:none;align-items:end}.sheet{background:var(--card);width:100%;max-height:calc(100dvh - 28px);overflow:auto;border-radius:24px 24px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}.modal.show{display:flex}.picker-overlay{position:absolute;inset:0;background:var(--card);border-radius:24px 24px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom));overflow:auto;z-index:2;-webkit-overflow-scrolling:touch}.picker-overlay .listpick{max-height:none}.handle{width:38px;height:4px;border-radius:5px;background:#d8dae0;margin:0 auto 16px}.sheet h2{margin:0 0 5px;font-size:21px}.sheet .hint{font-size:13px;color:var(--muted);margin-bottom:18px}
 .field{margin-bottom:14px}.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}.field input,.field select{width:100%;height:46px;border:1px solid var(--line);border-radius:12px;padding:0 12px;background:#fff;outline:none}.muscles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.muscle{border:1px solid var(--line);border-radius:13px;padding:13px 6px;text-align:center;font-size:12px}.muscle.active{border-color:var(--accent);background:var(--accent2);color:var(--accent);font-weight:750}
 .loggroup{margin-top:18px}.loggroup h3{font-size:13px;color:var(--accent);text-transform:uppercase;margin:0 0 4px}.logrow{display:grid;grid-template-columns:1fr 82px 38px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}.logrow input{width:82px;height:38px;border:1px solid var(--line);border-radius:10px;text-align:center}.addexercise{color:var(--accent);font-weight:700;font-size:13px;padding:12px 0}.listpick{max-height:50vh;overflow:auto}.pickrow{display:flex;justify-content:space-between;align-items:center;padding:14px 3px;border-bottom:1px solid var(--line)}.pickrow button{color:var(--accent);font-size:22px}
 .settings-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-top:1px solid var(--line)}.settings-actions{display:flex;gap:12px;align-items:center}.danger{color:var(--danger);font-size:13px;font-weight:700}
@@ -92,8 +92,14 @@ function monthView(){
 function shiftMonth(n){let d=new Date(state.month+"-01T12:00:00");d.setMonth(d.getMonth()+n);state.month=d.toISOString().slice(0,7);render()}
 function selectDate(ds){state.date=ds;state.month=ds.slice(0,7);state.view=workoutFor(ds)?"day":"month";render()}
 function dayView(){
- let w=workoutFor(state.date);if(!w)return `<div class="card empty"><b>${fmt(state.date)}</b><div>No workout logged.</div><button class="primary" style="margin-top:18px" onclick="openLog()">＋ Log Workout</button></div>`;
- return `<div class="datebar"><button class="iconbtn" onclick="moveDay(-1)">‹</button><div class="datecenter"><div class="date">${fmt(state.date)}</div><div class="daylabel">${esc(w.name)}</div></div><button class="iconbtn" onclick="moveDay(1)">›</button></div><div class="card"><div class="workouthead"><div class="workoutname">${esc(w.name)}</div><button class="edit" onclick="openLog('${state.date}')">Edit</button></div>${w.groups.map(g=>`<div class="group"><div class="groupname">${esc(g.name)}</div>${g.exercises.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span><span class="weight">${esc(e.weight)} kg</span></div>`).join("")}</div>`).join("")}</div>`;
+ let w=workoutFor(state.date);
+ if(!w)return `<div class="card empty"><b>${fmt(state.date)}</b><div>No workout logged.</div><button class="primary" style="margin-top:18px" onclick="openLog()">＋ Log Workout</button></div>`;
+ return `<div class="datebar"><button class="iconbtn" onclick="goMonth()">‹</button><div class="datecenter"><div class="date">${fmt(state.date)}</div><div class="daylabel">${esc(w.name)}</div></div><button class="iconbtn" onclick="openLog('${state.date}')">Edit</button></div><div class="card workout-card" onclick="selectWorkout('${state.date}')"><div class="workouthead"><div class="workoutname">${esc(w.name)}</div><button class="edit" onclick="event.stopPropagation();openLog('${state.date}')">Edit</button></div>${w.groups.map(g=>`<div class="group"><div class="groupname">${esc(g.name)}</div>${g.exercises.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span><span class="weight">${esc(e.weight)} kg</span></div>`).join("")}</div>`).join("")}<div class="select-workout">Select workout</div></div>`;
+}
+function selectWorkout(d){
+ state.date=d;
+ state.view="day";
+ render();
 }
 function moveDay(n){let d=new Date(state.date+"T12:00:00");d.setDate(d.getDate()+n);state.date=d.toISOString().slice(0,10);state.month=state.date.slice(0,7);render()}
 function exerciseList(){
@@ -145,18 +151,28 @@ function logStep2(d,ms,existing){
 function logRow(e){return `<div class="logrow" data-name="${esc(e.name)}"><span>${esc(e.name)}</span><input inputmode="decimal" value="${esc(e.weight)}" placeholder="kg"><button onclick="this.parentElement.remove()">×</button></div>`}
 function openPicker(group){
  let names=allExercises(group);
- showModal(`<div class="sheet"><div class="handle"></div><h2>Add Exercise</h2><div class="hint">${esc(group)}</div><button class="addexercise" style="display:block;width:100%;text-align:left" onclick="createFromPicker('${esc(group)}')">＋ Create New Exercise</button><input id="pickSearch" class="search" placeholder="Search exercises" oninput="filterPicker()"><div id="pickList" class="listpick">${names.map(n=>`<div class="pickrow"><span>${esc(n)}</span><button onclick="addPicked('${esc(group)}','${esc(n)}')">＋</button></div>`).join("")}</div></div>`);
+ let modal=document.getElementById("modal");
+ let sheet=modal.querySelector(".sheet");
+ if(!sheet)return;
+ sheet.insertAdjacentHTML("beforeend",`<div class="picker-overlay"><div class="handle"></div><div class="datebar" style="margin-bottom:18px"><div><h2 style="margin:0">Add Exercise</h2><div class="hint" style="margin:4px 0 0">${esc(group)}</div></div><button class="iconbtn" onclick="closePicker()">×</button></div><button class="addexercise" style="display:block;width:100%;text-align:left;padding-top:0" onclick="createFromPicker('${esc(group)}')">＋ Create New Exercise</button><input id="pickSearch" class="search" placeholder="Search exercises" oninput="filterPicker()"><div id="pickList" class="listpick">${names.map(n=>`<div class="pickrow"><span>${esc(n)}</span><button type="button" class="pick-add" aria-label="Add ${esc(n)}" data-group="${esc(group)}" data-name="${esc(n)}">＋</button></div>`).join("")}</div></div>`);
 }
+function closePicker(){document.querySelector(".picker-overlay")?.remove()}
 function filterPicker(){let q=document.getElementById("pickSearch").value.toLowerCase();document.querySelectorAll("#pickList .pickrow").forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?"flex":"none")}
 function addPicked(group,name){
- let rows=[...document.querySelectorAll(`#logGroups .loggroup[data-group="${CSS.escape(group)}"] .logrow`)];if(rows.some(r=>r.dataset.name===name)){closeModal();return}
- let container=document.querySelector(`#logGroups .loggroup[data-group="${CSS.escape(group)}"]`);container.querySelector(".addexercise").insertAdjacentHTML("beforebegin",logRow({name,weight:history(name)[0]?.weight||"",note:""}));closeModal();
+ let rows=[...document.querySelectorAll(`#logGroups .loggroup[data-group="${CSS.escape(group)}"] .logrow`)];
+ if(rows.some(r=>r.dataset.name===name)){closePicker();showToast("Exercise already added");return}
+ let container=document.querySelector(`#logGroups .loggroup[data-group="${CSS.escape(group)}"]`);
+ if(!container){showToast("Could not add exercise");return}
+ container.querySelector(".addexercise").insertAdjacentHTML("beforebegin",logRow({name,weight:history(name)[0]?.weight||"",note:""}));
+ closePicker();
 }
 function createFromPicker(group){
  let n=prompt("New exercise name","");if(!n)return;n=n.trim();if(!n)return;
  if(allExercises(group).some(x=>x.toLowerCase()===n.toLowerCase())){showToast("Exercise already exists");return}
- library[group]=[...(library[group]||[]),n];customExercises[group]=[...new Set([...(customExercises[group]||[]),n])];save();closeModal();
- let d=document.getElementById("logDate")?.value||today(),ms=[...document.querySelectorAll(".muscle.active")].map(x=>x.textContent),existing=workoutFor(d);showModal(logStep2(d,ms,existing));
+ library[group]=[...(library[group]||[]),n];customExercises[group]=[...new Set([...(customExercises[group]||[]),n])];save();
+ closePicker();
+ let container=document.querySelector(`#logGroups .loggroup[data-group="${CSS.escape(group)}"]`);
+ if(container)container.querySelector(".addexercise").insertAdjacentHTML("beforebegin",logRow({name:n,weight:"",note:""}));
 }
 function saveWorkout(d){
  let groups=[...document.querySelectorAll("#logGroups .loggroup")].map(g=>({name:g.dataset.group,exercises:[...g.querySelectorAll(".logrow")].map(r=>({name:r.dataset.name,weight:r.querySelector("input").value.trim(),note:""})).filter(e=>e.weight!=="")})).filter(g=>g.exercises.length);
@@ -166,7 +182,15 @@ function saveWorkout(d){
 function showModal(html){let m=document.getElementById("modal");m.innerHTML=html;m.classList.add("show")}
 function closeModal(){document.getElementById("modal").classList.remove("show")}
 function showToast(t){let x=document.getElementById("toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),1800)}
-document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+document.getElementById("modal").addEventListener("click",e=>{
+ if(e.target.id==="modal"){closeModal();return}
+ const add=e.target.closest(".pick-add");
+ if(add){
+   e.preventDefault();
+   e.stopPropagation();
+   addPicked(add.dataset.group,add.dataset.name);
+ }
+});
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
 render();
 </script>
