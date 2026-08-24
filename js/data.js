@@ -4,6 +4,14 @@ let state=JSON.parse(localStorage.getItem("wt_state")||"null");
 if(!state){state={muscles:Object.keys(defaults).map(name=>({id:crypto.randomUUID(),name})),exercises:[],workouts:[]};state.muscles.forEach(m=>(defaults[m.name]||[]).forEach(name=>state.exercises.push({id:crypto.randomUUID(),name,muscleId:m.id})));save();}
 let selected=new Date();selected.setHours(0,0,0,0);let month=new Date(selected.getFullYear(),selected.getMonth(),1);
 function save(){localStorage.setItem("wt_state",JSON.stringify(state))}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",""":"&quot;","'":"&#039;"}[c]))}
+function esc(s){
+  return String(s).replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[c]));
+}
 function dateKey(d){return d.toISOString().slice(0,10)}
 function muscle(id){return state.muscles.find(x=>x.id===id)?.name||"Unknown"}
