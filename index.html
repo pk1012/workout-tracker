@@ -6,16 +6,16 @@
 <meta name="theme-color" content="#ffffff">
 <title>Workout Tracker</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="css/styles.css?v=1.6.5">
-<link rel="stylesheet" href="css/components.css?v=1.6.5">
-<link rel="stylesheet" href="css/responsive.css?v=1.6.5">
+<link rel="stylesheet" href="css/styles.css?v=1.7.7">
+<link rel="stylesheet" href="css/components.css?v=1.7.7">
+<link rel="stylesheet" href="css/responsive.css?v=1.7.7">
 </head>
 <body>
 <div class="app">
 <section id="home" class="screen active">
   <header class="home-head">
-    <div><h1>Good morning, Prajwal! 👋</h1><p>Ready to crush your goals today?</p></div>
-    <div class="head-actions"><button class="head-pill">🔥 <span id="streak">0</span></button><button class="head-icon settings-head" aria-label="Settings" onclick="go('more')"><svg class="icon"><use href="#gear"/></svg></button></div>
+    <div><h1>Good morning, Prajwal!</h1><p>Ready to crush your goals today?</p></div>
+    <div class="head-actions"><button class="head-pill" aria-label="Workout streak"><svg class="icon"><use href="#streak-icon"/></svg><span id="streak">0</span></button><button class="head-icon settings-head" aria-label="Settings" onclick="go('more')"><svg class="icon"><use href="#gear"/></svg></button></div>
   </header>
   <main id="homeView"></main>
 </section>
@@ -32,7 +32,7 @@
 
 <section id="library-management" class="screen">
   <header class="page-head compact-head"><h1>Exercise Library</h1><div class="subtitle">Add, edit and delete exercises</div></header>
-  <div class="back"><button class="outline" style="padding:10px 14px" onclick="go('more')">‹ Back to More</button></div>
+  <div class="back"><button class="outline back-btn" onclick="go('more')">Back to Settings</button></div>
   <div id="library"></div><button class="fab" onclick="openExercise()">+</button>
 </section>
 
@@ -45,13 +45,13 @@
 <header class="page-head compact-head"><h1>Settings</h1><div class="subtitle">Manage your app preferences and data</div></header>
 <div class="setting-section-title">PREFERENCES</div>
 <div class="settings">
-<button class="setting card" onclick="go('library-management')"><span class="setting-icon"><svg class="icon"><use href="#book"/></svg></span><span class="setting-main"><span class="setting-title">Exercise Library</span><span class="setting-desc">Manage muscle groups and exercises</span></span><span class="chevron">›</span></button>
+<button class="setting card" onclick="go('library-management')"><span class="setting-icon"><svg class="icon"><use href="#book"/></svg></span><span class="setting-main"><span class="setting-title">Exercise Library</span><span class="setting-desc">Manage muscle groups and exercises</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>
 <div class="setting card theme-setting"><span class="setting-icon"><svg class="icon"><use href="#theme"/></svg></span><span class="setting-main"><span class="setting-title">Theme</span><span class="setting-desc">Choose light or dark</span></span><span class="segment"><button id="lightBtn" onclick="theme('light')">Light</button><button id="darkBtn" onclick="theme('dark')">Dark</button></span></div>
-<button class="setting card" onclick="restoreBackup()"><span class="setting-icon"><svg class="icon"><use href="#upload"/></svg></span><span class="setting-main"><span class="setting-title">Backup & Restore</span><span class="setting-desc">Export or restore your workout data</span></span><span class="chevron">›</span></button>
-<button class="setting card" onclick="clearData()"><span class="setting-icon"><svg class="icon"><use href="#trash"/></svg></span><span class="setting-main"><span class="setting-title">Clear All Data</span><span class="setting-desc">Delete all saved data</span></span><span class="chevron">›</span></button>
+<button class="setting card" onclick="restoreBackup()"><span class="setting-icon"><svg class="icon"><use href="#upload"/></svg></span><span class="setting-main"><span class="setting-title">Backup & Restore</span><span class="setting-desc">Export or restore your workout data</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>
+<button class="setting card" onclick="clearData()"><span class="setting-icon"><svg class="icon"><use href="#trash"/></svg></span><span class="setting-main"><span class="setting-title">Clear All Data</span><span class="setting-desc">Delete all saved data</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>
 </div>
-<div class="setting-section-title" style="padding-top:31px">ABOUT</div>
-<div class="settings"><button class="setting card" onclick="about()"><span class="setting-icon"><svg class="icon"><use href="#info"/></svg></span><span class="setting-main"><span class="setting-title">About Workout Tracker</span><span class="setting-desc">Version, build and app information</span></span><span class="chevron">›</span></button></div>
+<div class="setting-section-title about-title">ABOUT</div>
+<div class="settings"><button class="setting card" onclick="about()"><span class="setting-icon"><svg class="icon"><use href="#info"/></svg></span><span class="setting-main"><span class="setting-title">About Workout Tracker</span><span class="setting-desc">Version, build and app information</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button></div>
 </section>
 
 <nav class="bottom-nav">
@@ -62,7 +62,7 @@
 </nav>
 </div>
 
-<svg width="0" height="0" style="position:absolute">
+<svg width="0" height="0" class="icon-defs" aria-hidden="true">
 <symbol id="home-icon" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
 <symbol id="calendar-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></symbol>
 <symbol id="dumbbell" viewBox="0 0 24 24"><path d="M6 8v8M3 10v4M9 6v12M15 6v12M18 8v8M21 10v4M9 12h6"/></symbol>
@@ -73,7 +73,21 @@
 <symbol id="upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></symbol>
 <symbol id="trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/></symbol>
 <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 8h.01"/></symbol>
-<symbol id="gear" viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/><path d="M4.9 7.2l1.4-2.4 2.2.8a7.5 7.5 0 0 1 2-.8L11 2.5h2l.5 2.3a7.5 7.5 0 0 1 2 .8l2.2-.8 1.4 2.4-1.7 1.6c.3.6.6 1.3.7 2l2.1.9v2.6l-2.1.9c-.1.7-.4 1.4-.7 2l1.7 1.6-1.4 2.4-2.2-.8a7.5 7.5 0 0 1-2 .8l-.5 2.3h-2l-.5-2.3a7.5 7.5 0 0 1-2-.8l-2.2.8-1.4-2.4 1.7-1.6a7.5 7.5 0 0 1-.7-2l-2.1-.9v-2.6l2.1-.9c.1-.7.4-1.4.7-2z"/></symbol>
+<symbol id="streak-icon" viewBox="0 0 24 24"><path d="M12.4 3.2c.2 3-1.2 4.5-2.6 5.8-1.4 1.3-2.7 2.7-2.7 5a4.9 4.9 0 0 0 9.8 0c0-1.9-.9-3.5-2.3-4.8.1 1.7-.5 2.8-1.5 3.5.1-2.8-1.1-4.8-.7-9.5Z"/></symbol>
+<symbol id="activity" viewBox="0 0 24 24"><path d="M3 12h3l2-6 4 12 2-6h7"/></symbol>
+<symbol id="layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16l9 5 9-5"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="chevron-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+<symbol id="chevron-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="arrow-right" viewBox="0 0 24 24"><path d="M5 12h13"/><path d="m13 6 6 6-6 6"/></symbol>
+<symbol id="chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="moon" viewBox="0 0 24 24"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.6 8.6 0 1 0 11.2 11.2Z"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+<symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.2 13.1c.1-.4.1-.7.1-1.1s0-.7-.1-1.1l1.7-1.3-1.7-2.9-2 .8c-.6-.5-1.2-.8-1.9-1L15 4.4h-3.4l-.3 2.1c-.7.2-1.4.5-1.9 1l-2-.8-1.7 2.9 1.7 1.3c-.1.4-.1.7-.1 1.1s0 .7.1 1.1l-1.7 1.3 1.7 2.9 2-.8c.6.5 1.2.8 1.9 1l.3 2.1H15l.3-2.1c.7-.2 1.4-.5 1.9-1l2 .8 1.7-2.9-1.7-1.3Z"/></symbol>
 </svg>
 <div id="modal" class="modal" onclick="if(event.target===this)closeModal()"></div>
 <script src="js/data.js"></script>
