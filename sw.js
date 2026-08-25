@@ -1,11 +1,11 @@
-const CACHE="workout-tracker-v6";
+const CACHE="workout-tracker-v11";
 const ASSETS=[
  "./",
  "./index.html",
  "./manifest.webmanifest",
- "./css/styles.css",
- "./css/components.css",
- "./css/responsive.css",
+ "./css/styles.css?v=1.6.5",
+ "./css/components.css?v=1.6.5",
+ "./css/responsive.css?v=1.6.5",
  "./js/data.js",
  "./js/workouts.js",
  "./js/exercises.js",
