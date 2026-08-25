@@ -1,12 +1,181 @@
-@media(max-width:600px){
- .app{padding-bottom:98px}.home-head{padding:18px 24px 16px}.home-head h1{font-size:26px}.home-head p{font-size:16px}.head-pill{height:50px;padding:0 14px}.head-icon{width:50px;height:50px}
- .hero-card{height:276px;margin-left:24px;margin-right:24px}.hero-copy{padding-left:28px;width:58%}.hero-copy h2{font-size:29px}.hero-copy p{font-size:17px}.hero-btn{height:56px;padding:0 20px;font-size:17px}.hero-art{width:59%;right:-10px}
- .home-status{height:262px;margin-left:24px;margin-right:24px;padding:22px}.status-main{gap:14px}.status-icon{width:60px;height:60px}.status-copy strong{font-size:17px}.status-copy span{font-size:15px}.status-action{padding:0 16px;font-size:15px}.meter{margin-left:82px}
- .weekly-card,.quick,.workout-week{margin-left:24px;margin-right:24px}.week-select{gap:7px;font-size:14px}.week-select span{font-size:14px}.week-count{margin-top:15px}.week-day i,.workout-days i{width:40px;height:40px}.week-stats{font-size:12px}.week-stats b{margin-left:4px}.quick-grid b{font-size:16px}.quick-grid span{font-size:13px}.quick-grid small{font-size:11px}
- .page-head{padding:25px 24px 17px}.compact-head h1{font-size:30px}.workout-week-head span{font-size:14px}.workout-week-head div{gap:7px}.workout-days button>span{font-size:12px}.workout-days i{width:36px;height:36px}.workout-card{min-height:148px}.workout-avatar{width:70px;height:70px;font-size:35px}.workout-card-copy strong{font-size:17px}.workout-metrics b{font-size:14px;padding-right:10px;margin-right:10px}.workout-metrics small{font-size:10px}.rest-card{height:148px}
- .bottom-nav{height:82px}.nav-btn{font-size:12px}.nav-btn.active:before{margin-top:-77px}
- .grid{grid-template-columns:repeat(2,1fr);gap:8px}.sheet{padding-left:16px;padding-right:16px}.setting{padding:13px 14px;min-height:76px;gap:12px}.setting-icon{width:44px;height:44px;border-radius:14px}.setting-title{font-size:16px}.setting-desc{font-size:13px}.stats-four{grid-template-columns:repeat(2,1fr)}.set-row{grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 24px;gap:6px}
+@media (max-width: 600px){
+  :root{--radius:16px}
+  html,body{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{padding-top:env(safe-area-inset-top)}
+  .app{width:100%;max-width:none;margin:0;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+
+  /* Header — compact, Dynamic-Island safe */
+  .home-head{
+    min-height:96px;
+    padding:14px 16px 12px;
+    gap:8px;
+    align-items:flex-start;
+  }
+  .home-head>div:first-child{min-width:0;flex:1;padding-top:4px}
+  .home-head h1{font-size:18px;line-height:1.08;letter-spacing:-.35px;white-space:nowrap}
+  .home-head p{font-size:13px;line-height:1.25;margin-top:6px}
+  .head-actions{gap:6px;margin-top:0}
+  .head-pill,.head-icon{height:40px;border-radius:20px}
+  .head-pill{padding:0 10px;font-size:15px;min-width:48px}
+  .head-pill span{font-size:14px}
+  .head-icon{width:40px;font-size:21px}
+  .settings-head .icon{width:19px;height:19px}
+  .head-icon i{right:6px;top:6px;width:6px;height:6px}
+
+  /* Main hero */
+  .hero-card{
+    height:142px;
+    margin:0 16px 12px;
+    border-radius:16px;
+  }
+  .hero-copy{padding:16px 0 16px 18px;width:55%}
+  .hero-copy h2{font-size:22px;line-height:1.05;letter-spacing:-.4px}
+  .hero-copy p{font-size:13px;line-height:1.4;margin:7px 0 10px}
+  .hero-btn{height:39px;padding:0 15px;border-radius:10px;font-size:13px}
+  .hero-btn b{font-size:18px;margin-left:7px}
+  .hero-art{right:-2px;bottom:2px;width:57%;height:92%}
+
+  /* Today's Status — fixed height across all three states */
+  .home-status{
+    height:150px;
+    margin:0 16px 12px;
+    padding:14px 14px 12px;
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .home-status h2{font-size:16px;line-height:1.1}
+  .status-main{gap:10px;margin-top:13px;min-height:46px}
+  .status-icon{width:46px;height:46px;font-size:22px}
+  .status-icon.neutral{font-size:25px}
+  .status-icon.complete{font-size:28px}
+  .status-copy strong{font-size:14px;line-height:1.2}
+  .status-copy span{font-size:12px;line-height:1.25;margin-top:4px}
+  .status-action{height:42px;padding:0 12px;font-size:12px;border-radius:10px}
+  .meter-label{margin-top:13px;font-size:11px}
+  .meter-label b{font-size:13px;margin-left:7px}
+  .meter{height:6px;margin:7px 10px 0 56px}
+  .meter em{width:11px;height:11px}
+  .meter span{right:-22px;top:-7px;font-size:18px}
+  .target-badge{margin:8px auto 0;padding:4px 8px;font-size:10px;border-radius:7px}
+
+  /* Weekly activity */
+  .weekly-card{
+    margin:0 16px 12px;
+    padding:13px 9px 10px;
+    border-radius:16px;
+  }
+  .weekly-card h2{font-size:16px}
+  .section-head{padding:0 5px;gap:6px}
+  .week-select{gap:6px;font-size:13px}
+  .week-select b{padding:4px 6px;border-radius:6px}
+  .week-select span{font-size:13px}
+  .week-select i{font-size:18px}
+  .week-count{margin:12px 5px 9px;gap:7px}
+  .week-count .icon{width:17px;height:17px}
+  .week-count strong{font-size:13px}
+  .week-days{gap:0;width:100%;grid-template-columns:repeat(7,minmax(0,1fr))}
+  .week-day{gap:6px;min-width:0}
+  .week-day>span{font-size:11px;white-space:nowrap}
+  .week-day i,.workout-days i{width:30px;height:30px;font-size:14px}
+  .legend{gap:12px;font-size:10px;margin:8px 5px}
+  .dot{width:8px;height:8px}
+  .week-stats{font-size:10px;padding:8px 0}
+  .week-stats span{padding:0 7px}
+  .week-stats b{margin-left:3px;font-size:10px}
+  .full-week{height:36px;border-radius:9px;font-size:12px}
+  .full-week b{font-size:16px;margin-left:6px}
+
+  /* Quick progress */
+  .quick{margin:0 16px 12px;padding:13px 5px 11px;border-radius:16px}
+  .quick h2{font-size:16px}
+  .quick .section-head button{font-size:12px}
+  .quick-grid{margin-top:11px}
+  .quick-grid>div{padding:0 3px}
+  .quick-grid i{width:32px;height:32px;font-size:17px;margin-bottom:5px}
+  .quick-grid b{font-size:13px}
+  .quick-grid span{font-size:10px;margin-top:2px}
+  .quick-grid small{font-size:9px;margin-top:3px}
+
+  /* Bottom navigation */
+  .bottom-nav{
+    height:54px;
+    left:0;right:0;transform:none;width:100%;max-width:none;
+    padding:5px 8px env(safe-area-inset-bottom);
+    box-sizing:content-box;
+  }
+  .nav-btn{position:relative;min-width:0;font-size:10px;gap:2px}
+  .nav-btn .icon{width:21px;height:21px}
+  .nav-btn.active:before{top:0;left:50%;transform:translateX(-50%);margin:0;width:42px;height:3px;position:absolute}
+
+  /* Other screens */
+  .page-head{padding:18px 16px 12px}
+  .compact-head h1{font-size:22px}
+  .subtitle{font-size:12px;margin-top:4px}
+  .workout-week,.day-section,.recent-section{margin-left:16px;margin-right:16px}
+  .workout-week{padding:13px 10px;border-radius:16px}
+  .workout-week-head{margin-bottom:12px}
+  .workout-week-head button{width:34px;height:34px;border-radius:10px;font-size:22px}
+  .workout-week-head div{gap:6px}
+  .workout-week-head strong{padding:4px 6px;font-size:12px}
+  .workout-week-head span{font-size:12px}
+  .workout-days button{gap:5px;padding:4px 0}
+  .workout-days button>span{font-size:10px}
+  .workout-days button>small{font-size:10px}
+  .workout-days i{width:28px;height:28px}
+  .week-picker-link{font-size:12px;margin:3px auto 0;padding:5px}
+
+  .workout-card,.rest-card{min-height:96px;height:96px;padding:10px;gap:9px;border-radius:14px}
+  .workout-avatar{width:52px;height:52px;border-radius:11px;font-size:27px}
+  .workout-card-copy strong{font-size:13px}
+  .workout-card-copy>span{font-size:10px;margin-top:4px}
+  .workout-metrics{margin-top:7px}
+  .workout-metrics b{font-size:11px;padding-right:7px;margin-right:7px}
+  .workout-metrics small{font-size:8px}
+  .card-arrow{font-size:21px}
+
+  /* Week picker */
+  .modal{align-items:flex-end}
+  .sheet{
+    width:100%;
+    max-height:78vh;
+    padding:8px 16px calc(18px + env(safe-area-inset-bottom));
+    border-radius:22px 22px 0 0;
+  }
+  .handle{width:44px;height:4px;margin-bottom:14px}
+  .picker-title{margin-bottom:9px}
+  .picker-title h2{font-size:21px}
+  .picker-title button{font-size:26px}
+  .week-list{gap:1px}
+  .week-list button{
+    grid-template-columns:48px 1fr auto;
+    gap:6px;
+    padding:12px 9px;
+    border-radius:10px;
+  }
+  .week-list b{font-size:13px}
+  .week-list span{font-size:13px}
+  .week-list em{font-size:11px}
 }
-@media(max-width:390px){
- .home-head h1{font-size:23px}.head-actions{gap:5px}.head-pill{padding:0 10px}.hero-copy{padding-left:20px}.hero-copy h2{font-size:25px}.hero-copy p{font-size:15px}.hero-btn{font-size:15px;padding:0 13px}.hero-art{width:62%}.status-action{font-size:13px;padding:0 11px}.status-icon{width:54px;height:54px}.status-copy strong{font-size:15px}.week-select span{display:none}.week-stats{font-size:11px}.quick-grid b{font-size:14px}.quick-grid span{font-size:12px}
+
+@media (max-width:350px){
+  .home-head h1{font-size:19px}
+  .home-head p{font-size:12px}
+  .head-actions{gap:4px}
+  .head-icon{width:37px;height:37px}
+  .head-pill{height:37px;min-width:44px}
+  .hero-copy h2{font-size:20px}
+  .hero-copy p{font-size:12px}
+  .hero-btn{font-size:12px}
+  .status-action{font-size:11px;padding:0 9px}
+  .week-select span{font-size:11px}
+}
+
+
+@media (max-width:380px){
+  .home-head{padding-left:12px;padding-right:12px}
+  .home-head h1{font-size:16px}
+  .head-actions{gap:4px}
+  .head-pill{min-width:38px;padding:0 7px}
+  .head-icon{width:34px}
+  .hero-card,.home-status,.weekly-card,.quick{width:calc(100% - 24px);margin-left:12px;margin-right:12px}
 }
