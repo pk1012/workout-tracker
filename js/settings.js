@@ -20,16 +20,11 @@ function restoreFromFile(file){
    const parsed=JSON.parse(reader.result);
    const restored=parsed?.format==="workout-tracker-backup"?parsed.state:parsed;
    if(!isValidState(restored))throw new Error("Invalid backup format.");
-   if(!confirm("Restore this backup? Your current workout data will be replaced."))return;
-   state=restored;
-   save();
-   if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);
-   selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);
-   closeModal();go("workouts");
-   alert("Backup restored successfully.");
-  }catch(err){alert("Could not restore this backup. Please choose a valid Workout Tracker JSON backup.")}
+   confirmAction("Restore this backup? Your current workout data will be replaced.",()=>applyRestore(restored,parsed));
+   return;
+  }catch(err){notify("Could not restore this backup. Please choose a valid Workout Tracker JSON backup.","error")}
  };
- reader.onerror=()=>alert("Could not read the backup file.");
+ reader.onerror=()=>notify("Could not read the backup file.","error");
  reader.readAsText(file);
 }
 
@@ -59,6 +54,7 @@ function isValidState(s){
  });
 }
 
-function clearData(){if(confirm("Delete all workout data, exercises and muscle groups? This cannot be undone.")){localStorage.removeItem("wt_state");location.reload()}}
+function applyRestore(restored,parsed){state=restored;save();if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);closeModal();go("workouts");notify("Backup restored successfully.","success")}
+function clearData(){confirmAction("Delete all workout data, exercises and muscle groups? This cannot be undone.",()=>{localStorage.removeItem("wt_state");location.reload()})}
 
-function about(){modal(`<div class="handle"></div><h2>About Workout Tracker</h2><div class="muted">Workout logging and exercise management.</div><div class="card pad" style="margin-top:20px"><div class="about-row"><span>Version</span><strong>${VERSION}</strong></div><div class="about-row"><span>Build</span><strong>${BUILD}</strong></div><div class="about-row"><span>App</span><strong>Workout Tracker</strong></div><div class="about-row"><span>Support</span><span class="link">support@workouttracker.app</span></div></div><div class="modal-actions"><button class="primary btn-wide" onclick="closeModal()">Done</button></div>`)}
+function about(){modal(`<div class="handle"></div><h2>About Workout Tracker</h2><div class="muted">Workout logging and exercise management.</div><div class="card pad about-card"><div class="about-row"><span>Version</span><strong>${VERSION}</strong></div><div class="about-row"><span>Build</span><strong>${BUILD}</strong></div><div class="about-row"><span>App</span><strong>Workout Tracker</strong></div><div class="about-row"><span>Support</span><span class="link">support@workouttracker.app</span></div></div><div class="modal-actions"><button class="primary btn-wide" onclick="closeModal()">Done</button></div>`)}
