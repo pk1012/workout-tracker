@@ -16,3 +16,7 @@
  .setting-title{font-size:16px}
  .setting-desc{font-size:13px}
 }
+
+@media(max-width:600px){
+ .setting-main{min-width:0}.theme-setting{flex-wrap:wrap}.theme-setting .segment{margin-left:auto}.theme-setting .setting-main{flex:1 1 140px}.set-row{grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 24px;gap:6px}.stats-four{grid-template-columns:repeat(2,1fr)}.unit-field{align-items:center}
+}
