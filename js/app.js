@@ -13,4 +13,4 @@ function modal(html){document.getElementById("modal").innerHTML=`<div class="she
 function closeModal(){document.getElementById("modal").classList.remove("show")}
 let savedTheme=localStorage.getItem("wt_theme")||"light";theme(savedTheme);
 renderHome();renderCalendar();
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{}))}
