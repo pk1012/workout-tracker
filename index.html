@@ -18,7 +18,13 @@
 </section>
 
 <section id="exercises" class="screen">
-<header class="page-head"><h1>Exercise Library</h1><div class="subtitle">Manage exercises by muscle group</div></header>
+<header class="page-head"><h1>Exercises</h1><div class="subtitle">Exercises grouped by muscle group</div></header>
+<div id="exerciseList"></div>
+</section>
+
+<section id="library-management" class="screen">
+<header class="page-head"><h1>Exercise Library</h1><div class="subtitle">Add, edit and delete exercises</div></header>
+<div class="back"><button class="outline" style="padding:10px 14px" onclick="go('more')">‹ Back to More</button></div>
 <div id="library"></div><button class="fab" onclick="openExercise()">+</button>
 </section>
 
@@ -31,9 +37,9 @@
 <header class="page-head"><h1>Settings</h1><div class="subtitle">Manage your app</div></header>
 <div class="setting-section-title">PREFERENCES</div>
 <div class="settings">
-<button class="setting card" onclick="go('exercises')"><span class="setting-icon"><svg class="icon"><use href="#book"/></svg></span><span class="setting-main"><span class="setting-title">Exercise Library</span><span class="setting-desc">Manage muscle groups and exercises</span></span><span class="chevron">›</span></button>
+<button class="setting card" onclick="go('library-management')"><span class="setting-icon"><svg class="icon"><use href="#book"/></svg></span><span class="setting-main"><span class="setting-title">Exercise Library</span><span class="setting-desc">Manage muscle groups and exercises</span></span><span class="chevron">›</span></button>
 <div class="setting card"><span class="setting-icon"><svg class="icon"><use href="#theme"/></svg></span><span class="setting-main"><span class="setting-title">Theme</span><span class="setting-desc">Choose light or dark</span></span><span class="segment"><button id="lightBtn" onclick="theme('light')">Light</button><button id="darkBtn" onclick="theme('dark')">Dark</button></span></div>
-<button class="setting card" onclick="backup()"><span class="setting-icon"><svg class="icon"><use href="#upload"/></svg></span><span class="setting-main"><span class="setting-title">Backup & Restore</span><span class="setting-desc">Export your workout data</span></span><span class="chevron">›</span></button>
+<button class="setting card" onclick="restoreBackup()"><span class="setting-icon"><svg class="icon"><use href="#upload"/></svg></span><span class="setting-main"><span class="setting-title">Backup & Restore</span><span class="setting-desc">Export or restore your workout data</span></span><span class="chevron">›</span></button>
 <button class="setting card" onclick="clearData()"><span class="setting-icon"><svg class="icon"><use href="#trash"/></svg></span><span class="setting-main"><span class="setting-title">Clear All Data</span><span class="setting-desc">Delete all saved data</span></span><span class="chevron">›</span></button>
 </div>
 <div class="setting-section-title" style="padding-top:31px">ABOUT</div>
@@ -41,18 +47,18 @@
 </section>
 
 <nav class="bottom-nav">
-<button class="nav-btn active" data-screen="workouts" onclick="go('workouts')"><svg class="icon"><use href="#calendar"/></svg>Workouts</button>
+<button class="nav-btn active" data-screen="workouts" onclick="go('workouts')"><svg class="icon"><use href="#calendar-icon"/></svg>Workouts</button>
 <button class="nav-btn" data-screen="exercises" onclick="go('exercises')"><svg class="icon"><use href="#dumbbell"/></svg>Exercises</button>
 <button class="nav-btn" data-screen="progress" onclick="go('progress')"><svg class="icon"><use href="#chart"/></svg>Progress</button>
-<button class="nav-btn" data-screen="more" onclick="go('more')"><svg class="icon"><use href="#more"/></svg>More</button>
+<button class="nav-btn" data-screen="more" onclick="go('more')"><svg class="icon"><use href="#more-icon"/></svg>More</button>
 </nav>
 </div>
 
 <svg width="0" height="0" style="position:absolute">
-<symbol id="calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></symbol>
+<symbol id="calendar-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></symbol>
 <symbol id="dumbbell" viewBox="0 0 24 24"><path d="M6 8v8M3 10v4M9 6v12M15 6v12M18 8v8M21 10v4M9 12h6"/></symbol>
 <symbol id="chart" viewBox="0 0 24 24"><path d="M3 20 9 14l4 3 8-10"/><path d="M16 7h5v5"/></symbol>
-<symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+<symbol id="more-icon" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
 <symbol id="book" viewBox="0 0 24 24"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H20v18H7.5A3.5 3.5 0 0 0 4 23z"/><path d="M4 5.5v15A3.5 3.5 0 0 1 7.5 17H20"/></symbol>
 <symbol id="theme" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z"/></symbol>
 <symbol id="upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></symbol>

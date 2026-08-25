@@ -18,5 +18,14 @@ This is the complete Workout Tracker app reorganized into a maintainable multi-f
 - `sw.js` — service worker
 - `assets/icons/` — app icons
 
-Version 1.2.0
-Build 2026.08.25
+Version 1.3.0
+Build 2026.08.26
+
+## Fixes in 1.3.0
+
+- Local-time-safe workout date keys to prevent timezone date shifts.
+- Correct PWA icon paths and expanded service-worker asset caching.
+- Service worker registration on app startup.
+- Real JSON backup export and restore/import with validation.
+- Workout logging preserves selected date and muscle groups when going back from exercise selection.
+- Existing exercise add/edit/delete and alphabetical exercise ordering retained.
