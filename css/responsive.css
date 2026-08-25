@@ -1,1 +1,18 @@
-@media(max-width:600px){.page-head{padding-left:20px;padding-right:20px}.calendar,.summary,.section,.settings,.progress{margin-left:16px;margin-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.fab{right:20px}}
+@media(max-width:600px){
+ .page-head{padding:28px 16px 16px}
+ h1{font-size:32px}
+ .subtitle{font-size:15px}
+ .calendar,.summary,.section,.settings,.progress{margin-left:12px;margin-right:12px}
+ .calendar{padding:16px}
+ .day{height:42px}
+ .bottom-nav{height:72px;padding:6px 8px max(6px,env(safe-area-inset-bottom))}
+ .nav-btn{font-size:11px;gap:3px}
+ .nav-btn .icon{width:21px;height:21px}
+ .fab{right:16px;bottom:88px;width:58px;height:58px;border-radius:18px;font-size:32px}
+ .grid{grid-template-columns:repeat(2,1fr);gap:8px}
+ .sheet{padding-left:16px;padding-right:16px}
+ .setting{padding:13px 14px;min-height:76px;gap:12px}
+ .setting-icon{width:44px;height:44px;border-radius:14px}
+ .setting-title{font-size:16px}
+ .setting-desc{font-size:13px}
+}
