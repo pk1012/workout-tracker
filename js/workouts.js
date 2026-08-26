@@ -21,7 +21,7 @@ function formatTime(t){if(!t)return "—";let [h,m]=t.split(":").map(Number);let
 function durationMinutes(w){
  if(!w?.startTime||!w?.endTime)return null;
  let a=w.startTime.split(":").map(Number),b=w.endTime.split(":").map(Number);
- let x=a[0]*60+a[1],y=b[0]*60+b[1]; if(y<=x)return null; return y-x;
+ let x=a[0]*60+a[1],y=b[0]*60+b[1]; if(y<x)y+=1440; return y-x;
 }
 function durationLabel(n){if(n==null)return "—";let h=Math.floor(n/60),m=n%60;return h?`${h}h ${String(m).padStart(2,"0")}m`:`${m} min`}
 function weekStart(d){let x=new Date(d);x.setHours(0,0,0,0);let day=x.getDay();let mondayOffset=(day+6)%7;x.setDate(x.getDate()-mondayOffset);return x}
@@ -48,8 +48,19 @@ function renderHome(){
  const ws=weekStart(selectedWeekStart), days=weekDates(ws), workouts=days.filter(d=>state.workouts.some(w=>w.date===dateKey(d))).length;
  document.getElementById("homeView").innerHTML=heroCard()+status+weeklyCard(ws,workouts)+quickProgress();
 }
-function heroCard(){return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>Keep your streak alive!</p><button class="hero-btn" onclick="startNewWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div></section>`}
-function homeNotStarted(){return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon neutral"><svg class="icon"><use href="#activity"/></svg></div><div class="status-copy"><strong>No workout yet</strong><span>Ready when you are.</span></div><button class="outline status-action" onclick="startNewWorkout()">Start Workout</button></div></section>`}
+function heroCard(){return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>Keep your streak alive!</p><button class="hero-btn" onclick="openWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div></section>`}
+function homeNotStarted(){return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon neutral"><svg class="icon"><use href="#activity"/></svg></div><div class="status-copy"><strong>No workout yet</strong><span>Ready when you are.</span></div><button class="outline status-action" onclick="openWorkout()">Start Workout</button></div></section>`}
+function homeCompleted(w){
+ const dur=durationMinutes(w), pct=dur==null?0:Math.round(dur/90*100);
+ return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon complete"><svg class="icon" aria-hidden="true"><use href="#check"/></svg></div><div class="status-copy green-text"><strong>Workout completed</strong><span>Great job! You crushed it.</span></div><button class="outline status-action" onclick="viewWorkout('${w.id}')">View Workout</button></div><div class="meter-label"><span>Duration</span><b>${durationLabel(dur)}</b><span>Target: 90 min</span></div><div class="meter"><i style="width:${Math.min(100,pct)}%"></i><span>◎</span></div><div class="target-badge">${pct}% of your target</div></section>`;
+}
+
+function weeklyCard(start,count){
+ const days=weekDates(start);
+ const restCount=days.filter(d=>!state.workouts.some(w=>w.date===dateKey(d))).length;
+ const remaining=remainingDays(days);
+ return `<section class="weekly-card card"><div class="section-head"><h2>Weekly Activity</h2><button class="week-select" onclick="openWeekPicker()" aria-label="Select week"><b>#${weekNumber(start)}</b><span>${rangeLabel(start)}</span><i><svg class="icon" aria-hidden="true"><use href="#chevron-down"/></svg></i></button></div><div class="week-days">${days.map(d=>{const has=state.workouts.some(w=>w.date===dateKey(d)),today=isToday(d);return `<button type="button" onclick="goToWeekDay('${dateKey(d)}')" class="week-day"><span>${d.toLocaleDateString("en-IN",{weekday:"short"})}</span><i class="${has?"workout":today?"today":"rest"}">${has?'<svg class="icon" aria-hidden="true"><use href="#check"/></svg>':today?'':'<svg class="icon" aria-hidden="true"><use href="#minus"/></svg>'}</i></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><div class="week-stats"><span><svg class="icon" aria-hidden="true"><use href="#calendar-icon"/></svg><b>${count} workout${count===1?"":"s"}</b></span><span><svg class="icon" aria-hidden="true"><use href="#activity"/></svg><b>${restCount} rest days</b></span><span><svg class="icon" aria-hidden="true"><use href="#target"/></svg><b>${remaining} day${remaining===1?"":"s"} remaining</b></span></div><button class="full-week" onclick="go('workouts')">View full week <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></section>`;
+}
 
 function remainingDays(days){
  const today=new Date();today.setHours(0,0,0,0);
@@ -148,7 +159,7 @@ function saveWorkout(){
  if(!workoutDraft.endTime){notify("Enter the end time to complete the workout.");return}
  let startMinutes=Number(workoutDraft.startTime.split(":")[0])*60+Number(workoutDraft.startTime.split(":")[1]);
  let endMinutes=Number(workoutDraft.endTime.split(":")[0])*60+Number(workoutDraft.endTime.split(":")[1]);
- if(endMinutes<=startMinutes){notify("End time must be later than start time.");return}
+ if(endMinutes===startMinutes){notify("Start and end time cannot be the same.");return}
  if(!exercises.length){notify("Select at least one exercise.");return}
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
  let record={id:state.activeWorkout?.id||newId(),date,muscles,startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt:Date.now()};
