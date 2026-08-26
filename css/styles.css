@@ -1,0 +1,430 @@
+/* Workout Tracker 1.5 design system */
+:root{--bg:#fff;--card:#fff;--text:#11131a;--muted:#626978;--line:#e8e9ee;--primary:#4b2be7;--soft:#f0edff;--green:#20a96b;--green-soft:#e7f7ef;--rest:#eef0f4;--radius:20px;--shadow:0 2px 10px rgba(20,20,40,.045)}
+[data-theme=dark]{--bg:#111216;--card:#1a1b20;--text:#f4f4f7;--muted:#a5a6b0;--line:#303139;--primary:#8b75ff;--soft:#28233f;--green:#35c786;--green-soft:#193a2d;--rest:#292b31;--shadow:none}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;background:var(--bg);color:var(--text)}body{padding-top:env(safe-area-inset-top)}button,input,select{font:inherit}button{border:0;background:none;color:inherit;cursor:pointer}.app{max-width:900px;margin:auto;min-height:100vh;padding-bottom:104px}.screen{display:none}.screen.active{display:block}
+h1,h2,p{margin:0}.home-head{display:flex;justify-content:space-between;align-items:center;padding:22px 24px 18px;gap:12px}.home-head h1{font-size:27px;line-height:1.12;letter-spacing:-.7px}.home-head p{font-size:17px;color:var(--muted);margin-top:8px}.head-actions{display:flex;gap:10px;flex:none}.head-pill,.head-icon{height:54px;border:1px solid var(--line);border-radius:28px;background:var(--card);box-shadow:var(--shadow);display:grid;place-items:center}.head-pill{padding:0 18px;color:#ff7a00;font-size:18px;font-weight:800}.head-pill span{color:#555;font-size:16px}.head-icon{width:54px;font-size:28px;position:relative}.settings-head .icon{width:22px;height:22px}.head-icon i{position:absolute;right:9px;top:9px;width:8px;height:8px;background:#4b2be7;border-radius:50%}
+.page-head{padding:28px 24px 18px}.compact-head h1{font-size:32px}.subtitle{color:var(--muted);font-size:16px;margin-top:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.hero-card{height:276px;margin:0 24px 18px;border-radius:22px;background:#f0edff;overflow:hidden;position:relative;display:flex;align-items:center}.hero-copy{position:relative;z-index:2;padding:28px 0 28px 28px;width:56%}.hero-copy h2{font-size:30px;color:#2412aa;letter-spacing:-.6px}.hero-copy p{font-size:18px;line-height:1.55;color:#4d5360;margin:10px 0 18px}.hero-btn{height:58px;padding:0 28px;border-radius:14px;background:#4324df;color:#fff;font-weight:750;font-size:18px}.hero-btn b{font-size:26px;margin-left:12px}.hero-art{position:absolute;right:-2px;bottom:5px;width:56%;height:92%;object-fit:contain}
+.home-status{height:262px;margin:0 24px 18px;padding:24px 22px}.home-status h2,.weekly-card h2,.quick h2{font-size:21px;letter-spacing:-.3px}.status-main{display:flex;align-items:center;gap:16px;margin-top:19px}.status-icon{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:31px;flex:none}.status-icon.neutral{background:#edf0f5;color:#536070;font-size:34px}.status-icon.green,.status-icon.complete{background:var(--green-soft);color:var(--green)}.status-icon.complete{background:#28b976;color:#fff;font-size:38px}.status-copy{min-width:0;flex:1}.status-copy strong{display:block;font-size:18px;color:#1d6fd4}.status-copy span{display:block;color:var(--muted);font-size:16px;margin-top:6px}.green-text strong{color:var(--green)}.status-action{height:56px;padding:0 20px;border-color:#6244ed;color:#3820c9;font-weight:750;white-space:nowrap}.meter-label{display:flex;align-items:center;justify-content:space-between;margin-top:23px;color:#4e5664;font-size:14px}.meter-label b{color:var(--green);font-size:16px;margin-right:auto;margin-left:10px}.meter{height:10px;background:#e9eaf0;border-radius:99px;margin:10px 12px 0 85px;position:relative}.meter i{position:absolute;left:0;top:0;height:100%;background:#20ae70;border-radius:99px}.meter em{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border:2px solid #28b879;background:#fff;border-radius:50%}.meter span{position:absolute;right:-28px;top:-7px;color:#4127df;font-size:23px}.target-badge{width:max-content;margin:14px auto 0;background:#eaf8f0;color:#25a96a;border-radius:10px;padding:6px 12px;font-size:14px;font-weight:700}
+.weekly-card{margin:0 24px 18px;padding:20px 14px 14px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 8px}.week-select{display:flex;align-items:center;gap:10px;color:#3923d4;font-size:16px;white-space:nowrap}.week-select b{background:#f0edff;border-radius:7px;padding:6px 8px}.week-select span{font-weight:750}.week-select i{font-style:normal;font-size:22px}.week-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.week-day{display:flex;flex-direction:column;align-items:center;gap:9px}.week-day>span{font-size:14px;color:#303540}.week-day i,.workout-days i{font-style:normal;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:21px}.workout,.week-day i.workout{background:#25b477;color:#fff}.rest{background:#eceef2;color:#67707d}.today{border:2px solid #4b2be7;background:transparent;color:#4b2be7}.legend{display:flex;gap:23px;margin:17px 8px;color:#69707c;font-size:13px}.legend span{display:flex;align-items:center;gap:7px}.dot{width:13px;height:13px;border-radius:50%;display:inline-block}.dot.workout{background:#72d4ae}.dot.rest{background:#e7e9ed}.dot.today{background:#fff;border:2px solid #4b2be7}.week-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin-top:5px;padding:16px 0 12px;text-align:center;color:#555d6a;font-size:13px}.week-stats span+span{border-left:1px solid var(--line)}.week-stats b{margin-left:7px;font-weight:600}.full-week{height:50px;width:100%;background:#f0edff;color:#3520cf;border-radius:11px;font-weight:750;font-size:16px}.full-week b{font-size:22px;margin-left:10px}
+.quick{margin:0 24px;padding:18px 8px 16px}.quick .section-head button{color:#3d27d4;font-weight:750}.quick-grid{display:grid;grid-template-columns:repeat(5,1fr);margin-top:15px}.quick-grid>div{text-align:center;border-left:1px solid var(--line);padding:0 6px}.quick-grid>div:first-child{border-left:0}.quick-grid i{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#f0edff;color:#4b2be7;font-size:24px;font-style:normal;margin:0 auto 8px}.quick-grid>div:nth-child(2) i{background:#eaf3ff;color:#2777dc}.quick-grid>div:nth-child(3) i{background:#fff0e6;color:#f08a2c}.quick-grid>div:nth-child(4) i{background:#e7f7ef;color:#20a96b}.quick-grid b,.quick-grid span,.quick-grid small{display:block}.quick-grid b{font-size:18px}.quick-grid span{font-size:14px;margin-top:3px}.quick-grid small{color:#7c8290;margin-top:5px}
+.workout-week{margin:0 24px 18px;padding:18px 14px}.workout-week-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.workout-week-head button{width:42px;height:42px;border:1px solid var(--line);border-radius:13px;font-size:29px}.workout-week-head div{display:flex;gap:12px;align-items:center;color:#3b24d2}.workout-week-head strong{background:#f0edff;padding:6px 9px;border-radius:8px}.workout-week-head span{font-weight:750}.workout-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.workout-days button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:7px 0;border-radius:14px}.workout-days button.selected{background:#f0edff}.workout-days button>span{font-size:13px}.workout-days button>small{font-size:13px;color:var(--muted)}.week-picker-link{color:#4328d7;font-weight:750;display:block;margin:6px auto 0;padding:8px}.day-section,.recent-section{margin:0 24px 20px}.selected-date{font-size:18px;font-weight:800;margin:0 4px 10px}.workout-card{width:100%;min-height:148px;padding:15px;display:flex;align-items:center;text-align:left;gap:15px;margin-bottom:10px}.workout-avatar{width:82px;height:82px;border-radius:16px;background:#e8e2ff;display:grid;place-items:center;font-size:43px;flex:none}.rest-avatar{background:#eef0f4;color:#67717e}.workout-card-copy{min-width:0;flex:1}.workout-card-copy strong{font-size:18px;display:block}.workout-card-copy>span{display:block;color:var(--muted);font-size:14px;margin-top:7px}.workout-metrics{display:flex;margin-top:13px;gap:0}.workout-metrics b{font-size:16px;color:#1e2a3b;padding-right:18px;margin-right:18px;border-right:1px solid var(--line)}.workout-metrics b:last-child{border-right:0}.workout-metrics small{display:block;color:var(--muted);font-size:11px;font-weight:500;margin-top:2px}.card-arrow{font-size:29px;color:#596172}.rest-card{height:148px}.rest-card .workout-card-copy span{max-width:470px;line-height:1.35}.recent-section .section-head{margin-bottom:10px}.recent-section .section-head button{color:#4328d7;font-weight:750}.picker-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.picker-title h2{font-size:24px}.picker-title button{font-size:30px}.week-list{display:grid;gap:3px;margin-bottom:16px}.week-list button{display:grid;grid-template-columns:55px 1fr auto;align-items:center;gap:8px;padding:17px 12px;border-radius:12px;text-align:left}.week-list button.chosen{border:1px solid #9b8cf5;background:#faf9ff}.week-list b{font-size:16px}.week-list span{font-size:16px;color:#4f5664}.week-list em{font-style:normal;color:#3c27d2;font-size:13px;font-weight:750}
+.time-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modal{position:fixed;z-index:60;inset:0;background:rgba(0,0,0,.42);display:none;align-items:flex-end}.modal.show{display:flex}.sheet{width:100%;max-height:92vh;overflow:auto;background:var(--card);border-radius:28px 28px 0 0;padding:12px 24px 28px}.handle{width:55px;height:5px;background:var(--line);border-radius:8px;margin:0 auto 22px}.sheet h2{font-size:27px;margin:0 0 7px}.field{margin:18px 0}.field label{display:block;color:var(--muted);font-size:14px;margin-bottom:8px}.input{width:100%;height:53px;border:1px solid var(--line);border-radius:15px;padding:0 15px;background:var(--card);color:var(--text);outline:none}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pick{min-height:58px;border:1px solid var(--line);border-radius:16px}.pick.selected{border:2px solid var(--primary);background:var(--soft);color:var(--primary);font-weight:750}.modal-actions{display:grid;gap:9px;margin-top:22px}.outline{border:1px solid var(--line);background:var(--card);border-radius:15px}.btn-wide{width:100%;height:55px}.progress{margin:0 24px;padding:22px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.stat{padding:16px;border:1px solid var(--line);border-radius:17px}.stat strong{display:block;font-size:25px;margin-top:4px}.empty{text-align:center;padding:30px 15px;color:var(--muted)}.back{padding:0 24px 14px}.link{color:var(--primary);font-weight:650}.setting-section-title{padding:18px 24px 10px;color:var(--muted);font-size:16px;font-weight:800;letter-spacing:.5px}.settings{margin:0 24px;display:grid;gap:13px}.setting{min-height:86px;padding:16px 20px;display:flex;align-items:center;gap:16px;text-align:left}.setting-icon{width:50px;height:50px;border-radius:16px;background:var(--soft);color:var(--primary);display:grid;place-items:center;flex:none}.setting-main{flex:1}.setting-title{font-size:17px;font-weight:750}.setting-desc{font-size:14px;color:var(--muted);margin-top:4px}.chevron{font-size:28px;color:var(--muted)}.segment{display:flex;gap:3px;padding:3px;border:1px solid var(--line);background:var(--bg);border-radius:14px}.segment button{padding:8px 11px;border-radius:11px;color:var(--muted);font-size:13px;font-weight:700}.segment button.active{background:var(--card);color:var(--primary)}.pad{padding:22px}.section{margin:0 24px 18px}.section-title{font-size:17px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}.exercise-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 0;border-top:1px solid var(--line)}.actions{display:flex;gap:14px;font-weight:700}.edit{color:var(--primary)}.delete{color:var(--danger)}.exercise-pick{min-height:52px;padding:12px 15px;width:100%;text-align:left}.exercise-pick .pick-plus{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;font-size:20px}.set-editor{margin:16px 0;padding:15px}.set-editor-head{font-size:16px;margin-bottom:10px}.set-row{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) 28px;gap:8px;align-items:end;padding:8px 0;border-top:1px solid var(--line)}.set-number{font-weight:750;color:var(--muted);padding-bottom:15px;text-align:center}.set-field{display:block;font-size:12px;color:var(--muted)}.set-field span{display:block;margin:0 0 5px}.input.compact{height:44px;padding:0 10px}.remove-set{height:44px;font-size:26px;color:var(--danger)}.remove-placeholder{height:44px}.add-set{margin-top:8px;color:var(--primary);font-weight:750}.unit-field{display:flex;align-items:center;justify-content:space-between;gap:12px}.unit-field>label{margin:0}.workout-detail{margin:14px 0;padding:14px}.detail-set{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);margin-top:8px}.stats-four{grid-template-columns:repeat(4,1fr)}.stat small{display:block;margin-top:2px}.progress-note{font-size:11px}.fab{position:fixed;right:22px;bottom:102px;width:60px;height:60px;border-radius:20px;background:var(--primary);color:#fff;font-size:34px}
+.bottom-nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width:min(900px,100%);height:88px;padding:8px 12px max(8px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb,var(--card) 94%,transparent);backdrop-filter:blur(18px);border-top:1px solid var(--line)}.nav-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:16px;color:#525967;font-size:13px;font-weight:650}.nav-btn.active{color:var(--primary)}.nav-btn.active:before{content:"";position:absolute;margin-top:-82px;width:70px;height:4px;border-radius:5px;background:var(--primary)}.nav-btn .icon{width:25px;height:25px}.icon{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* 1.6.9 polish: safe areas, consistent iconography, no footer overlap */
+.app{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+.head-pill .icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.head-pill{display:flex;align-items:center;justify-content:center;gap:7px}
+.status-icon .icon{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.meter span{display:grid;place-items:center}
+.meter span .icon{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.status-note{margin:18px 0 0 80px;color:var(--muted);font-size:14px}
+.week-stats .icon{width:14px;height:14px;vertical-align:-2px;fill:none;stroke:currentColor;stroke-width:2}
+.quick-grid i .icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.inline-icon{width:14px;height:14px;vertical-align:-2px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.workout-avatar .icon{width:36px;height:36px;fill:none;stroke:#4b2be7;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.workout-metrics{align-items:flex-start}
+.workout-metrics b{display:grid;grid-template-columns:auto 1fr;column-gap:4px;align-items:center}
+.workout-metrics b .inline-icon{grid-row:span 2}
+.workout-metrics small{grid-column:2}
+.bottom-nav{padding-bottom:max(8px,env(safe-area-inset-bottom));height:64px}
+@media(max-width:600px){body{padding-top:0}.app{padding-top:env(safe-area-inset-top);padding-bottom:calc(64px + env(safe-area-inset-bottom) + 10px)}.home-head{padding-top:12px}.hero-art{filter:drop-shadow(0 8px 8px rgba(50,30,130,.10))}.status-note{margin:15px 0 0 56px;font-size:11px}.bottom-nav{height:54px;padding-bottom:env(safe-area-inset-bottom)}.workout-metrics b{grid-template-columns:auto 1fr}.workout-metrics .inline-icon{width:11px;height:11px}.workout-avatar .icon{width:28px;height:28px}}
+
+/* 1.7.0 premium visual system */
+:root{--primary:#4b2be7;--soft:#f1efff;--green:#20a96b;--green-soft:#e9f8f0;--rest:#eef0f4;--radius:18px;--shadow:0 2px 12px rgba(20,20,40,.035)}
+.home-head{padding:18px 24px 16px}.home-head h1{font-size:24px;letter-spacing:-.55px}.home-head p{font-size:15px;margin-top:6px}
+.head-pill,.head-icon{height:48px}.head-pill{padding:0 14px;color:var(--primary);font-size:16px}.head-pill span{font-size:15px;color:var(--text)}.head-icon{width:48px}.settings-head .icon,.head-pill .icon{width:20px;height:20px}
+.hero-card{height:244px;margin:0 24px 16px;border-radius:20px;background:linear-gradient(135deg,#f4f1ff 0%,#ebe7ff 100%)}.hero-copy{padding:24px 0 24px 28px;width:50%}.hero-copy h2{font-size:28px}.hero-copy p{font-size:16px;line-height:1.45;margin:9px 0 16px}.hero-btn{height:50px;padding:0 20px;border-radius:12px;font-size:16px;display:inline-flex;align-items:center;gap:10px}.hero-btn .icon{width:21px;height:21px}.hero-art{right:-8px;bottom:0;width:59%;height:100%;filter:drop-shadow(0 10px 12px rgba(45,25,130,.10))}
+.home-status{height:auto;min-height:220px;margin:0 24px 16px;padding:20px}.home-status h2,.weekly-card h2,.quick h2{font-size:20px}.status-main{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;margin-top:16px}.status-icon{width:56px;height:56px}.status-copy strong{font-size:17px}.status-copy span{font-size:14px;margin-top:4px}.status-action{height:48px;padding:0 17px;border-radius:12px}.meter-label{margin-top:18px}.meter{margin-left:70px}.status-note{margin:18px 0 0 70px}
+.weekly-card{padding:18px 14px 14px}.section-head{padding:0 6px}.week-select{gap:8px}.week-select i{display:grid;place-items:center}.week-select i .icon{width:16px;height:16px}.week-day i,.workout-days i{width:38px;height:38px}.legend{margin:14px 8px;gap:18px}.week-stats{padding:14px 0 11px}.full-week{display:flex;align-items:center;justify-content:center;gap:10px}.full-week .icon{width:20px;height:20px}
+.quick{padding:18px 8px 16px}.quick-grid i{font-style:normal}.quick-grid i .icon{width:19px;height:19px}
+.workout-avatar{background:#f0edff}.rest-avatar{background:#eef0f4;color:#69717e}.workout-avatar .icon{stroke:currentColor}.workout-card-copy strong{font-size:17px}.workout-card-copy>span{font-size:13px}.workout-metrics b{font-size:12px}.workout-metrics small{font-size:10px}.card-arrow{font-size:24px;color:#69717e}
+.bottom-nav{height:72px;padding:7px 12px max(7px,env(safe-area-inset-bottom));box-shadow:0 -2px 14px rgba(20,20,40,.035)}.nav-btn{font-size:12px;gap:4px}.nav-btn .icon{width:23px;height:23px}.nav-btn.active:before{width:48px;height:3px;margin-top:-64px}
+@media(max-width:600px){
+ .home-head{min-height:82px;padding:12px 16px 10px}.home-head h1{font-size:17px}.home-head p{font-size:12px;margin-top:5px}.head-pill,.head-icon{height:38px}.head-pill{min-width:44px;padding:0 9px;font-size:14px}.head-pill span{font-size:13px}.head-icon{width:38px}.settings-head .icon,.head-pill .icon{width:18px;height:18px}
+ .hero-card{height:156px;margin:0 16px 12px;border-radius:16px}.hero-copy{padding:18px 0 18px 18px;width:53%}.hero-copy h2{font-size:21px}.hero-copy p{font-size:12.5px;line-height:1.35;margin:6px 0 10px}.hero-btn{height:38px;padding:0 13px;border-radius:10px;font-size:12.5px;gap:7px}.hero-btn .icon{width:17px;height:17px}.hero-art{right:-8px;width:58%;height:100%}
+ .home-status{min-height:0;height:auto;margin:0 16px 12px;padding:14px;border-radius:16px}.home-status h2{font-size:16px}.status-main{grid-template-columns:auto minmax(0,1fr);gap:10px;margin-top:12px}.status-icon{width:44px;height:44px}.status-icon .icon{width:24px;height:24px}.status-copy strong{font-size:14px}.status-copy span{font-size:11.5px}.status-action{grid-column:2;height:40px;width:max-content;justify-self:start;padding:0 12px;font-size:11.5px}.meter-label{margin-top:12px;font-size:11px}.meter{margin:7px 8px 0 54px;height:6px}.target-badge{margin:7px auto 0;font-size:10px;padding:4px 8px}.status-note{margin:13px 0 0 54px;font-size:11px}
+ .weekly-card{margin:0 16px 12px;padding:13px 9px 10px}.weekly-card h2{font-size:16px}.section-head{padding:0 4px}.week-select{font-size:12px;gap:5px}.week-select b{padding:4px 6px}.week-select span{font-size:12px}.week-select i .icon{width:14px;height:14px}.week-day>span{font-size:10.5px}.week-day i,.workout-days i{width:30px;height:30px;font-size:14px}.legend{gap:10px;font-size:9.5px;margin:8px 4px}.week-stats{font-size:9.5px;padding:8px 0}.week-stats span{padding:0 4px}.week-stats b{font-size:9.5px}.full-week{height:36px;font-size:12px;gap:6px}.full-week .icon{width:16px;height:16px}
+ .quick{margin:0 16px 12px;padding:13px 5px 11px}.quick h2{font-size:16px}.quick-grid i{width:30px;height:30px}.quick-grid b{font-size:12px}.quick-grid span{font-size:9.5px}.quick-grid small{font-size:8.5px}
+ .bottom-nav{height:56px;padding:5px 8px env(safe-area-inset-bottom)}.nav-btn{font-size:10px;gap:2px}.nav-btn .icon{width:21px;height:21px}.nav-btn.active:before{top:0;width:42px;margin:0}
+ .workout-card,.rest-card{min-height:92px;height:auto;padding:10px;gap:10px}.workout-avatar{width:50px;height:50px;border-radius:11px}.workout-avatar .icon{width:25px;height:25px}.workout-card-copy strong{font-size:13px}.workout-card-copy>span{font-size:10px}.workout-metrics b{font-size:10.5px}.workout-metrics small{font-size:8px}
+}
+
+/* 1.7.1 visual cleanup */
+.icon{display:inline-block;flex:0 0 auto;overflow:visible;vertical-align:middle}
+button .icon{pointer-events:none}
+.card-arrow .icon{width:20px;height:20px}
+.workout-week-head button .icon{width:19px;height:19px}
+.picker-title button .icon{width:22px;height:22px}
+.week-day i .icon{width:18px;height:18px}
+.full-week .icon{width:20px;height:20px}
+.quick .section-head button{display:inline-flex;align-items:center;gap:6px}
+.quick .section-head button .icon{width:16px;height:16px}
+.remove-set .icon{width:16px;height:16px}
+
+/* Workout entry polish — 1.7.2 */
+.primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--primary);color:#fff;border:1px solid var(--primary);border-radius:15px;font-weight:750;min-height:55px;padding:0 18px;box-shadow:0 5px 14px rgba(75,43,231,.14)}
+.primary:active{transform:translateY(1px)}
+.input{min-width:0;max-width:100%;appearance:none;-webkit-appearance:none}
+.time-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.time-grid .field{min-width:0}
+.modal-actions{position:sticky;bottom:0;background:var(--card);padding-top:12px;margin-top:18px;z-index:3}
+.pick-plus{font-size:0!important;width:30px!important;height:30px!important;flex:none}
+.pick-plus .icon{width:20px;height:20px}
+
+/* 1.7.3 premium polish overrides */
+.home-head h1{font-size:24px;font-weight:760;letter-spacing:-.55px}
+.home-head p{font-size:15px}
+.head-pill{color:var(--primary);background:var(--card)}
+.head-pill .icon,.settings-head .icon{stroke-width:1.65}
+.head-pill{border-color:#e3e1ea;box-shadow:0 2px 12px rgba(30,28,60,.04)}
+.head-icon{border-color:#e3e1ea;box-shadow:0 2px 12px rgba(30,28,60,.04)}
+.hero-card{background:linear-gradient(135deg,#f6f3ff 0%,#eeeaff 58%,#e8e3ff 100%);box-shadow:0 8px 28px rgba(56,37,145,.07)}
+.hero-art{filter:drop-shadow(0 16px 18px rgba(34,25,86,.14))}
+.status-icon.neutral{background:#eef1f5;color:#657080}
+.status-icon.neutral .icon{stroke-width:1.8}
+.status-action{border:1px solid #ddd8f8;background:#fff}
+.weekly-card,.quick,.home-status,.workout-week,.workout-card,.rest-card,.progress,.settings .setting{box-shadow:0 4px 18px rgba(24,26,38,.035)}
+.weekly-card{padding-top:18px}
+.week-days,.workout-days{min-width:0}
+.legend{flex-wrap:wrap}
+.bottom-nav{box-shadow:0 -1px 16px rgba(25,27,38,.05)}
+.nav-btn{font-weight:600}
+.nav-btn .icon{stroke-width:1.75}
+.nav-btn.active .icon{stroke-width:2}
+.modal{background:rgba(16,18,24,.36);backdrop-filter:blur(2px)}
+.sheet{box-shadow:0 -10px 40px rgba(15,17,28,.12)}
+.sheet h2{font-weight:760;letter-spacing:-.5px}
+
+/* 1.7.8 — premium experience system */
+:root{
+  --primary:#4b2be7;
+  --primary-deep:#3820c9;
+  --soft:#f3f1ff;
+  --text:#15161c;
+  --muted:#69707e;
+  --line:#e6e7ec;
+  --green:#22ad70;
+  --green-soft:#eaf8f1;
+  --rest:#eef0f3;
+  --card:#fff;
+  --bg:#fff;
+  --radius:18px;
+  --shadow:0 6px 24px rgba(24,25,40,.045);
+}
+body{font-synthesis:none;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{transition:transform .16s ease,background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease}
+button:active{transform:scale(.985)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(75,43,231,.18);outline-offset:2px}
+.card{border-color:#e8e9ee;box-shadow:0 5px 22px rgba(20,22,35,.035)}
+.home-head{padding-top:20px;padding-bottom:18px}
+.home-head h1{font-size:25px;font-weight:760;letter-spacing:-.65px}
+.home-head p{font-size:15px;color:#707785}
+.head-actions{gap:9px}
+.head-pill,.head-icon{height:48px;border-color:#e4e5ea;background:#fff;box-shadow:0 4px 16px rgba(20,22,35,.045)}
+.head-pill{padding:0 14px;gap:7px;color:var(--primary);font-size:15px;font-weight:720}
+.head-pill span{color:var(--text);font-size:14px;font-weight:650}
+.head-icon{width:48px}
+.head-pill .icon,.settings-head .icon{width:20px;height:20px;stroke-width:1.8}
+.hero-card{height:244px;margin:0 24px 16px;border-radius:22px;background:linear-gradient(120deg,#f7f5ff 0%,#f0edff 52%,#ebe7ff 100%);box-shadow:0 10px 32px rgba(56,37,145,.065)}
+.hero-card:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 78% 48%,rgba(255,255,255,.58),transparent 32%);pointer-events:none}
+.hero-copy{padding:25px 0 25px 28px;width:49%}
+.hero-copy h2{font-size:29px;line-height:1.02;font-weight:780;letter-spacing:-.8px;color:#2f1ab6}
+.hero-copy p{font-size:16px;line-height:1.45;color:#505765;margin:10px 0 17px}
+.hero-btn{height:50px;padding:0 20px;border-radius:12px;background:var(--primary);font-size:16px;font-weight:720;box-shadow:0 8px 18px rgba(75,43,231,.16)}
+.hero-btn .icon{width:20px;height:20px}
+.hero-art{right:-3px;width:59%;height:100%;filter:drop-shadow(0 18px 20px rgba(26,20,80,.13));z-index:1}
+.home-status{min-height:0;height:auto;margin-bottom:16px;padding:20px 21px}
+.home-status h2,.weekly-card h2,.quick h2{font-size:20px;font-weight:760;letter-spacing:-.35px}
+.status-main{margin-top:16px;gap:14px}
+.status-icon{width:56px;height:56px}
+.status-icon.neutral{background:#f0f2f5;color:#687281}
+.status-icon.active-state{background:var(--soft);color:var(--primary)}
+.status-icon.complete{background:var(--green);color:#fff}
+.status-copy strong{font-size:17px;font-weight:720}
+.status-copy span{font-size:14px;color:#747b88;margin-top:4px}
+.status-copy.active-text strong{color:var(--primary)}
+.status-copy.green-text strong{color:var(--green)}
+.status-action{height:48px;border:1px solid #dcd8f4;background:#fff;color:var(--primary-deep);border-radius:12px;font-weight:700}
+.meter i{background:var(--green)}
+.target-badge{background:var(--green-soft);color:var(--green)}
+.weekly-card{padding:18px 14px 14px}
+
+.week-day i.workout,.workout{background:var(--green)}
+.week-day i.rest,.rest{background:var(--rest);color:#68717e}
+.week-day i.today{border-color:var(--primary);color:var(--primary)}
+.legend{font-size:12px;gap:18px}
+.week-stats{font-size:12px;padding-top:13px}
+.week-stats b{font-weight:650}
+.full-week{height:48px;border-radius:11px;background:var(--soft);color:var(--primary-deep);font-size:15px;font-weight:720}
+.quick{padding:18px 8px 15px}
+.quick .section-head button{font-size:14px;color:var(--primary-deep)}
+.quick-grid b{font-size:17px;font-weight:720}
+.quick-grid span{font-size:13px;color:#444b58}
+.quick-grid small{font-size:11px;color:#8a909b}
+.workout-card,.rest-card{min-height:126px;padding:14px;border-radius:17px}
+.workout-avatar{width:68px;height:68px;border-radius:15px;background:var(--soft);color:var(--primary)}
+.rest-avatar{background:var(--rest);color:#69717d}
+.workout-avatar .icon{width:30px;height:30px;stroke-width:1.75}
+.workout-card-copy strong{font-size:17px;font-weight:720}
+.workout-card-copy>span{font-size:12px;line-height:1.4;color:#737a87}
+.workout-metrics{margin-top:10px}
+.workout-metrics b{font-size:12px;color:#27303c}
+.workout-metrics small{font-size:9px;color:#7a818d}
+.card-arrow{color:#737b88}
+.page-head{padding-top:26px;padding-bottom:16px}
+.compact-head h1{font-size:30px;font-weight:760;letter-spacing:-.7px}
+.subtitle{font-size:15px;color:#737a87}
+.section-title{color:var(--primary-deep)}
+.setting-section-title{font-size:11px;letter-spacing:1px;font-weight:750;color:#8a909b}
+.settings .setting{min-height:74px;border-radius:16px;box-shadow:0 4px 18px rgba(20,22,35,.03)}
+.setting-icon{width:40px;height:40px;border-radius:12px;background:var(--soft);color:var(--primary);display:grid;place-items:center}
+.setting-icon .icon{width:20px;height:20px;stroke-width:1.8}
+.setting-title{font-size:15px;font-weight:700}.setting-desc{font-size:12px;color:#7b828f}
+.segment{border:1px solid var(--line);border-radius:10px;padding:2px;background:#f7f7f9}.segment button{border-radius:8px;padding:7px 10px;font-size:12px;color:#747b87}.segment button.active{background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(20,22,35,.06);font-weight:700}
+.primary{min-height:52px;border-radius:13px;box-shadow:0 7px 18px rgba(75,43,231,.14)}
+.outline{border-radius:13px}
+.input{height:52px;border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--text);box-shadow:inset 0 1px 2px rgba(20,22,35,.015)}
+.pick{border:1px solid var(--line);background:#fff;transition:all .16s ease}.pick.selected{border-color:var(--primary);background:var(--soft);color:var(--primary-deep);box-shadow:0 3px 12px rgba(75,43,231,.06)}
+.sheet{border-radius:28px 28px 0 0;box-shadow:0 -12px 45px rgba(15,17,28,.14)}
+.sheet h2{font-size:28px;font-weight:760;letter-spacing:-.6px}
+.modal{background:rgba(16,18,24,.42);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.modal-open{overflow:hidden}
+.handle{width:44px;height:4px;margin-bottom:20px;background:#dfe1e6}
+.modal-actions{gap:10px}
+.confirm-icon{width:46px;height:46px;border-radius:14px;background:var(--soft);color:var(--primary);display:grid;place-items:center;margin-bottom:14px}.confirm-icon .icon{width:23px;height:23px}.confirm-title{margin-bottom:6px!important}.confirm-copy{font-size:14px;line-height:1.45}
+#toastHost{position:fixed;z-index:100;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(420px,calc(100vw - 32px));display:grid;gap:8px;pointer-events:none}.toast{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.96);box-shadow:0 10px 28px rgba(15,17,28,.12);font-size:13px;font-weight:650;opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}.toast.show{opacity:1;transform:none}.toast .icon{width:18px;height:18px;color:var(--primary)}.toast.success .icon{color:var(--green)}.toast.error .icon{color:#c44755}
+.bottom-nav{height:72px;background:rgba(255,255,255,.92);border-top:1px solid #e7e8ec;box-shadow:0 -4px 18px rgba(20,22,35,.045);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.nav-btn{font-size:12px;font-weight:620;color:#666e7b}.nav-btn .icon{width:23px;height:23px;stroke-width:1.75}.nav-btn.active .icon{stroke-width:2}.nav-btn.active:before{height:3px;width:46px;background:var(--primary)}
+[data-theme=dark] .head-pill,[data-theme=dark] .head-icon,[data-theme=dark] .input,[data-theme=dark] .status-action,[data-theme=dark] .pick{background:var(--card)}
+[data-theme=dark] .bottom-nav{background:rgba(26,27,32,.94)}
+@media(max-width:600px){
+ .home-head{padding:14px 16px 12px;min-height:76px}.home-head h1{font-size:19px}.home-head p{font-size:13px;margin-top:5px}.head-actions{gap:6px}.head-pill,.head-icon{height:40px}.head-pill{min-width:48px;padding:0 10px}.head-icon{width:40px}
+ .hero-card{height:164px;margin:0 16px 14px;border-radius:18px}.hero-copy{width:53%;padding:18px 0 18px 18px}.hero-copy h2{font-size:22px}.hero-copy p{font-size:12.5px;line-height:1.38;margin:7px 0 11px}.hero-btn{height:40px;padding:0 14px;border-radius:10px;font-size:13px}.hero-art{right:-7px;width:61%;height:100%;filter:drop-shadow(0 12px 15px rgba(26,20,80,.12))}
+ .home-status{margin:0 16px 14px;padding:16px;border-radius:17px}.home-status h2,.weekly-card h2,.quick h2{font-size:17px}.status-main{grid-template-columns:46px minmax(0,1fr) auto;gap:10px;margin-top:13px}.status-icon{width:46px;height:46px}.status-icon .icon{width:23px;height:23px}.status-copy strong{font-size:13.5px}.status-copy span{font-size:11.5px}.status-action{height:40px;min-width:92px;padding:0 12px;font-size:11.5px}.meter-label{font-size:11px}.target-badge{font-size:10px}
+ .weekly-card{margin:0 16px 14px;padding:14px 10px 11px;border-radius:17px}.week-select{font-size:12px}.week-day>span{font-size:10.5px}.week-day i,.workout-days i{width:31px;height:31px}.legend{font-size:9.5px;gap:10px 13px}.week-stats{font-size:9.5px;padding:9px 0}.full-week{height:38px;font-size:12px}
+ .quick{margin:0 16px 14px;padding:14px 6px 12px;border-radius:17px}.quick-grid b{font-size:13px}.quick-grid span{font-size:10px}.quick-grid small{font-size:9px}
+ .page-head{padding:19px 16px 13px}.compact-head h1{font-size:23px}.subtitle{font-size:13px}.workout-week,.day-section,.recent-section{margin-left:16px;margin-right:16px}.workout-card,.rest-card{min-height:100px;padding:11px;border-radius:16px}.workout-avatar{width:54px;height:54px}.workout-avatar .icon{width:26px;height:26px}.workout-card-copy strong{font-size:14px}.workout-card-copy>span{font-size:10.5px}.workout-metrics b{font-size:10.5px}.workout-metrics small{font-size:8px}
+ .settings .setting{min-height:68px}.setting-icon{width:36px;height:36px}.setting-title{font-size:14px}.setting-desc{font-size:11px}.segment button{padding:6px 8px}
+ .bottom-nav{height:58px;padding:5px 8px env(safe-area-inset-bottom)}.nav-btn{font-size:10.5px}.nav-btn .icon{width:21px;height:21px}.nav-btn.active:before{top:0;margin:0;width:42px}
+ #toastHost{bottom:calc(68px + env(safe-area-inset-bottom))}
+}
+.back-btn{padding:10px 14px}.about-title{padding-top:31px}.about-card{margin-top:20px}.progress-history{margin-top:16px}
+
+/* 1.7.8 final polish */
+.icon-defs{position:absolute;width:0;height:0;overflow:hidden}
+.chevron{display:inline-flex;align-items:center;justify-content:center}
+.chevron .icon{width:17px;height:17px}
+.card-arrow{display:inline-flex;align-items:center;justify-content:center}
+.card-arrow .icon{width:19px;height:19px}
+.add-set,.edit{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.add-set .icon,.edit .icon{width:15px;height:15px}
+.week-picker-link{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.week-picker-link .icon{width:14px;height:14px}
+.week-list em{display:inline-flex;align-items:center;gap:3px}
+.week-list em .icon{width:13px;height:13px}
+
+.meter>i{width:var(--meter-pct,0%)}
+
+/* 1.7.8 production cleanup */
+.visually-hidden{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
+
+
+/* 1.7.8 — floating premium bottom navigation */
+body{
+  padding-bottom:calc(92px + env(safe-area-inset-bottom));
+}
+.bottom-nav{
+  position:fixed;
+  z-index:100;
+  left:16px;
+  right:16px;
+  bottom:calc(10px + env(safe-area-inset-bottom));
+  transform:none;
+  width:auto;
+  max-width:900px;
+  height:64px;
+  padding:6px;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:3px;
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(222,224,232,.92);
+  border-radius:34px;
+  box-shadow:0 10px 32px rgba(20,22,35,.13),0 2px 8px rgba(20,22,35,.06);
+  backdrop-filter:blur(22px) saturate(1.15);
+  -webkit-backdrop-filter:blur(22px) saturate(1.15);
+}
+.nav-btn{
+  position:relative;
+  min-width:0;
+  min-height:52px;
+  border:0;
+  border-radius:27px;
+  background:transparent;
+  color:#626a78;
+  font-size:11px;
+  font-weight:650;
+  line-height:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.nav-btn .icon{
+  width:22px;
+  height:22px;
+  stroke-width:1.8;
+}
+.nav-btn.active{
+  color:var(--primary);
+  background:var(--soft);
+}
+.nav-btn.active .icon{stroke-width:2.15}
+.nav-btn.active:before{display:none}
+.nav-btn:active{transform:scale(.97)}
+@media(min-width:601px){
+  .bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(560px,calc(100% - 32px))}
+}
+@media(max-width:600px){
+  body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .bottom-nav{
+    height:62px;
+    bottom:calc(9px + env(safe-area-inset-bottom));
+    padding:5px;
+    border-radius:32px;
+  }
+  .nav-btn{min-height:50px;font-size:10.5px}
+  .nav-btn .icon{width:21px;height:21px}
+}
+@media(max-width:370px){
+  body{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+  .bottom-nav{left:12px;right:12px}
+  .nav-btn{font-size:10px}
+}
+[data-theme=dark] .bottom-nav{
+  background:rgba(27,28,34,.94);
+  border-color:rgba(70,72,82,.7);
+  box-shadow:0 10px 32px rgba(0,0,0,.3);
+}
+
+/* 1.7.25 — simplified home header/navigation */
+.bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))}
+.hero-card .hero-copy{width:100%;max-width:560px}
+.hero-art{display:none!important}
+@media(max-width:600px){
+  .bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .nav-btn{min-width:0;padding-left:2px;padding-right:2px}
+  .nav-btn span{white-space:nowrap}
+  .hero-card .hero-copy{width:100%;max-width:none;padding-right:18px}
+}
+
+/* v30.1 — home polish: CSS-only fixes */
+/* Header settings moved to More in the bottom navigation. */
+.settings-head{display:none!important}
+
+/* Keep bottom-navigation clearance tight without creating a large empty tail. */
+.app{padding-bottom:78px}
+body{padding-bottom:0}
+
+/* Weekly Activity: give each section deliberate breathing room and keep the stats balanced. */
+.weekly-card{padding:20px 18px 16px}
+.weekly-card .section-head{padding:0 2px;margin-bottom:14px}
+.weekly-card .week-days{gap:4px}
+.weekly-card .legend{margin:13px 2px 12px;gap:20px}
+.weekly-card .week-stats{margin-top:0;padding:13px 0 14px}
+.weekly-card .full-week{height:46px}
+.week-stats span{min-width:0}
+.week-stats .icon{width:18px;height:18px;flex:none;vertical-align:middle}
+
+/* Quick Progress has four metrics, so use four equal columns. */
+.quick{padding:20px 14px 18px}
+.quick .section-head{padding:0 2px}
+.quick-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:17px}
+.quick-grid>div{padding:0 8px}
+.quick-grid i{margin-bottom:9px}
+
+/* Theme-aware surfaces/colors that were previously hard-coded for light mode. */
+[data-theme=dark] .hero-card{background:var(--soft)}
+[data-theme=dark] .hero-copy h2{color:var(--primary)}
+[data-theme=dark] .hero-copy p{color:var(--muted)}
+[data-theme=dark] .home-status .status-icon.neutral{background:var(--rest);color:var(--muted)}
+[data-theme=dark] .status-copy strong{color:var(--primary)}
+[data-theme=dark] .status-action{border-color:var(--primary);color:var(--primary)}
+[data-theme=dark] .meter{background:var(--line)}
+[data-theme=dark] .meter em{background:var(--card)}
+[data-theme=dark] .weekly-card .week-select,
+[data-theme=dark] .quick .section-head button{color:var(--primary)}
+[data-theme=dark] .week-select b,
+[data-theme=dark] .full-week,
+[data-theme=dark] .quick-grid i{background:var(--soft);color:var(--primary)}
+[data-theme=dark] .quick-grid>div:nth-child(2) i{background:#202d40;color:#75aaf0}
+[data-theme=dark] .quick-grid>div:nth-child(3) i{background:#3a2b20;color:#f3a45e}
+[data-theme=dark] .quick-grid>div:nth-child(4) i{background:var(--green-soft);color:var(--green)}
+[data-theme=dark] .rest{background:var(--rest);color:var(--muted)}
+[data-theme=dark] .dot.rest{background:var(--rest)}
+
+@media(max-width:600px){
+  .app{padding-bottom:76px}
+  .weekly-card{padding:17px 14px 14px}
+  .weekly-card .section-head{margin-bottom:12px}
+  .weekly-card .week-days{gap:1px}
+  .weekly-card .legend{margin:11px 1px 12px;gap:14px}
+  .weekly-card .week-stats{padding:11px 0 12px}
+  .weekly-card .full-week{height:42px}
+  .quick{padding:17px 10px 15px}
+  .quick .section-head{padding:0 2px}
+  .quick-grid{margin-top:14px}
+  .quick-grid>div{padding:0 4px}
+  .quick-grid i{width:34px;height:34px;margin-bottom:6px}
+}
+
+
+/* v30.2 mobile spacing refinement — existing UI/structure unchanged */
+@media (max-width: 759px){
+  .weekly-card{
+    padding:22px 18px 19px;
+  }
+  .weekly-card .week-head{
+    margin-bottom:15px;
+  }
+  .weekly-card .days{
+    margin-top:12px;
+  }
+  .weekly-card .legend{
+    margin-top:15px;
+  }
+  .weekly-card .week-stats{
+    margin-top:16px;
+  }
+  .weekly-card .week-cta{
+    margin-top:16px;
+  }
+
+  .quick{
+    padding:22px 14px 20px;
+  }
+  .quick .quick-head{
+    margin-bottom:15px;
+  }
+  .quick .metric{
+    padding-left:10px;
+    padding-right:10px;
+  }
+  .quick .metric-icon{
+    margin-bottom:7px;
+  }
+}
