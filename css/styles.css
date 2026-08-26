@@ -331,3 +331,63 @@ body{
   .nav-btn span{white-space:nowrap}
   .hero-card .hero-copy{width:100%;max-width:none;padding-right:18px}
 }
+
+/* v30.1 — home polish: CSS-only fixes */
+/* Header settings moved to More in the bottom navigation. */
+.settings-head{display:none!important}
+
+/* Keep bottom-navigation clearance tight without creating a large empty tail. */
+.app{padding-bottom:78px}
+body{padding-bottom:0}
+
+/* Weekly Activity: give each section deliberate breathing room and keep the stats balanced. */
+.weekly-card{padding:20px 18px 16px}
+.weekly-card .section-head{padding:0 2px;margin-bottom:14px}
+.weekly-card .week-days{gap:4px}
+.weekly-card .legend{margin:13px 2px 12px;gap:20px}
+.weekly-card .week-stats{margin-top:0;padding:13px 0 14px}
+.weekly-card .full-week{height:46px}
+.week-stats span{min-width:0}
+.week-stats .icon{width:18px;height:18px;flex:none;vertical-align:middle}
+
+/* Quick Progress has four metrics, so use four equal columns. */
+.quick{padding:20px 14px 18px}
+.quick .section-head{padding:0 2px}
+.quick-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:17px}
+.quick-grid>div{padding:0 8px}
+.quick-grid i{margin-bottom:9px}
+
+/* Theme-aware surfaces/colors that were previously hard-coded for light mode. */
+[data-theme=dark] .hero-card{background:var(--soft)}
+[data-theme=dark] .hero-copy h2{color:var(--primary)}
+[data-theme=dark] .hero-copy p{color:var(--muted)}
+[data-theme=dark] .home-status .status-icon.neutral{background:var(--rest);color:var(--muted)}
+[data-theme=dark] .status-copy strong{color:var(--primary)}
+[data-theme=dark] .status-action{border-color:var(--primary);color:var(--primary)}
+[data-theme=dark] .meter{background:var(--line)}
+[data-theme=dark] .meter em{background:var(--card)}
+[data-theme=dark] .weekly-card .week-select,
+[data-theme=dark] .quick .section-head button{color:var(--primary)}
+[data-theme=dark] .week-select b,
+[data-theme=dark] .full-week,
+[data-theme=dark] .quick-grid i{background:var(--soft);color:var(--primary)}
+[data-theme=dark] .quick-grid>div:nth-child(2) i{background:#202d40;color:#75aaf0}
+[data-theme=dark] .quick-grid>div:nth-child(3) i{background:#3a2b20;color:#f3a45e}
+[data-theme=dark] .quick-grid>div:nth-child(4) i{background:var(--green-soft);color:var(--green)}
+[data-theme=dark] .rest{background:var(--rest);color:var(--muted)}
+[data-theme=dark] .dot.rest{background:var(--rest)}
+
+@media(max-width:600px){
+  .app{padding-bottom:76px}
+  .weekly-card{padding:17px 14px 14px}
+  .weekly-card .section-head{margin-bottom:12px}
+  .weekly-card .week-days{gap:1px}
+  .weekly-card .legend{margin:11px 1px 12px;gap:14px}
+  .weekly-card .week-stats{padding:11px 0 12px}
+  .weekly-card .full-week{height:42px}
+  .quick{padding:17px 10px 15px}
+  .quick .section-head{padding:0 2px}
+  .quick-grid{margin-top:14px}
+  .quick-grid>div{padding:0 4px}
+  .quick-grid i{width:34px;height:34px;margin-bottom:6px}
+}
