@@ -6,16 +6,16 @@
 <meta name="theme-color" content="#ffffff">
 <title>Workout Tracker</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="css/styles.css?v=1.7.11">
-<link rel="stylesheet" href="css/components.css?v=1.7.11">
-<link rel="stylesheet" href="css/responsive.css?v=1.7.11">
+<link rel="stylesheet" href="css/styles.css?v=1.7.27">
+<link rel="stylesheet" href="css/components.css?v=1.7.27">
+<link rel="stylesheet" href="css/responsive.css?v=1.7.27">
 </head>
 <body>
 <div class="app">
 <section id="home" class="screen active">
   <header class="home-head">
     <div><h1>Good morning, Prajwal!</h1><p>Ready to crush your goals today?</p></div>
-    <div class="head-actions"><button class="head-pill" aria-label="Workout streak"><svg class="icon"><use href="#streak-icon"/></svg><span id="streak">0</span></button><button class="head-icon settings-head" aria-label="Settings" onclick="go('more')"><svg class="icon"><use href="#gear"/></svg></button></div>
+    <div class="head-actions"><button class="head-icon settings-head" aria-label="Settings" onclick="go('more')"><svg class="icon"><use href="#gear"/></svg></button></div>
   </header>
   <main id="homeView"></main>
 </section>
@@ -59,6 +59,7 @@
 <button class="nav-btn" data-screen="workouts" onclick="go('workouts')"><svg class="icon"><use href="#calendar-icon"/></svg><span>Workouts</span></button>
 <button class="nav-btn" data-screen="exercises" onclick="go('exercises')"><svg class="icon"><use href="#dumbbell"/></svg><span>Exercises</span></button>
 <button class="nav-btn" data-screen="progress" onclick="go('progress')"><svg class="icon"><use href="#chart"/></svg><span>Progress</span></button>
+<button class="nav-btn" data-screen="more" onclick="go('more')"><svg class="icon"><use href="#more-icon"/></svg><span>More</span></button>
 </nav>
 </div>
 
@@ -73,7 +74,6 @@
 <symbol id="upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></symbol>
 <symbol id="trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/></symbol>
 <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 8h.01"/></symbol>
-<symbol id="streak-icon" viewBox="0 0 24 24"><path d="M12.4 3.2c.2 3-1.2 4.5-2.6 5.8-1.4 1.3-2.7 2.7-2.7 5a4.9 4.9 0 0 0 9.8 0c0-1.9-.9-3.5-2.3-4.8.1 1.7-.5 2.8-1.5 3.5.1-2.8-1.1-4.8-.7-9.5Z"/></symbol>
 <symbol id="activity" viewBox="0 0 24 24"><path d="M3 12h3l2-6 4 12 2-6h7"/></symbol>
 <symbol id="layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16l9 5 9-5"/></symbol>
 <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
