@@ -37,37 +37,20 @@ function weekKey(d){return dateKey(weekStart(d))}
 function weekDates(start){return Array.from({length:7},(_,i)=>{let d=new Date(start);d.setDate(d.getDate()+i);return d})}
 function isToday(d){return dateKey(d)===dateKey(new Date())}
 
-let homeTimer=null;
-function startHomeTimer(){
- if(homeTimer)clearInterval(homeTimer);
- homeTimer=setInterval(()=>{
-  const active=state.activeWorkout;
-  if(active) renderHome();
- },60000);
-}
 function renderHome(){
- const today=new Date();today.setHours(0,0,0,0),k=dateKey(today);
- const active=state.activeWorkout||null;
+ const today=new Date();today.setHours(0,0,0,0);
+ const k=dateKey(today);
  const todays=[...state.workouts].filter(w=>w.date===k).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
  const latest=todays[0];
- document.getElementById("streak").textContent=calcStreak();
- let status=active?homeInProgress(active):latest?homeCompleted(latest):homeNotStarted();
+ // Home intentionally exposes only two status states: completed or no workout yet.
+ // An unfinished draft remains available to the workout flow, but is not presented as a third home status.
+ const status=latest?homeCompleted(latest):homeNotStarted();
  const ws=weekStart(selectedWeekStart), days=weekDates(ws), workouts=days.filter(d=>state.workouts.some(w=>w.date===dateKey(d))).length;
  document.getElementById("homeView").innerHTML=heroCard()+status+weeklyCard(ws,workouts)+quickProgress();
- startHomeTimer();
 }
-function heroCard(){return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>keep your streak alive!</p><button class="hero-btn" onclick="startNewWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><img src="assets/workout-hero.png" alt="" class="hero-art"></section>`}
+function heroCard(){return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>Keep your streak alive!</p><button class="hero-btn" onclick="startNewWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div></section>`}
 function homeNotStarted(){return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon neutral"><svg class="icon"><use href="#activity"/></svg></div><div class="status-copy"><strong>No workout yet</strong><span>Ready when you are.</span></div><button class="outline status-action" onclick="startNewWorkout()">Start Workout</button></div></section>`}
-function homeInProgress(w){let start=w.startTime||localTimeValue();let elapsed=elapsedFrom(start);let rawPct=Math.round(elapsed/90*100),meterPct=Math.min(100,rawPct);return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon active-state"><svg class="icon"><use href="#activity"/></svg></div><div class="status-copy active-text"><strong>Workout in progress</strong><span>Keep going! You’ve got this.</span></div><button class="outline status-action" onclick="continueWorkout()">Continue Workout</button></div><div class="meter-label"><span>Elapsed</span><b>${elapsed} min</b><span>Target: 90 min</span></div><div class="meter" style="--meter-pct:${meterPct}%"><i></i><em style="left:${meterPct}%"></em><span><svg class="icon"><use href="#target"/></svg></span></div><div class="target-badge">${rawPct}% of your target</div></section>`}
-function homeCompleted(w){let dur=durationMinutes(w),rawPct=dur==null?null:Math.round(dur/90*100),meterPct=rawPct==null?null:Math.min(100,rawPct);return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon complete"><svg class="icon"><use href="#check"/></svg></div><div class="status-copy green-text"><strong>Workout completed</strong><span>Great job! You crushed it.</span></div><button class="outline status-action" onclick="viewWorkout('${w.id}')">View Workout</button></div>${dur==null?`<div class="status-note">Duration not recorded</div>`:`<div class="meter-label"><span>Duration</span><b>${durationLabel(dur)}</b><span>Target: 90 min</span></div><div class="meter" style="--meter-pct:${meterPct}%"><i></i><span><svg class="icon"><use href="#target"/></svg></span></div><div class="target-badge">${rawPct}% of your target</div>`}</section>`}
-function elapsedFrom(start){let a=start.split(":").map(Number),now=new Date(),x=a[0]*60+a[1],y=now.getHours()*60+now.getMinutes();if(y<x)y+=1440;return y-x}
-function continueWorkout(){openWorkout(state.activeWorkout?.muscles||[],state.activeWorkout?.date||dateKey(new Date()),true)}
-function startNewWorkout(){openWorkout([],dateKey(new Date()),false)}
 
-function weeklyCard(start,count){
- let days=weekDates(start);
- return `<section class="weekly-card card"><div class="section-head"><h2>Weekly Activity</h2><div class="week-select" onclick="openWeekPicker()"><b>#${weekNumber(start)}</b><span>${rangeLabel(start)}</span><i aria-hidden="true"><svg class="icon"><use href="#chevron-down"/></svg></i></div></div><div class="week-days">${days.map(d=>{let has=state.workouts.some(w=>w.date===dateKey(d)),today=isToday(d);return `<button onclick="goToWeekDay('${dateKey(d)}')" class="week-day"><span>${d.toLocaleDateString("en-IN",{weekday:"short"})}</span><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><div class="week-stats"><span><svg class="icon"><use href="#calendar-icon"/></svg> <b>${count} workout${count===1?"":"s"}</b></span><span><svg class="icon"><use href="#activity"/></svg> <b>${days.filter(d=>!state.workouts.some(w=>w.date===dateKey(d))).length} rest days</b></span><span><svg class="icon"><use href="#target"/></svg> <b>${remainingDays(days)} day${remainingDays(days)===1?"":"s"} remaining</b></span></div><button class="full-week" onclick="go('workouts')">View full week <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></section>`
-}
 function remainingDays(days){
  const today=new Date();today.setHours(0,0,0,0);
  const todayKey=dateKey(today);
@@ -76,7 +59,7 @@ function remainingDays(days){
  const todayCompleted=state.workouts.some(w=>w.date===todayKey);
  return days.filter(d=>d>=today && (!isToday(d) || !todayCompleted)).length;
 }
-function quickProgress(){let ws=weekStart(selectedWeekStart),we=weekEnd(ws),w=state.workouts.filter(x=>x.date>=dateKey(ws)&&x.date<=dateKey(we));let volume=0;w.forEach(x=>(x.exercises||[]).forEach(raw=>{let e=normalizedEntry(raw,x.unit||"kg");(e.sets||[]).forEach(s=>volume+=(Number(s.weight)||0)*(Number(s.reps)||0)*(e.unit==="lb"?0.45359237:1))}));return `<section class="quick card"><div class="section-head"><h2>Quick Progress</h2><button onclick="go('progress')">View full progress <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><div class="quick-grid"><div><i><svg class="icon"><use href="#activity"/></svg></i><b>${w.length}</b><span>Workouts</span><small>This Week</small></div><div><i><svg class="icon"><use href="#layers"/></svg></i><b>${Math.round(volume).toLocaleString()} kg</b><span>Volume</span><small>This Week</small></div><div><i><svg class="icon"><use href="#chart"/></svg></i><b>${countPRs()}</b><span>PRs</span><small>This Month</small></div><div><i><svg class="icon"><use href="#target"/></svg></i><b>${calcStreak()}</b><span>Day Streak</span><small>Keep it up!</small></div></div></section>`}
+function quickProgress(){let ws=weekStart(selectedWeekStart),we=weekEnd(ws),w=state.workouts.filter(x=>x.date>=dateKey(ws)&&x.date<=dateKey(we));let volume=0;w.forEach(x=>(x.exercises||[]).forEach(raw=>{let e=normalizedEntry(raw,x.unit||"kg");(e.sets||[]).forEach(s=>volume+=(Number(s.weight)||0)*(Number(s.reps)||0)*(e.unit==="lb"?0.45359237:1))}));return `<section class="quick card"><div class="section-head"><h2>Quick Progress</h2><button onclick="go('progress')">View full progress <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><div class="quick-grid"><div><i><svg class="icon"><use href="#activity"/></svg></i><b>${w.length}</b><span>Workouts</span><small>This Week</small></div><div><i><svg class="icon"><use href="#layers"/></svg></i><b>${Math.round(volume).toLocaleString()} kg</b><span>Volume</span><small>This Week</small></div><div><i><svg class="icon"><use href="#chart"/></svg></i><b>${countPRs()}</b><span>PRs</span><small>This Month</small></div><div><i><svg class="icon"><use href="#target"/></svg></i><b>${calcProgress()}</b><span>Day Progress</span><small>Keep it up!</small></div></div></section>`}
 function countPRs(){
  const now=new Date(),monthStart=new Date(now.getFullYear(),now.getMonth(),1),seen=new Map(),prs=[];
  const workouts=[...state.workouts].sort((a,b)=>String(a.date).localeCompare(String(b.date))||(a.createdAt||0)-(b.createdAt||0));
@@ -97,7 +80,7 @@ function countPRs(){
  });
  return prs.length;
 }
-function calcStreak(){let n=0,d=new Date();d.setHours(0,0,0,0);if(!state.workouts.some(w=>w.date===dateKey(d)))d.setDate(d.getDate()-1);while(state.workouts.some(w=>w.date===dateKey(d))){n++;d.setDate(d.getDate()-1)}return n}
+function calcProgress(){let n=0,d=new Date();d.setHours(0,0,0,0);if(!state.workouts.some(w=>w.date===dateKey(d)))d.setDate(d.getDate()-1);while(state.workouts.some(w=>w.date===dateKey(d))){n++;d.setDate(d.getDate()-1)}return n}
 
 function renderCalendar(){
  const start=weekStart(selectedWeekStart),days=weekDates(start),sel=dateKey(selected);
@@ -125,7 +108,7 @@ function openWorkout(muscleIds=[],dateValue=dateKey(selected),resume=false){
  let ms=sortedMuscles(), chosen=new Set(muscleIds), existing=resume&&state.activeWorkout;
  if(!muscleIds.length&&!resume)workoutDraft={date:dateValue,muscles:[],exercises:[],unit:"kg",startTime:localTimeValue(),endTime:""};
  else workoutDraft={date:existing?.date||dateValue,muscles:existing?.muscles||muscleIds,exercises:existing?.exercises||[],unit:existing?.unit||"kg",startTime:existing?.startTime||localTimeValue(),endTime:existing?.endTime||""};
- modal(`<div class="handle"></div><h2>${resume?"Continue Workout":"Start Workout"}</h2><div class="muted">Choose the date, start time and muscle groups.</div><div class="time-grid"><div class="field"><label>Date</label><input id="workDate" class="input" type="date" value="${esc(workoutDraft.date)}"></div><div class="field"><label>Start time</label><input id="startTime" class="input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field"><label>End time <span class="muted">(enter when completed)</span></label><input id="endTime" class="input" type="time" value="${esc(workoutDraft.endTime)}"></div><div class="field"><label>Muscle groups</label><div class="grid">${ms.map(m=>`<button class="pick ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')">${esc(m.name)}</button>`).join("")}</div></div><div class="modal-actions"><button class="primary btn-wide" onclick="chooseExercises()">Next: Select Exercises</button><button class="outline btn-wide" onclick="closeModal()">Cancel</button></div>`)
+ modal(`<div class="handle"></div><h2>${resume?"Start Workout":"Start Workout"}</h2><div class="muted">Choose the date, start time and muscle groups.</div><div class="time-grid"><div class="field"><label>Date</label><input id="workDate" class="input" type="date" value="${esc(workoutDraft.date)}"></div><div class="field"><label>Start time</label><input id="startTime" class="input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field"><label>End time <span class="muted">(enter when completed)</span></label><input id="endTime" class="input" type="time" value="${esc(workoutDraft.endTime)}"></div><div class="field"><label>Muscle groups</label><div class="grid">${ms.map(m=>`<button class="pick ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')">${esc(m.name)}</button>`).join("")}</div></div><div class="modal-actions"><button class="primary btn-wide" onclick="chooseExercises()">Next: Select Exercises</button><button class="outline btn-wide" onclick="closeModal()">Cancel</button></div>`)
 }
 function chooseExercises(){
  let ids=[...document.querySelectorAll("[data-muscle].selected")].map(x=>x.dataset.muscle),date=document.getElementById("workDate")?.value,start=document.getElementById("startTime")?.value,end=document.getElementById("endTime")?.value;
