@@ -1,3 +1,3 @@
-Workout Tracker 1.6.2
+Workout Tracker 1.7.11
 
-UI stabilization build. Mobile layout uses the actual iPhone viewport width, with safe-area handling, compact typography, fixed card dimensions, full-width bottom navigation, and cache-busted assets.
+UI stabilization build. Mobile layout uses the actual iPhone viewport width, with safe-area handling, compact typography, fixed card dimensions, full-width bottom navigation, and cache-busted assets and a consolidated weekly activity header.

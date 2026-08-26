@@ -1,11 +1,11 @@
-const CACHE="workout-tracker-v18";
+const CACHE="workout-tracker-v22";
 const ASSETS=[
  "./",
  "./index.html",
  "./manifest.webmanifest",
- "./css/styles.css?v=1.7.7",
- "./css/components.css?v=1.7.7",
- "./css/responsive.css?v=1.7.7",
+ "./css/styles.css?v=1.7.11",
+ "./css/components.css?v=1.7.11",
+ "./css/responsive.css?v=1.7.11",
  "./js/data.js",
  "./js/workouts.js",
  "./js/exercises.js",
@@ -14,7 +14,7 @@ const ASSETS=[
  "./js/app.js",
  "./assets/icons/icon-180.png",
  "./assets/icons/icon-512.png",
- "./assets/workout-hero.svg"
+ "./assets/workout-hero.png"
 ];
 
 self.addEventListener("install",event=>{
