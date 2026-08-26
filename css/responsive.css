@@ -132,9 +132,6 @@
   .week-select span{font-size:12px}
   .week-select i{display:grid;place-items:center}
   .week-select i .icon{width:14px;height:14px}
-  .week-count{margin:12px 5px 10px;gap:7px}
-  .week-count .icon{width:17px;height:17px}
-  .week-count strong{font-size:13px}
   .week-days{grid-template-columns:repeat(7,minmax(0,1fr));gap:0;width:100%}
   .week-day{gap:6px;min-width:0}
   .week-day>span{font-size:11px;white-space:nowrap}
@@ -325,4 +322,24 @@
   .home-status,.weekly-card,.quick{margin-left:12px;margin-right:12px}
   .status-main{grid-template-columns:42px minmax(0,1fr)}
   .status-action{grid-column:2;justify-self:start;margin-top:2px}
+}
+
+/* 1.7.8 nav override */
+.bottom-nav{
+  left:16px;
+  right:16px;
+  bottom:calc(10px + env(safe-area-inset-bottom));
+  width:auto;
+  height:64px;
+  padding:6px;
+  border:1px solid rgba(222,224,232,.92);
+  border-radius:34px;
+  box-shadow:0 10px 32px rgba(20,22,35,.13),0 2px 8px rgba(20,22,35,.06);
+}
+.nav-btn.active:before{display:none}
+@media(max-width:600px){
+  .bottom-nav{height:62px;padding:5px;bottom:calc(9px + env(safe-area-inset-bottom))}
+}
+@media(max-width:370px){
+  .bottom-nav{left:12px;right:12px}
 }
