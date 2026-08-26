@@ -16,6 +16,7 @@ const APP_SHELL = [
   "./assets/icons/icon-180.png",
   "./assets/icons/icon-512.png",
   "./assets/workout-hero.png",
+  "./assets/workout-hero.svg"
 ];
 
 const NETWORK_FIRST_TYPES = new Set([
