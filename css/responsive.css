@@ -614,3 +614,20 @@ body.workout-form-open .bottom-nav{
     margin-bottom:calc(16px + 62px + 9px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
+
+/* 1.7.44 — Equal side gutters so the dim shows on both sides, matching the nav island */
+body.workout-form-open .modal .sheet,
+body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+  width:calc(100% - 32px) !important;
+  max-width:none !important;
+  margin-left:16px !important;
+  margin-right:16px !important;
+}
+@media(max-width:600px){
+  body.workout-form-open .modal .sheet,
+  body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+    width:calc(100% - 32px) !important;
+    margin-left:16px !important;
+    margin-right:16px !important;
+  }
+}
