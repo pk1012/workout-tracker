@@ -497,3 +497,12 @@ select.input,
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field.workout-muscle-groups-section{
   margin-top:9px;
 }
+
+/* 1.7.40 — Start Workout: space above the title so the sheet reads as swipeable later */
+body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+  padding-top:calc(12px + env(safe-area-inset-top, 0px));
+}
+.modal:has(.workout-entry-sheet) .workout-entry-header .handle{
+  margin-top:6px;
+  margin-bottom:20px;
+}
