@@ -831,9 +831,11 @@ body{padding-bottom:0}
   display:flex !important;
   flex-direction:column !important;
   overflow:hidden !important;
-  margin-bottom:0 !important;
-  height:calc(100vh - 83px - env(safe-area-inset-bottom)) !important;
-  max-height:calc(100vh - 83px - env(safe-area-inset-bottom)) !important;
+  /* Keep the entire sheet, including Cancel, above the floating bottom nav.
+     Mobile nav: 62px high + 9px bottom offset + 8px visual clearance. */
+  margin-bottom:calc(79px + env(safe-area-inset-bottom)) !important;
+  height:calc(100vh - 79px - env(safe-area-inset-bottom)) !important;
+  max-height:calc(100vh - 79px - env(safe-area-inset-bottom)) !important;
 }
 .workout-entry-sheet .workout-entry-header{
   flex:0 0 auto !important;
@@ -865,8 +867,8 @@ body{padding-bottom:0}
 }
 @media(max-width:600px){
   .workout-entry-sheet{
-    height:calc(100vh - 83px - env(safe-area-inset-bottom)) !important;
-    max-height:calc(100vh - 83px - env(safe-area-inset-bottom)) !important;
-    margin-bottom:0 !important;
+    margin-bottom:calc(79px + env(safe-area-inset-bottom)) !important;
+    height:calc(100vh - 79px - env(safe-area-inset-bottom)) !important;
+    max-height:calc(100vh - 79px - env(safe-area-inset-bottom)) !important;
   }
 }
