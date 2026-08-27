@@ -511,49 +511,52 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 body.workout-form-open .modal,
 body.workout-form-open .modal.show,
 body.workout-form-open .modal:has(.workout-entry-sheet){
-  background:rgba(16,18,24,.3);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  inset:0 0 calc(84px + env(safe-area-inset-bottom, 0px)) 0;
-  align-items:flex-end;
+  background:rgba(16,18,24,.34) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+  inset:0 0 calc(84px + env(safe-area-inset-bottom, 0px)) 0 !important;
+  align-items:flex-end !important;
 }
 body.workout-form-open .modal .sheet,
 body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
-  width:100%;
-  max-width:none;
-  height:calc(100% - (12px + env(safe-area-inset-top, 0px)));
-  max-height:calc(100% - (12px + env(safe-area-inset-top, 0px)));
-  border-radius:24px 24px 0 0;
-  box-shadow:0 -8px 32px rgba(16,18,24,.16);
-  padding-top:10px;
+  width:100% !important;
+  max-width:none !important;
+  height:calc(100% - (36px + env(safe-area-inset-top, 0px))) !important;
+  max-height:calc(100% - (36px + env(safe-area-inset-top, 0px))) !important;
+  border-radius:24px 24px 0 0 !important;
+  box-shadow:0 -8px 32px rgba(16,18,24,.18);
+  padding-top:10px !important;
   overflow:hidden;
 }
 body.workout-form-open .modal:has(.workout-entry-sheet) .workout-entry-header .handle{
   margin-top:8px;
   margin-bottom:18px;
+  width:40px;
+  height:5px;
+  background:#c4c7cf;
 }
 body.workout-form-open .bottom-nav{
-  background:var(--card);
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
+  background:var(--card) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
   box-shadow:none;
 }
 [data-theme=dark] body.workout-form-open .modal,
 [data-theme=dark] body.workout-form-open .modal.show,
 [data-theme=dark] body.workout-form-open .modal:has(.workout-entry-sheet){
-  background:rgba(0,0,0,.38);
+  background:rgba(0,0,0,.42) !important;
 }
 @media(max-width:600px){
   body.workout-form-open .modal,
   body.workout-form-open .modal.show,
   body.workout-form-open .modal:has(.workout-entry-sheet){
-    inset:0 0 calc(84px + env(safe-area-inset-bottom, 0px)) 0;
+    inset:0 0 calc(84px + env(safe-area-inset-bottom, 0px)) 0 !important;
   }
   body.workout-form-open .modal .sheet,
   body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
-    height:calc(100% - (12px + env(safe-area-inset-top, 0px)));
-    max-height:calc(100% - (12px + env(safe-area-inset-top, 0px)));
-    border-radius:24px 24px 0 0;
-    padding-top:10px;
+    height:calc(100% - (36px + env(safe-area-inset-top, 0px))) !important;
+    max-height:calc(100% - (36px + env(safe-area-inset-top, 0px))) !important;
+    border-radius:24px 24px 0 0 !important;
+    padding-top:10px !important;
   }
 }
