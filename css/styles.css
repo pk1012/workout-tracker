@@ -512,14 +512,20 @@ body{padding-bottom:0}
 }
 
 
-/* v30.9 — Start Workout sheet: keep bottom navigation visible without overlap; grouped scrolling */
+/* v30.9 — Start Workout sheet: fixed header + scrollable form + fixed actions
+   The optional sheet class is now applied by modal(), so these rules are active. */
 .workout-entry-sheet{
   display:flex;
   flex-direction:column;
+  min-height:0;
   overflow:hidden;
+  max-height:92vh;
   padding-bottom:calc(82px + env(safe-area-inset-bottom));
 }
-.workout-entry-header{flex:none}
+.workout-entry-header{
+  flex:0 0 auto;
+  min-height:0;
+}
 .workout-entry-scroll{
   flex:1 1 auto;
   min-height:0;
@@ -527,18 +533,87 @@ body{padding-bottom:0}
   overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
-  padding-bottom:6px;
+  padding:0 2px 8px 0;
+  scroll-snap-type:y proximity;
 }
 .workout-entry-scroll::-webkit-scrollbar{display:none}
-.workout-entry-scroll .field{break-inside:avoid}
-.workout-entry-scroll .time-grid{break-inside:avoid}
+
+/* Keep each logical section together when scrolling. */
+.workout-entry-scroll .workout-date-field,
+.workout-entry-scroll .workout-time-grid,
+.workout-entry-scroll .workout-muscle-field,
+.workout-entry-scroll .workout-selection-hint{
+  scroll-snap-align:start;
+}
+
+/* Labels and their fields behave as one visual unit. */
+.workout-entry-scroll .field{
+  break-inside:avoid;
+}
+.workout-entry-scroll .time-grid{
+  break-inside:avoid;
+}
+.workout-entry-scroll .workout-date-field{
+  margin-top:20px;
+}
+.workout-entry-scroll .workout-time-grid{
+  margin-top:0;
+}
+.workout-entry-scroll .workout-muscle-field{
+  margin-top:20px;
+}
 .workout-modal-actions{
-  flex:none;
-  margin-top:12px;
+  flex:0 0 auto;
+  position:static;
+  display:grid;
+  gap:10px;
+  margin-top:10px;
   padding-top:10px;
   padding-bottom:0;
   background:var(--card);
+  z-index:3;
 }
+.workout-modal-actions .primary{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+.workout-modal-actions .primary .icon{
+  width:24px;
+  height:24px;
+}
+.workout-modal-actions .outline{
+  background:var(--card);
+}
+
+/* Match the compact control language used by Today's Status. */
+.workout-entry-sheet .input{
+  height:48px;
+  font-size:13px;
+  padding-right:13px;
+}
+.workout-entry-sheet .field label{
+  font-size:13px;
+  margin-bottom:7px;
+}
+.workout-entry-sheet .workout-input-wrap .input{
+  padding-left:46px;
+}
+.workout-entry-sheet .workout-field-icon{
+  left:14px;
+  width:21px;
+  height:21px;
+}
+.workout-entry-sheet .workout-muscle-pick{
+  min-height:70px;
+  font-size:13px;
+  border-radius:15px;
+}
+.workout-entry-sheet .workout-selection-hint{
+  font-size:13px;
+}
+
 @media(max-width:600px){
   .workout-entry-sheet{
     max-height:88vh;
@@ -546,15 +621,59 @@ body{padding-bottom:0}
     padding-right:16px;
     padding-bottom:calc(78px + env(safe-area-inset-bottom));
   }
+  .workout-entry-header{
+    padding-bottom:2px;
+  }
+  .workout-entry-subtitle{
+    font-size:15px;
+    line-height:1.38;
+  }
   .workout-entry-scroll{
     padding-right:2px;
     padding-bottom:8px;
   }
+  .workout-entry-scroll .workout-date-field{
+    margin-top:18px;
+  }
+  .workout-entry-scroll .workout-time-grid{
+    gap:9px;
+  }
+  .workout-entry-scroll .workout-muscle-field{
+    margin-top:20px;
+  }
   .workout-modal-actions{
-    margin-top:10px;
-    padding-top:10px;
+    margin-top:8px;
+    padding-top:9px;
+    gap:9px;
   }
   .workout-modal-actions .btn-wide{
-    min-height:52px;
+    min-height:48px;
+    height:48px;
+    font-size:12px;
+    padding:0 12px;
+    border-radius:13px;
+  }
+  .workout-entry-sheet .input{
+    height:48px;
+    font-size:13px;
+    padding-left:44px;
+  }
+  .workout-entry-sheet .field label{
+    font-size:13px;
+    margin-bottom:7px;
+  }
+  .workout-entry-sheet .workout-field-icon{
+    left:13px;
+    width:20px;
+    height:20px;
+  }
+  .workout-entry-sheet .workout-muscle-pick{
+    min-height:68px;
+    font-size:13px;
+  }
+  .workout-entry-sheet .workout-muscle-icon,
+  .workout-entry-sheet .workout-muscle-icon .icon{
+    width:22px;
+    height:22px;
   }
 }
