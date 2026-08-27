@@ -355,3 +355,133 @@
   margin-top:8px;
   margin-bottom:8px;
 }
+
+/* 1.7.37 — App type scale (all screens)
+   22 hero title
+   20 screen title
+   17 card title
+   16 form body / primary form actions
+   13 supporting copy + Home primary buttons
+   11–12 meta */
+.hero-copy h2{font-size:22px !important;line-height:1.1}
+
+.home-head h1,
+.page-head h1,
+.compact-head h1,
+.sheet h2,
+.sheet .workout-form-title,
+.modal:has(.workout-entry-sheet) .workout-entry-header h2,
+.modal:has(.workout-entry-sheet) .workout-entry-header .workout-form-title,
+.picker-title h2,
+.confirm-title{font-size:20px !important;line-height:1.2}
+
+.home-status h2,
+.weekly-card h2,
+.quick h2,
+.progress h2,
+.section-head h2,
+.recent-section h2,
+.section-title{font-size:17px !important}
+
+.field label,
+.input,
+select.input,
+.btn-wide,
+.primary.btn-wide,
+.outline.btn-wide,
+.modal:has(.workout-entry-sheet) .workout-modal-actions .primary.btn-wide.workout-next-button,
+.modal:has(.workout-entry-sheet) .workout-modal-actions .outline.btn-wide.workout-cancel-button,
+.pick.workout-muscle-button,
+.workout-muscle-button,
+.exercise-pick,
+.exercise-row span,
+.exercise-row strong,
+.setting-title,
+.workout-card-copy strong,
+.back-btn,
+.about-row strong,
+.set-editor-head,
+.set-editor-head strong{font-size:16px !important}
+
+.home-head p,
+.subtitle,
+.hero-copy p,
+.hero-btn,
+.status-copy strong,
+.status-copy span,
+.status-action,
+.sheet>.muted,
+.workout-form-description,
+.modal:has(.workout-entry-sheet) .workout-entry-subtitle,
+.confirm-copy,
+.setting-desc,
+.progress>.muted,
+.quick-grid b,
+.workout-card-copy>span,
+.empty,
+.toast,
+.about-row span,
+.detail-set,
+.add-set,
+.edit,
+.delete,
+.segment button,
+.week-list span,
+.week-list em,
+.set-field,
+.workout-selection-hint{font-size:13px !important;line-height:1.35}
+
+.week-select,
+.week-select span,
+.week-select b,
+.full-week,
+.quick .section-head button,
+.setting-section-title,
+.workout-week-head span,
+.workout-week-head strong,
+.workout-days button>span,
+.week-list b{font-size:12px !important}
+
+.selected-date{font-size:17px !important}
+.stat strong{font-size:13px !important}
+
+.week-day>span,
+.legend,
+.week-stats,
+.week-stats b,
+.quick-grid span,
+.quick-grid small,
+.nav-btn,
+.meter-label,
+.target-badge,
+.status-note,
+.progress-note,
+.stat span,
+.stat small,
+.workout-metrics b,
+.workout-metrics small,
+.workout-days button>small{font-size:11px !important}
+
+@media(max-width:600px){
+  .hero-copy h2{font-size:22px !important}
+  .home-head h1,
+  .page-head h1,
+  .compact-head h1,
+  .sheet h2,
+  .sheet .workout-form-title,
+  .modal:has(.workout-entry-sheet) .workout-entry-header h2,
+  .modal:has(.workout-entry-sheet) .workout-entry-header .workout-form-title{font-size:20px !important;line-height:1.2}
+  .home-head p,
+  .subtitle,
+  .hero-copy p,
+  .hero-btn,
+  .status-copy strong,
+  .status-copy span,
+  .status-action{font-size:13px !important}
+  .nav-btn{font-size:11px !important}
+}
+
+@media(max-width:370px){
+  .home-head h1,
+  .compact-head h1{font-size:20px !important}
+}
