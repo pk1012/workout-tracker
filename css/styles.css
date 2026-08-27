@@ -868,12 +868,12 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   box-shadow:none;
   max-width:none;
   width:100%;
-  height:calc(100dvh - 88px - env(safe-area-inset-bottom, 0px));
-  max-height:calc(100dvh - 88px - env(safe-area-inset-bottom, 0px));
+  height:calc(100svh - 96px - env(safe-area-inset-bottom, 0px));
+  max-height:calc(100svh - 96px - env(safe-area-inset-bottom, 0px));
 }
 body.workout-form-open .workout-modal-actions{
   flex:0 0 auto;
-  padding-bottom:8px;
+  padding-bottom:12px;
 }
 body.workout-form-open .bottom-nav{
   background:var(--card);
@@ -884,8 +884,8 @@ body.workout-form-open .bottom-nav{
 @media(max-width:600px){
   body.workout-form-open .modal .sheet,
   body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
-    height:calc(100dvh - 88px - env(safe-area-inset-bottom, 0px));
-    max-height:calc(100dvh - 88px - env(safe-area-inset-bottom, 0px));
+    height:calc(100svh - 96px - env(safe-area-inset-bottom, 0px));
+    max-height:calc(100svh - 96px - env(safe-area-inset-bottom, 0px));
     border-radius:0;
   }
 }
