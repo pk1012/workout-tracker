@@ -902,3 +902,53 @@ body.workout-form-open .bottom-nav{
   .weekly-card .legend{margin:16px 1px 14px}
   .weekly-card .week-stats{padding:14px 0 12px}
 }
+
+/* 1.7.36 — Start Workout: match Home type scale, same-size labels/values, tighter field gaps */
+.modal:has(.workout-entry-sheet) .workout-entry-header h2,
+.modal:has(.workout-entry-sheet) .workout-entry-header .workout-form-title{
+  font-size:19px;
+  line-height:1.2;
+  margin:0 0 6px;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-subtitle,
+.workout-entry-header .workout-form-description{
+  font-size:13px !important;
+  line-height:1.35;
+}
+.workout-date-label,
+.workout-start-time-label,
+.workout-end-time-label,
+.workout-muscle-groups-label,
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field label{
+  font-size:16px !important;
+  line-height:1.2;
+  margin-bottom:8px;
+}
+.workout-date-input,
+.workout-start-time-input,
+.workout-end-time-input{
+  font-size:16px !important;
+}
+.workout-muscle-button{font-size:13px !important;}
+.workout-selection-hint{font-size:13px !important;line-height:1.3;}
+.workout-next-button,
+.workout-cancel-button,
+.modal:has(.workout-entry-sheet) .workout-modal-actions .btn-wide{
+  font-size:13px !important;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field{
+  margin:8px 0;
+}
+.modal:has(.workout-entry-sheet) .time-grid .field{
+  margin:8px 0;
+}
+.modal:has(.workout-entry-sheet) .workout-date-field{
+  margin-top:0;
+}
+@media(max-width:600px){
+  .modal:has(.workout-entry-sheet) .workout-entry-header h2,
+  .modal:has(.workout-entry-sheet) .workout-entry-header .workout-form-title{
+    font-size:19px;
+    line-height:1.2;
+  }
+}
