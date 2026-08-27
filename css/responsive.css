@@ -270,7 +270,7 @@
   .pick.selected{border-width:2px}
   .modal-actions{gap:9px;padding-top:12px;margin-top:16px;padding-bottom:2px}
   .primary.btn-wide,.outline.btn-wide{height:52px;min-height:52px;font-size:15px}
-  .exercise-pick{height:52px;min-height:52px;padding:0 14px}
+  .exercise-pick{height:52px;min-height:52px;padding:0 14pxbox-sizing:border-box;}
   .section-title{font-size:15px;margin-bottom:8px}
   .pick-plus{width:28px!important;height:28px!important}
   .pick-plus .icon{width:18px;height:18px}
