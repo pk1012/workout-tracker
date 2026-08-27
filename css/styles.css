@@ -789,3 +789,84 @@ body{padding-bottom:0}
   .modal{inset:0;}
   .workout-entry-sheet{max-height:calc(100vh - 88px - env(safe-area-inset-bottom));}
 }
+
+
+/* v31.5 — Start Workout sheet: header/footer fixed; only form body scrolls.
+   The workout form passes "workout-entry-sheet" to modal(); this class now
+   applies to the outer sheet so the generic .sheet overflow cannot scroll it. */
+.workout-entry-sheet{
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  margin-bottom:calc(56px + env(safe-area-inset-bottom));
+  max-height:calc(100vh - 56px - env(safe-area-inset-bottom));
+}
+.workout-entry-sheet .workout-entry-header{
+  flex:0 0 auto;
+  overflow:visible;
+}
+.workout-entry-sheet .workout-entry-scroll{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+.workout-entry-sheet .workout-modal-actions{
+  flex:0 0 auto;
+  overflow:visible;
+}
+@media(max-width:600px){
+  .workout-entry-sheet{
+    margin-bottom:calc(56px + env(safe-area-inset-bottom));
+    max-height:calc(100vh - 56px - env(safe-area-inset-bottom));
+  }
+}
+
+/* v31.5.1 — Final workout-sheet/nav clearance and hard fixed header/footer. */
+.workout-entry-sheet{
+  box-sizing:border-box !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+  margin-bottom:0 !important;
+  height:calc(100vh - 83px - env(safe-area-inset-bottom)) !important;
+  max-height:calc(100vh - 83px - env(safe-area-inset-bottom)) !important;
+}
+.workout-entry-sheet .workout-entry-header{
+  flex:0 0 auto !important;
+  position:relative !important;
+  z-index:4 !important;
+  overflow:visible !important;
+  background:var(--card) !important;
+}
+.workout-entry-sheet .workout-entry-scroll{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:touch !important;
+  scrollbar-width:none !important;
+}
+.workout-entry-sheet .workout-modal-actions{
+  flex:0 0 auto !important;
+  position:relative !important;
+  z-index:4 !important;
+  overflow:visible !important;
+  background:var(--card) !important;
+}
+.workout-entry-sheet .workout-entry-header h2,
+.workout-entry-sheet .workout-entry-header .workout-form-title,
+.workout-entry-sheet .workout-entry-header .workout-form-description{
+  position:relative !important;
+}
+@media(max-width:600px){
+  .workout-entry-sheet{
+    height:calc(100vh - 83px - env(safe-area-inset-bottom)) !important;
+    max-height:calc(100vh - 83px - env(safe-area-inset-bottom)) !important;
+    margin-bottom:0 !important;
+  }
+}
