@@ -485,3 +485,15 @@ select.input,
   .home-head h1,
   .compact-head h1{font-size:20px !important}
 }
+
+/* 1.7.39 — Start Workout: +1px in three vertical gaps */
+.modal:has(.workout-entry-sheet) .workout-entry-header{
+  padding-bottom:5px;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.workout-date-section{
+  margin-top:9px;
+  margin-bottom:9px;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.workout-muscle-groups-section{
+  margin-top:9px;
+}
