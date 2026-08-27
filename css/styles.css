@@ -513,7 +513,7 @@ body{padding-bottom:0}
 
 
 /* v30.6 — Start Workout sheet: grouped scrolling + fixed actions */
-body.workout-form-open .bottom-nav{display:none}
+body:has(#modal.show .workout-entry-sheet) .bottom-nav{display:none}
 .workout-entry-sheet{
   display:flex;
   flex-direction:column;
