@@ -688,7 +688,7 @@ body{padding-bottom:0}
     padding:12px 16px calc(12px + env(safe-area-inset-bottom));
     max-height:92vh;
   }
-  .workout-entry-header h2{font-size:40px}
+  
   .workout-entry-subtitle{font-size:22px !important}
   .workout-entry-scroll{padding-bottom:18px}
   .workout-entry-scroll .field label{font-size:22px}
@@ -705,14 +705,17 @@ body{padding-bottom:0}
 
 /* v31.3 — Keep modal forms above the floating bottom navigation. */
 .modal{
-  inset:0 0 calc(74px + env(safe-area-inset-bottom)) 0;
+  inset:0;
 }
 .sheet{
-  max-height:100%;
+  max-height:92vh;
 }
 @media(max-width:600px){
   .modal{
-    inset:0 0 calc(71px + env(safe-area-inset-bottom)) 0;
+    inset:0;
+  }
+  .workout-entry-sheet{
+    max-height:calc(100vh - 88px - env(safe-area-inset-bottom));
   }
 }
 
@@ -776,3 +779,13 @@ body{padding-bottom:0}
 .workout-selection-hint{font-size:14px !important;line-height:1.2;}
 .workout-next-button,
 .workout-cancel-button{font-size:15px !important;}
+
+
+/* v31.4 — Final Start Workout form positioning and heading scale */
+.modal{inset:0;}
+.sheet{max-height:92vh;}
+.workout-entry-header h2{font-size:28px;line-height:34px;margin:0 0 8px;font-weight:750;}
+@media(max-width:600px){
+  .modal{inset:0;}
+  .workout-entry-sheet{max-height:calc(100vh - 88px - env(safe-area-inset-bottom));}
+}
