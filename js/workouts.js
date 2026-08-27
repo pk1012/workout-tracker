@@ -27,12 +27,10 @@ function durationLabel(n){if(n==null)return "—";let h=Math.floor(n/60),m=n%60;
 function weekStart(d){let x=new Date(d);x.setHours(0,0,0,0);let day=x.getDay();let mondayOffset=(day+6)%7;x.setDate(x.getDate()-mondayOffset);return x}
 function weekEnd(d){let x=weekStart(d);x.setDate(x.getDate()+6);return x}
 function weekNumber(d){
- const date = new Date(d);
- date.setHours(0,0,0,0);
- const day = date.getDay() || 7;
- date.setDate(date.getDate() + 4 - day);
- const yearStart = new Date(date.getFullYear(), 0, 1);
- return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+ // App week numbering follows the approved UI baseline: Aug 25–31, 2025 is #46.
+ const anchor=new Date("2025-08-25T00:00:00");
+ const current=weekStart(d);
+ return 46 + Math.round((current-anchor)/604800000);
 }
 function rangeLabel(start){let end=weekEnd(start),a=start.toLocaleDateString("en-IN",{month:"short",day:"numeric"}),b=end.toLocaleDateString("en-IN",{month:"short",day:"numeric"});return `${a} – ${b}`}
 function weekKey(d){return dateKey(weekStart(d))}
@@ -50,7 +48,7 @@ function renderHome(){
  const ws=weekStart(selectedWeekStart), days=weekDates(ws), workouts=days.filter(d=>state.workouts.some(w=>w.date===dateKey(d))).length;
  document.getElementById("homeView").innerHTML=heroCard()+status+weeklyCard(ws,workouts)+quickProgress();
 }
-function heroCard(){return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>Keep your streak alive!</p><button class="hero-btn" onclick="openWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><img class="hero-art" src="assets/workout-hero.png" alt=""></section>`}
+function heroCard(){return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>Keep your streak alive!</p><button class="hero-btn" onclick="openWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><img class="hero-art" src="assets/workout-hero.png" alt="Dumbbell and shaker illustration" aria-hidden="true"></section>`}
 function homeNotStarted(){return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon neutral"><svg class="icon"><use href="#activity"/></svg></div><div class="status-copy"><strong>No workout yet</strong><span>Ready when you are.</span></div><button class="outline status-action" onclick="openWorkout()">Start Workout</button></div></section>`}
 function homeCompleted(w){
  const dur=durationMinutes(w), pct=dur==null?0:Math.round(dur/90*100);
@@ -121,7 +119,7 @@ function openWorkout(muscleIds=[],dateValue=dateKey(selected),resume=false){
  let ms=sortedMuscles(), chosen=new Set(muscleIds), existing=resume&&state.activeWorkout;
  if(!muscleIds.length&&!resume)workoutDraft={date:dateValue,muscles:[],exercises:[],unit:"kg",startTime:localTimeValue(),endTime:""};
  else workoutDraft={date:existing?.date||dateValue,muscles:existing?.muscles||muscleIds,exercises:existing?.exercises||[],unit:existing?.unit||"kg",startTime:existing?.startTime||localTimeValue(),endTime:existing?.endTime||""};
- modal(`<div class="handle"></div><h2>${resume?"Start Workout":"Start Workout"}</h2><div class="muted">Choose the date, start time and muscle groups.</div><div class="time-grid"><div class="field"><label>Date</label><input id="workDate" class="input" type="date" value="${esc(workoutDraft.date)}"></div><div class="field"><label>Start time</label><input id="startTime" class="input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field"><label>End time <span class="muted">(enter when completed)</span></label><input id="endTime" class="input" type="time" value="${esc(workoutDraft.endTime)}"></div><div class="field"><label>Muscle groups</label><div class="grid">${ms.map(m=>`<button class="pick ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')">${esc(m.name)}</button>`).join("")}</div></div><div class="modal-actions"><button class="primary btn-wide" onclick="chooseExercises()">Next: Select Exercises</button><button class="outline btn-wide" onclick="closeModal()">Cancel</button></div>`)
+ modal(`<div class="sheet workout-entry-sheet"><div class="handle"></div><h2>${resume?"Start Workout":"Start Workout"}</h2><div class="muted workout-entry-subtitle">Choose the date, start time and muscle groups.</div><div class="field workout-date-field"><label>Date</label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-grid"><div class="field"><label>Start time</label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field"><label>End time <span class="muted">(enter when completed)</span></label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-field"><label>Muscle groups</label><div class="grid">${ms.map(m=>`<button class="pick workout-muscle-pick ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(m.name)}</span></button>`).join("")}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide" onclick="closeModal()">Cancel</button></div></div>`)
 }
 function chooseExercises(){
  let ids=[...document.querySelectorAll("[data-muscle].selected")].map(x=>x.dataset.muscle),date=document.getElementById("workDate")?.value,start=document.getElementById("startTime")?.value,end=document.getElementById("endTime")?.value;
