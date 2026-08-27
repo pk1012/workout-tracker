@@ -251,4 +251,4 @@ function viewWorkout(id){
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
 }
-function deleteWorkout(id){confirmAction("Delete this workout?",()=>{state.workouts=state.workouts.filter(w=>w.id!==id);save();closeModal();renderCalendar();renderHome()})}
+function deleteWorkout(id){confirmAction("Delete this workout?",()=>{state.workouts=state.workouts.filter(w=>w.id!==id);save();closeModal();renderCalendar();renderHome()},true)}
