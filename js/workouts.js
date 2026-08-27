@@ -141,8 +141,71 @@ function chooseExercises(){
  renderExerciseSelection();
 }
 function renderExerciseSelection(){
- modal(`<div class="handle"></div><h2>Select Exercises</h2><div class="muted">Exercises are sorted alphabetically. Select the exercises you performed.</div>${workoutDraft.muscles.map(id=>{let ex=sortedExercisesForMuscle(id);return `<div class="field"><div class="section-title">${esc(muscle(id))}</div>${ex.length?ex.map(e=>`<button class="exercise-row exercise-pick pick ${workoutDraft.exercises.some(x=>x.exerciseId===e.id)?"selected":""}" data-exercise="${e.id}" onclick="this.classList.toggle('selected')"><span>${esc(e.name)}</span><span class="pick-plus"><svg class="icon" aria-hidden="true"><use href="#plus"/></svg></span></button>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`}).join("")}<div class="modal-actions"><button class="primary btn-wide" onclick="continueToSetDetails()">Next: Enter Weight & Reps</button><button class="outline btn-wide" onclick="openWorkout(workoutDraft.muscles,workoutDraft.date,true)">Back</button></div>`)
+    const muscles = workoutDraft.muscles || [];
+    const selected = workoutDraft.exercises || [];
+
+    const content = muscles.map(mid=>{
+        const m = state.muscles.find(x=>x.id===mid);
+        if(!m) return "";
+
+        const exercises = state.exercises
+            .filter(e=>e.muscleId===mid)
+            .sort((a,b)=>a.name.localeCompare(b.name));
+
+        return `
+            <section class="exercise-selection-group">
+                <h3 class="exercise-selection-group-title">${esc(m.name)}</h3>
+                <div class="exercise-selection-list">
+                    ${exercises.map(e=>{
+                        const isSelected = selected.includes(e.id);
+                        return `
+                            <button
+                                type="button"
+                                class="exercise-selection-row ${isSelected ? "selected" : ""}"
+                                data-exercise-id="${e.id}"
+                                onclick="toggleWorkoutExercise('${e.id}')"
+                            >
+                                <span class="exercise-selection-name">${esc(e.name)}</span>
+                                <span class="exercise-selection-check">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use href="#${isSelected ? "check" : "plus"}"></use>
+                                    </svg>
+                                </span>
+                            </button>
+                        `;
+                    }).join("")}
+                </div>
+            </section>
+        `;
+    }).join("");
+
+    modal(`
+        <div class="workout-entry-header">
+            <div class="handle"></div>
+            <h2>Select Exercises</h2>
+            <div class="muted workout-form-description">
+                Exercises are sorted alphabetically. Select the exercises you performed.
+            </div>
+        </div>
+
+        <div class="workout-entry-scroll">
+            ${content}
+        </div>
+
+        <div class="modal-actions workout-modal-actions">
+            <button class="primary btn-wide workout-next-button" type="button"
+                    onclick="nextToDetails()">
+                Next: Enter Weight &amp; Reps
+                <svg class="icon" aria-hidden="true"><use href="#arrow-right"></use></svg>
+            </button>
+            <button class="outline btn-wide workout-cancel-button" type="button"
+                    onclick="openWorkout()">
+                Back
+            </button>
+        </div>
+    `, "workout-entry-sheet");
 }
+
 function continueToSetDetails(){
  const ids=[...document.querySelectorAll("[data-exercise].selected")].map(x=>x.dataset.exercise).filter(id=>state.exercises.some(e=>e.id===id));
  if(!ids.length){notify("Select at least one exercise.");return}
