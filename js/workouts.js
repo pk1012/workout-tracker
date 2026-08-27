@@ -27,10 +27,16 @@ function durationLabel(n){if(n==null)return "—";let h=Math.floor(n/60),m=n%60;
 function weekStart(d){let x=new Date(d);x.setHours(0,0,0,0);let day=x.getDay();let mondayOffset=(day+6)%7;x.setDate(x.getDate()-mondayOffset);return x}
 function weekEnd(d){let x=weekStart(d);x.setDate(x.getDate()+6);return x}
 function weekNumber(d){
- // App week numbering follows the approved UI baseline: Aug 25–31, 2025 is #46.
- const anchor=new Date("2025-08-25T00:00:00");
- const current=weekStart(d);
- return 46 + Math.round((current-anchor)/604800000);
+ // Use ISO-8601 week numbers so the label matches the calendar week.
+ // Examples: 2–8 Feb 2025 = #06, 5–11 May 2025 = #19,
+ // 24–30 Aug 2026 = #35, 13–19 Sep 2027 = #37.
+ const x=new Date(d);
+ x.setHours(0,0,0,0);
+ // ISO week: Thursday determines the ISO year.
+ const day=x.getDay() || 7;
+ x.setDate(x.getDate() + 4 - day);
+ const yearStart=new Date(x.getFullYear(),0,1);
+ return Math.ceil((((x-yearStart)/86400000)+1)/7);
 }
 function rangeLabel(start){let end=weekEnd(start),a=start.toLocaleDateString("en-IN",{month:"short",day:"numeric"}),b=end.toLocaleDateString("en-IN",{month:"short",day:"numeric"});return `${a} – ${b}`}
 function weekKey(d){return dateKey(weekStart(d))}
@@ -119,7 +125,8 @@ function openWorkout(muscleIds=[],dateValue=dateKey(selected),resume=false){
  let ms=sortedMuscles(), chosen=new Set(muscleIds), existing=resume&&state.activeWorkout;
  if(!muscleIds.length&&!resume)workoutDraft={date:dateValue,muscles:[],exercises:[],unit:"kg",startTime:localTimeValue(),endTime:""};
  else workoutDraft={date:existing?.date||dateValue,muscles:existing?.muscles||muscleIds,exercises:existing?.exercises||[],unit:existing?.unit||"kg",startTime:existing?.startTime||localTimeValue(),endTime:existing?.endTime||""};
- modal(`<div class="sheet workout-entry-sheet"><div class="handle"></div><h2>${resume?"Start Workout":"Start Workout"}</h2><div class="muted workout-entry-subtitle">Choose the date, start time and muscle groups.</div><div class="field workout-date-field"><label>Date</label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-grid"><div class="field"><label>Start time</label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field"><label>End time <span class="muted">(enter when completed)</span></label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-field"><label>Muscle groups</label><div class="grid">${ms.map(m=>`<button class="pick workout-muscle-pick ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(m.name)}</span></button>`).join("")}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide" onclick="closeModal()">Cancel</button></div></div>`)
+ modal(`<div class="workout-entry-header"><div class="handle"></div><h2>${resume?"Start Workout":"Start Workout"}</h2><div class="muted workout-entry-subtitle">Choose the date, start time and muscle groups.</div></div><div class="workout-entry-scroll"><div class="field workout-date-field"><label>Date</label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-grid"><div class="field"><label>Start time</label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field"><label>End time <span class="muted">(enter when completed)</span></label><div class="workout-input-wrap"><svg class="workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-field"><label>Muscle groups</label><div class="grid">${ms.map(m=>`<button class="pick workout-muscle-pick ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(m.name)}</span></button>`).join("")}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide" onclick="closeModal()">Cancel</button></div>`,"workout-entry-sheet")
+ document.body.classList.add("workout-form-open")
 }
 function chooseExercises(){
  let ids=[...document.querySelectorAll("[data-muscle].selected")].map(x=>x.dataset.muscle),date=document.getElementById("workDate")?.value,start=document.getElementById("startTime")?.value,end=document.getElementById("endTime")?.value;
