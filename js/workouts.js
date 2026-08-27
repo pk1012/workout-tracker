@@ -115,7 +115,22 @@ function selectWorkoutDay(k){selected=new Date(k+"T00:00:00");selectedWeekStart=
 function goToWeekDay(k){go("workouts");selectWorkoutDay(k)}
 function openWeekPicker(){
  let s=weekStart(new Date()),items=[];for(let i=0;i<52;i++){let d=new Date(s);d.setDate(d.getDate()-i*7);items.push(d)}
- modal(`<div class="handle"></div><div class="picker-title"><h2>Select Week</h2><button aria-label="Close" onclick="closeModal()"><svg class="icon"><use href="#close"/></svg></button></div><div class="week-list">${items.map(d=>`<button onclick="chooseWeek('${dateKey(d)}')" class="${dateKey(d)===dateKey(selectedWeekStart)?"chosen":""}"><b>#${weekNumber(d)}</b><span>${rangeLabel(d)}</span>${iAmThisWeek(d)?'<em>This Week <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div><button class="outline btn-wide" onclick="closeModal()">Close</button>`)
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <div class="picker-title">
+    <h2 class="workout-form-title">Select Week</h2>
+    <button aria-label="Close" onclick="closeModal()"><svg class="icon"><use href="#close"/></svg></button>
+   </div>
+  </div>
+  <div class="workout-entry-scroll">
+   <div class="week-list">${items.map(d=>`<button onclick="chooseWeek('${dateKey(d)}')" class="${dateKey(d)===dateKey(selectedWeekStart)?"chosen":""}"><b>#${weekNumber(d)}</b><span>${rangeLabel(d)}</span>${iAmThisWeek(d)?'<em>This Week <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Close</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
 }
 function iAmThisWeek(d){return dateKey(d)===dateKey(weekStart(new Date()))}
 function chooseWeek(k){selectedWeekStart=weekStart(new Date(k+"T00:00:00"));selected=new Date(selectedWeekStart);closeModal();renderCalendar();renderHome()}
