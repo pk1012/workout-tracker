@@ -228,5 +228,27 @@ function saveWorkout(){
 function workoutSignature(w){const muscles=[...(w.muscles||[])].sort();const exercises=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg")).sort((a,b)=>a.exerciseId.localeCompare(b.exerciseId));return JSON.stringify({date:w.date,muscles,exercises})}
 function normalizedEntry(entry,fallbackUnit="kg"){if(typeof entry==="string")return {exerciseId:entry,sets:[],unit:fallbackUnit};const e=entry||{exerciseId:"",sets:[]};return {...e,unit:e.unit||fallbackUnit}}
 function formatSet(set,unit){return `${Number(set.weight)} ${unit||"kg"} · ${Number(set.reps)} reps`}
-function viewWorkout(id){let w=state.workouts.find(x=>x.id===id);if(!w)return;let entries=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg"));modal(`<div class="handle"></div><h2>${esc(w.muscles.map(muscle).join(" + "))}</h2><div class="muted">${new Date(w.date+"T00:00:00").toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · ${formatTime(w.startTime)} – ${formatTime(w.endTime)} · ${durationLabel(durationMinutes(w))}</div>${entries.map(e=>{let ex=state.exercises.find(x=>x.id===e.exerciseId);return `<div class="workout-detail card"><strong>${esc(ex?.name||"Deleted exercise")}</strong>${(e.sets||[]).map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${esc(formatSet(s,e.unit))}</span></div>`).join("")}</div>`}).join("")}<div class="modal-actions"><button class="outline btn-wide" onclick="deleteWorkout('${w.id}')">Delete Workout</button><button class="primary btn-wide" onclick="closeModal()">Done</button></div>`)}
+function viewWorkout(id){
+ let w=state.workouts.find(x=>x.id===id);if(!w)return;
+ let entries=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg"));
+ const details=entries.map(e=>{
+  let ex=state.exercises.find(x=>x.id===e.exerciseId);
+  return `<div class="workout-detail card"><strong>${esc(ex?.name||"Deleted exercise")}</strong>${(e.sets||[]).map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${esc(formatSet(s,e.unit))}</span></div>`).join("")}</div>`;
+ }).join("");
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <h2 class="workout-form-title">${esc(w.muscles.map(muscle).join(" + "))}</h2>
+   <div class="muted workout-form-description">${new Date(w.date+"T00:00:00").toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · ${formatTime(w.startTime)} – ${formatTime(w.endTime)} · ${durationLabel(durationMinutes(w))}</div>
+  </div>
+  <div class="workout-entry-scroll">
+   ${details}
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="outline btn-wide workout-cancel-button" onclick="deleteWorkout('${w.id}')">Delete Workout</button>
+   <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
+}
 function deleteWorkout(id){confirmAction("Delete this workout?",()=>{state.workouts=state.workouts.filter(w=>w.id!==id);save();closeModal();renderCalendar();renderHome()})}
