@@ -321,13 +321,10 @@ body{
   box-shadow:0 10px 32px rgba(0,0,0,.3);
 }
 
-/* Notification action — aligned with the greeting on the home header. */
-.notification-head{display:grid!important;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;border:1px solid #e4e2ee;background:#fff;box-shadow:0 4px 16px rgba(20,22,35,.045);color:#5b43f3;padding:0;cursor:pointer}
-.notification-head .icon{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-
 /* 1.7.25 — simplified home header/navigation */
 .bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))}
 .hero-card .hero-copy{width:100%;max-width:560px}
+.hero-art{display:none!important}
 @media(max-width:600px){
   .bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))}
   .nav-btn{min-width:0;padding-left:2px;padding-right:2px}
@@ -395,39 +392,121 @@ body{padding-bottom:0}
   .quick-grid i{width:34px;height:34px;margin-bottom:6px}
 }
 
+/* v30.3 — Quick Progress spacing refinement
+   CSS-only. Uses the actual Quick Progress selectors in the current HTML.
+   Weekly Activity spacing is intentionally unchanged. */
+.quick{
+  padding:20px 18px 20px;
+}
+.quick .section-head{
+  padding:0 2px;
+}
+.quick-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  margin-top:20px;
+}
+.quick-grid>div{
+  padding:0 10px;
+}
+.quick-grid i{
+  margin-bottom:11px;
+}
+.quick-grid span{
+  margin-top:4px;
+}
+.quick-grid small{
+  margin-top:6px;
+}
 
-/* v30.2 mobile spacing refinement — existing UI/structure unchanged */
-@media (max-width: 759px){
-  .weekly-card{
-    padding:22px 18px 19px;
-  }
-  .weekly-card .week-head{
-    margin-bottom:15px;
-  }
-  .weekly-card .days{
-    margin-top:12px;
-  }
-  .weekly-card .legend{
-    margin-top:15px;
-  }
-  .weekly-card .week-stats{
-    margin-top:16px;
-  }
-  .weekly-card .week-cta{
-    margin-top:16px;
-  }
-
+@media(max-width:600px){
   .quick{
-    padding:22px 14px 20px;
+    padding:18px 12px 17px;
   }
-  .quick .quick-head{
-    margin-bottom:15px;
+  .quick .section-head{
+    padding:0 2px;
   }
-  .quick .metric{
-    padding-left:10px;
-    padding-right:10px;
+  .quick-grid{
+    margin-top:16px;
   }
-  .quick .metric-icon{
+  .quick-grid>div{
+    padding:0 6px;
+  }
+  .quick-grid i{
     margin-bottom:7px;
   }
+}
+
+/* v30.4 — workout hero illustration */
+.hero-card .hero-copy{width:49%}
+.hero-card .hero-art{display:block!important;position:absolute;right:-3px;bottom:0;width:59%;height:100%;object-fit:contain;z-index:1;pointer-events:none}
+@media(max-width:600px){
+  .hero-card .hero-copy{width:54%}
+  .hero-card .hero-art{right:-2px;width:57%;height:100%}
+}
+
+/* v30.5 — Start Workout form: date-first layout + navigation-safe actions */
+.workout-entry-sheet{
+  padding-bottom:calc(104px + env(safe-area-inset-bottom));
+}
+.workout-entry-subtitle{font-size:16px;line-height:1.4}
+.workout-date-field{margin-top:22px}
+.workout-time-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.workout-input-wrap{position:relative}
+.workout-input-wrap .input{padding-left:50px}
+.workout-field-icon{
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  width:23px;
+  height:23px;
+  color:var(--primary);
+  z-index:2;
+  pointer-events:none;
+}
+.workout-muscle-field{margin-top:22px}
+.workout-muscle-pick{
+  min-height:74px;
+  padding:10px 6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  flex-direction:column;
+  font-size:15px;
+}
+.workout-muscle-icon{
+  width:25px;
+  height:25px;
+  display:grid;
+  place-items:center;
+  color:var(--primary);
+}
+.workout-muscle-icon .icon{width:25px;height:25px;stroke-width:1.7}
+.workout-selection-hint{
+  margin-top:14px;
+  min-height:48px;
+  border-radius:15px;
+  background:var(--soft);
+  color:#626a78;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  font-size:14px;
+}
+.workout-selection-hint .icon{width:20px;height:20px;color:var(--primary);flex:none}
+.workout-modal-actions{margin-top:14px;gap:10px}
+.workout-modal-actions .primary{display:flex;align-items:center;justify-content:center;gap:10px}
+.workout-modal-actions .primary .icon{width:24px;height:24px}
+.workout-modal-actions .outline{background:var(--card)}
+@media(max-width:600px){
+  .workout-entry-sheet{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+  .workout-entry-subtitle{font-size:15px}
+  .workout-time-grid{gap:9px}
+  .workout-input-wrap .input{padding-left:46px}
+  .workout-field-icon{left:14px;width:21px;height:21px}
+  .workout-muscle-pick{min-height:70px;font-size:14px;border-radius:15px}
+  .workout-muscle-icon,.workout-muscle-icon .icon{width:23px;height:23px}
+  .workout-selection-hint{font-size:13px}
 }
