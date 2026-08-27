@@ -952,22 +952,12 @@ body.workout-form-open .bottom-nav{
 }
 
 
-/* Progress cards: match the compact mobile card treatment used elsewhere */
-@media (max-width:600px){
-  .progress{
-    margin-left:16px;
-    margin-right:16px;
-    margin-bottom:14px;
-    padding:14px;
-    border-radius:16px;
-  }
-
-  .stats-four{
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
-  }
-
-  .stat{
-    padding:16px;
+/* Progress: Training Overview title matches Home Quick Progress */
+@media (max-width:600px) {
+  #progressView .training-overview h2,
+  #progressView .training-overview .card-title,
+  #progressView .training-overview .section-title {
+    font-size: 17px !important;
+    color: var(--text-primary) !important;
   }
 }
