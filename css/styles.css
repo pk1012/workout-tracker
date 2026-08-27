@@ -512,13 +512,12 @@ body{padding-bottom:0}
 }
 
 
-/* v30.6 — Start Workout sheet: grouped scrolling + fixed actions */
-body:has(#modal.show .workout-entry-sheet) .bottom-nav{display:none}
+/* v30.9 — Start Workout sheet: keep bottom navigation visible without overlap; grouped scrolling */
 .workout-entry-sheet{
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  padding-bottom:calc(20px + env(safe-area-inset-bottom));
+  padding-bottom:calc(82px + env(safe-area-inset-bottom));
 }
 .workout-entry-header{flex:none}
 .workout-entry-scroll{
@@ -528,15 +527,15 @@ body:has(#modal.show .workout-entry-sheet) .bottom-nav{display:none}
   overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
-  padding-bottom:4px;
+  padding-bottom:6px;
 }
 .workout-entry-scroll::-webkit-scrollbar{display:none}
 .workout-entry-scroll .field{break-inside:avoid}
 .workout-entry-scroll .time-grid{break-inside:avoid}
 .workout-modal-actions{
   flex:none;
-  margin-top:14px;
-  padding-top:12px;
+  margin-top:12px;
+  padding-top:10px;
   padding-bottom:0;
   background:var(--card);
 }
@@ -545,7 +544,7 @@ body:has(#modal.show .workout-entry-sheet) .bottom-nav{display:none}
     max-height:88vh;
     padding-left:16px;
     padding-right:16px;
-    padding-bottom:calc(12px + env(safe-area-inset-bottom));
+    padding-bottom:calc(78px + env(safe-area-inset-bottom));
   }
   .workout-entry-scroll{
     padding-right:2px;
@@ -554,5 +553,8 @@ body:has(#modal.show .workout-entry-sheet) .bottom-nav{display:none}
   .workout-modal-actions{
     margin-top:10px;
     padding-top:10px;
+  }
+  .workout-modal-actions .btn-wide{
+    min-height:52px;
   }
 }
