@@ -894,3 +894,11 @@ body.workout-form-open .bottom-nav{
     border-radius:0;
   }
 }
+
+/* 1.7.35 — Weekly Activity: a few extra pixels between day row, legend, and stats */
+.weekly-card .legend{margin:18px 2px 14px}
+.weekly-card .week-stats{padding:16px 0 14px}
+@media(max-width:600px){
+  .weekly-card .legend{margin:16px 1px 14px}
+  .weekly-card .week-stats{padding:14px 0 12px}
+}
