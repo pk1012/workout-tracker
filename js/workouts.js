@@ -27,10 +27,12 @@ function durationLabel(n){if(n==null)return "—";let h=Math.floor(n/60),m=n%60;
 function weekStart(d){let x=new Date(d);x.setHours(0,0,0,0);let day=x.getDay();let mondayOffset=(day+6)%7;x.setDate(x.getDate()-mondayOffset);return x}
 function weekEnd(d){let x=weekStart(d);x.setDate(x.getDate()+6);return x}
 function weekNumber(d){
- // App week numbering follows the approved UI baseline: Aug 25–31, 2025 is #46.
- const anchor=new Date("2025-08-25T00:00:00");
- const current=weekStart(d);
- return 46 + Math.round((current-anchor)/604800000);
+ const date = new Date(d);
+ date.setHours(0,0,0,0);
+ const day = date.getDay() || 7;
+ date.setDate(date.getDate() + 4 - day);
+ const yearStart = new Date(date.getFullYear(), 0, 1);
+ return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
 }
 function rangeLabel(start){let end=weekEnd(start),a=start.toLocaleDateString("en-IN",{month:"short",day:"numeric"}),b=end.toLocaleDateString("en-IN",{month:"short",day:"numeric"});return `${a} – ${b}`}
 function weekKey(d){return dateKey(weekStart(d))}
