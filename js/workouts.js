@@ -171,8 +171,42 @@ function continueToSetDetails(){
 }
 function renderSetDetails(){
  const selectedNames=workoutDraft.exercises.map(e=>state.exercises.find(x=>x.id===e.exerciseId)?.name||"Deleted exercise");
- modal(`<div class="handle"></div><h2>Enter Workout Details</h2><div class="muted">Add the weight and reps for each set.</div><div class="field unit-field"><label>Weight unit</label><div class="segment"><button class="unit-btn ${workoutDraft.unit==='kg'?'active':''}" onclick="setWorkoutUnit('kg')">kg</button><button class="unit-btn ${workoutDraft.unit==='lb'?'active':''}" onclick="setWorkoutUnit('lb')">lb</button></div></div>${workoutDraft.exercises.map((entry,i)=>{const name=selectedNames[i];return `<div class="set-editor card pad"><div class="set-editor-head"><strong>${esc(name)}</strong></div><div id="sets-${i}">${entry.sets.map((set,j)=>setRow(i,j,set)).join("")}</div><button class="add-set" onclick="addSet(${i})"><svg class="icon"><use href="#plus"/></svg> Add Set</button></div>`}).join("")}<div class="modal-actions"><button class="primary btn-wide" onclick="saveWorkout()">Complete Workout</button><button class="outline btn-wide" onclick="renderExerciseSelection()">Back</button></div>`)
+ const content=`
+   <div class="field unit-field">
+     <label>Weight unit</label>
+     <div class="segment">
+       <button class="unit-btn ${workoutDraft.unit==='kg'?'active':''}" onclick="setWorkoutUnit('kg')">kg</button>
+       <button class="unit-btn ${workoutDraft.unit==='lb'?'active':''}" onclick="setWorkoutUnit('lb')">lb</button>
+     </div>
+   </div>
+   ${workoutDraft.exercises.map((entry,i)=>{
+     const name=selectedNames[i];
+     return `<div class="set-editor card pad">
+       <div class="set-editor-head"><strong>${esc(name)}</strong></div>
+       <div id="sets-${i}">${entry.sets.map((set,j)=>setRow(i,j,set)).join("")}</div>
+       <button class="add-set" onclick="addSet(${i})">
+         <svg class="icon"><use href="#plus"></use></svg> Add Set
+       </button>
+     </div>`;
+   }).join("")}
+ `;
+
+ modal(`
+   <div class="workout-entry-header">
+     <div class="handle"></div>
+     <h2>Enter Workout Details</h2>
+     <div class="muted workout-form-description">Add the weight and reps for each set.</div>
+   </div>
+   <div class="workout-entry-scroll">
+     ${content}
+   </div>
+   <div class="modal-actions workout-modal-actions">
+     <button class="primary btn-wide workout-next-button" onclick="saveWorkout()">Complete Workout</button>
+     <button class="outline btn-wide workout-cancel-button" onclick="renderExerciseSelection()">Back</button>
+   </div>
+ `,"workout-entry-sheet");
 }
+
 function setRow(exIndex,setIndex,set){const remove=workoutDraft.exercises[exIndex].sets.length>1?`<button class="remove-set" aria-label="Remove set" onclick="removeSet(${exIndex},${setIndex})"><svg class="icon"><use href="#close"/></svg></button>`:`<span class="remove-placeholder"></span>`;return `<div class="set-row"><span class="set-number">${setIndex+1}</span><label class="set-field"><span>Weight</span><input class="input compact" type="number" min="0" step="0.1" value="${esc(set.weight??"")}" oninput="updateSet(${exIndex},${setIndex},'weight',this.value)"></label><label class="set-field"><span>Reps</span><input class="input compact" type="number" min="1" step="1" value="${esc(set.reps??"")}" oninput="updateSet(${exIndex},${setIndex},'reps',this.value)"></label>${remove}</div>`}
 function updateSet(i,j,k,v){if(workoutDraft.exercises[i]?.sets[j])workoutDraft.exercises[i].sets[j][k]=v}
 function addSet(i){workoutDraft.exercises[i].sets.push({weight:"",reps:""});renderSetDetails()}
