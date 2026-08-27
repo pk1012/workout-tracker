@@ -703,6 +703,36 @@ body{padding-bottom:0}
 }
 
 
+/* v31.3 — Keep modal forms above the floating bottom navigation. */
+.modal{
+  inset:0 0 calc(74px + env(safe-area-inset-bottom)) 0;
+}
+.sheet{
+  max-height:100%;
+}
+@media(max-width:600px){
+  .modal{
+    inset:0 0 calc(71px + env(safe-area-inset-bottom)) 0;
+  }
+}
+
+/* v31.3 — Center muscle-group icons within their buttons. */
+.workout-muscle-button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:4px;
+  text-align:center;
+}
+.workout-muscle-button .workout-muscle-icon{
+  display:grid;
+  place-items:center;
+  width:22px;
+  height:22px;
+  margin:0 auto;
+}
+
 /* v31.2 — Semantic names for Start Workout form elements.
    Typography restored to the app's existing mobile form scale; no layout/spacing changes. */
 .workout-form-title{}
