@@ -57,4 +57,19 @@ function isValidState(s){
 function applyRestore(restored,parsed){state=restored;save();if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);closeModal();go("workouts");notify("Backup restored successfully.","success")}
 function clearData(){confirmAction("Delete all workout data, exercises and muscle groups? This cannot be undone.",()=>{localStorage.removeItem("wt_state");location.reload()})}
 
-function about(){modal(`<div class="handle"></div><h2>About Workout Tracker</h2><div class="muted">Workout logging and exercise management.</div><div class="card pad about-card"><div class="about-row"><span>Version</span><strong>${VERSION}</strong></div><div class="about-row"><span>Build</span><strong>${BUILD}</strong></div><div class="about-row"><span>App</span><strong>Workout Tracker</strong></div><div class="about-row"><span>Support</span><span class="link">support@workouttracker.app</span></div></div><div class="modal-actions"><button class="primary btn-wide" onclick="closeModal()">Done</button></div>`)}
+function about(){
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <h2 class="workout-form-title">About Workout Tracker</h2>
+   <div class="muted workout-form-description">Workout logging and exercise management.</div>
+  </div>
+  <div class="workout-entry-scroll">
+   <div class="card pad about-card"><div class="about-row"><span>Version</span><strong>${VERSION}</strong></div><div class="about-row"><span>Build</span><strong>${BUILD}</strong></div><div class="about-row"><span>App</span><strong>Workout Tracker</strong></div><div class="about-row"><span>Support</span><span class="link">support@workouttracker.app</span></div></div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
+}
