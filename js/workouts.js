@@ -150,7 +150,7 @@ function renderExerciseSelection(){
   <div class="workout-entry-header">
    <div class="handle"></div>
    <h2>Select Exercises</h2>
-   <div class="muted workout-form-description">Exercises are sorted alphabetically. Select the exercises you performed.</div>
+   <div class="muted workout-form-description">Select the exercises you performed.</div>
   </div>
   <div class="workout-entry-scroll">
    ${exerciseContent}
