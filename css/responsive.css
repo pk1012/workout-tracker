@@ -439,7 +439,7 @@ select.input,
 .setting-section-title,
 .workout-week-head span,
 .workout-week-head strong,
-.workout-days button>span,
+.workout-days button>span{font-size:11px !important}
 .week-list b{font-size:12px !important}
 
 .selected-date{font-size:17px !important}
