@@ -657,10 +657,10 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   flex:0 0 auto;
 }
 
-/* 1.7.54 — Select Exercises rows: list rows aligned with title, muscle heading, and actions */
+/* 1.7.55 — Select Exercises rows: 15px from name to divider */
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
-  height:52px;
-  min-height:52px;
+  height:47px;
+  min-height:47px;
   width:100%;
   padding:0;
   border:0;
@@ -669,6 +669,7 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   background:transparent;
   box-shadow:none;
   box-sizing:border-box;
+  line-height:16px;
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected{
   border:0;
