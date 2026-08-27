@@ -510,3 +510,49 @@ body{padding-bottom:0}
   .workout-muscle-icon,.workout-muscle-icon .icon{width:23px;height:23px}
   .workout-selection-hint{font-size:13px}
 }
+
+
+/* v30.6 — Start Workout sheet: grouped scrolling + fixed actions */
+body.workout-form-open .bottom-nav{display:none}
+.workout-entry-sheet{
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom));
+}
+.workout-entry-header{flex:none}
+.workout-entry-scroll{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  padding-bottom:4px;
+}
+.workout-entry-scroll::-webkit-scrollbar{display:none}
+.workout-entry-scroll .field{break-inside:avoid}
+.workout-entry-scroll .time-grid{break-inside:avoid}
+.workout-modal-actions{
+  flex:none;
+  margin-top:14px;
+  padding-top:12px;
+  padding-bottom:0;
+  background:var(--card);
+}
+@media(max-width:600px){
+  .workout-entry-sheet{
+    max-height:88vh;
+    padding-left:16px;
+    padding-right:16px;
+    padding-bottom:calc(12px + env(safe-area-inset-bottom));
+  }
+  .workout-entry-scroll{
+    padding-right:2px;
+    padding-bottom:8px;
+  }
+  .workout-modal-actions{
+    margin-top:10px;
+    padding-top:10px;
+  }
+}
