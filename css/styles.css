@@ -851,3 +851,47 @@ body{padding-bottom:0}
   .modal:has(.workout-entry-sheet) .workout-entry-scroll{padding-bottom:6px}
   .modal:has(.workout-entry-sheet) .workout-modal-actions{margin-top:6px;padding-top:6px}
 }
+
+/* 1.7.33 — Start Workout: no dim overlay at the top corners or behind the tab bar */
+body.workout-form-open .modal,
+body.workout-form-open .modal.show{
+  background:var(--card);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  inset:0;
+}
+body.workout-form-open .modal:has(.workout-entry-sheet){
+  background:var(--card);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  inset:0;
+}
+body.workout-form-open .modal .sheet{
+  border-radius:0;
+  box-shadow:none;
+  max-width:none;
+  max-height:calc(100% - 71px - env(safe-area-inset-bottom));
+  height:calc(100% - 71px - env(safe-area-inset-bottom));
+}
+body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+  border-radius:0;
+  box-shadow:none;
+  max-width:none;
+  width:100%;
+  height:calc(100% - 71px - env(safe-area-inset-bottom));
+  max-height:calc(100% - 71px - env(safe-area-inset-bottom));
+}
+body.workout-form-open .bottom-nav{
+  background:var(--card);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  box-shadow:none;
+}
+@media(max-width:600px){
+  body.workout-form-open .modal .sheet,
+  body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+    height:calc(100% - 71px - env(safe-area-inset-bottom));
+    max-height:calc(100% - 71px - env(safe-area-inset-bottom));
+    border-radius:0;
+  }
+}
