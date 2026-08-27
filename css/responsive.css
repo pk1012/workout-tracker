@@ -560,3 +560,21 @@ body.workout-form-open .bottom-nav{
     padding-top:10px !important;
   }
 }
+
+/* 1.7.42 — Sheet floats above the tab bar; nav unchanged */
+body.workout-form-open .modal .sheet,
+body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+  height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - 16px) !important;
+  max-height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - 16px) !important;
+  margin-bottom:16px;
+  border-radius:24px !important;
+}
+@media(max-width:600px){
+  body.workout-form-open .modal .sheet,
+  body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+    height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - 16px) !important;
+    max-height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - 16px) !important;
+    margin-bottom:16px;
+    border-radius:24px !important;
+  }
+}
