@@ -321,6 +321,10 @@ body{
   box-shadow:0 10px 32px rgba(0,0,0,.3);
 }
 
+/* Notification action — aligned with the greeting on the home header. */
+.notification-head{display:grid!important;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;border:1px solid #e4e2ee;background:#fff;box-shadow:0 4px 16px rgba(20,22,35,.045);color:#5b43f3;padding:0;cursor:pointer}
+.notification-head .icon{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
 /* 1.7.25 — simplified home header/navigation */
 .bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))}
 .hero-card .hero-copy{width:100%;max-width:560px}
