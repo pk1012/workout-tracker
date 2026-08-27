@@ -343,3 +343,15 @@
 @media(max-width:370px){
   .bottom-nav{left:12px;right:12px}
 }
+
+/* 1.7.36 — Next/Cancel match the 16px form scale, not the 13px Home hero button */
+.modal:has(.workout-entry-sheet) .workout-modal-actions .primary.btn-wide.workout-next-button,
+.modal:has(.workout-entry-sheet) .workout-modal-actions .outline.btn-wide.workout-cancel-button{
+  font-size:16px !important;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.workout-date-section,
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .time-grid .field,
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.workout-muscle-groups-section{
+  margin-top:8px;
+  margin-bottom:8px;
+}

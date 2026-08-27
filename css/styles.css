@@ -929,12 +929,10 @@ body.workout-form-open .bottom-nav{
 .workout-end-time-input{
   font-size:16px !important;
 }
-.workout-muscle-button{font-size:13px !important;}
 .workout-selection-hint{font-size:13px !important;line-height:1.3;}
-.workout-next-button,
-.workout-cancel-button,
-.modal:has(.workout-entry-sheet) .workout-modal-actions .btn-wide{
-  font-size:13px !important;
+.modal:has(.workout-entry-sheet) .workout-modal-actions .primary.btn-wide.workout-next-button,
+.modal:has(.workout-entry-sheet) .workout-modal-actions .outline.btn-wide.workout-cancel-button{
+  font-size:16px !important;
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field{
   margin:8px 0;
