@@ -9,7 +9,20 @@ function backup(){
 }
 
 function restoreBackup(){
- modal(`<div class="handle"></div><h2>Backup & Restore</h2><div class="muted">Export a backup or restore one from a JSON file. Restoring replaces the current workout data.</div><div class="modal-actions"><button class="primary btn-wide" onclick="backup()">Export Backup</button><button class="outline btn-wide" onclick="document.getElementById('restoreFile').click()">Choose Backup File</button><input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreFromFile(this.files[0])"></div>`)
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <h2 class="workout-form-title">Backup & Restore</h2>
+   <div class="muted workout-form-description">Export a backup or restore one from a JSON file. Restoring replaces the current workout data.</div>
+  </div>
+  <div class="workout-entry-scroll"></div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="backup()">Export Backup</button>
+   <button class="outline btn-wide workout-cancel-button" onclick="document.getElementById('restoreFile').click()">Choose Backup File</button>
+   <input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreFromFile(this.files[0])">
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
 }
 
 function restoreFromFile(file){
@@ -20,7 +33,7 @@ function restoreFromFile(file){
    const parsed=JSON.parse(reader.result);
    const restored=parsed?.format==="workout-tracker-backup"?parsed.state:parsed;
    if(!isValidState(restored))throw new Error("Invalid backup format.");
-   confirmAction("Restore this backup? Your current workout data will be replaced.",()=>applyRestore(restored,parsed));
+   confirmAction("Restore this backup? Your current workout data will be replaced.",()=>applyRestore(restored,parsed),true);
    return;
   }catch(err){notify("Could not restore this backup. Please choose a valid Workout Tracker JSON backup.","error")}
  };
@@ -55,7 +68,7 @@ function isValidState(s){
 }
 
 function applyRestore(restored,parsed){state=restored;save();if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);closeModal();go("workouts");notify("Backup restored successfully.","success")}
-function clearData(){confirmAction("Delete all workout data, exercises and muscle groups? This cannot be undone.",()=>{localStorage.removeItem("wt_state");location.reload()})}
+function clearData(){confirmAction("Delete all workout data, exercises and muscle groups? This cannot be undone.",()=>{localStorage.removeItem("wt_state");location.reload()},true)}
 
 function about(){
  modal(`

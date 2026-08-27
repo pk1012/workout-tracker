@@ -25,7 +25,21 @@ function renderLibrary(){
 
 function openExercise(id="",muscleId=""){
  let e=id?state.exercises.find(x=>x.id===id):null,ms=sortedMuscles();
- modal(`<div class="handle"></div><h2>${e?"Edit Exercise":"Add Exercise"}</h2><div class="field"><label>Exercise name</label><input id="exerciseName" class="input" value="${e?esc(e.name):""}" placeholder="Exercise name"></div><div class="field"><label>Muscle group</label><select id="exerciseMuscle" class="input">${ms.map(m=>`<option value="${m.id}" ${((e&&e.muscleId)||muscleId)===m.id?"selected":""}>${esc(m.name)}</option>`).join("")}</select></div><div class="modal-actions"><button class="primary btn-wide" onclick="saveExercise('${id}')">Save Exercise</button><button class="outline btn-wide" onclick="closeModal()">Cancel</button></div>`)
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <h2 class="workout-form-title">${e?"Edit Exercise":"Add Exercise"}</h2>
+  </div>
+  <div class="workout-entry-scroll">
+   <div class="field"><label>Exercise name</label><input id="exerciseName" class="input" value="${e?esc(e.name):""}" placeholder="Exercise name"></div>
+   <div class="field"><label>Muscle group</label><select id="exerciseMuscle" class="input">${ms.map(m=>`<option value="${m.id}" ${((e&&e.muscleId)||muscleId)===m.id?"selected":""}>${esc(m.name)}</option>`).join("")}</select></div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="saveExercise('${id}')">Save Exercise</button>
+   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Cancel</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
 }
 function saveExercise(id){
  let name=document.getElementById("exerciseName")?.value.trim(),mid=document.getElementById("exerciseMuscle")?.value;
@@ -39,11 +53,24 @@ function saveExercise(id){
 }
 function deleteExercise(id){
  let e=state.exercises.find(x=>x.id===id);if(!e)return;
- confirmAction(`Delete “${e.name}”? Existing workout history will remain.`,()=>{state.exercises=state.exercises.filter(x=>x.id!==id);save();renderLibrary();renderExercises();})
+ confirmAction(`Delete “${e.name}”? Existing workout history will remain.`,()=>{state.exercises=state.exercises.filter(x=>x.id!==id);save();renderLibrary();renderExercises();},true)
 }
 function openMuscle(id=""){
  let m=id?state.muscles.find(x=>x.id===id):null;
- modal(`<div class="handle"></div><h2>${m?"Edit Muscle Group":"Add Muscle Group"}</h2><div class="field"><label>Name</label><input id="muscleName" class="input" value="${m?esc(m.name):""}" placeholder="e.g. Forearms"></div><div class="modal-actions"><button class="primary btn-wide" onclick="saveMuscle('${id}')">Save Muscle Group</button><button class="outline btn-wide" onclick="closeModal()">Cancel</button></div>`)
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <h2 class="workout-form-title">${m?"Edit Muscle Group":"Add Muscle Group"}</h2>
+  </div>
+  <div class="workout-entry-scroll">
+   <div class="field"><label>Name</label><input id="muscleName" class="input" value="${m?esc(m.name):""}" placeholder="e.g. Forearms"></div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="saveMuscle('${id}')">Save Muscle Group</button>
+   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Cancel</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
 }
 function saveMuscle(id){
  let name=document.getElementById("muscleName")?.value.trim();
@@ -54,5 +81,5 @@ function saveMuscle(id){
 }
 function deleteMuscle(id){
  let m=state.muscles.find(x=>x.id===id),n=state.exercises.filter(e=>e.muscleId===id).length;if(!m)return;
- confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also be removed from the library.`:""}`,()=>{state.muscles=state.muscles.filter(x=>x.id!==id);state.exercises=state.exercises.filter(e=>e.muscleId!==id);save();renderLibrary();renderExercises();})
+ confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also be removed from the library.`:""}`,()=>{state.muscles=state.muscles.filter(x=>x.id!==id);state.exercises=state.exercises.filter(e=>e.muscleId!==id);save();renderLibrary();renderExercises();},true)
 }
