@@ -656,3 +656,32 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 .modal:has(.workout-entry-sheet) .workout-modal-actions{
   flex:0 0 auto;
 }
+
+/* 1.7.54 — Select Exercises rows: list rows aligned with title, muscle heading, and actions */
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
+  height:52px;
+  min-height:52px;
+  width:100%;
+  padding:0;
+  border:0;
+  border-radius:0;
+  border-top:1px solid var(--line);
+  background:transparent;
+  box-shadow:none;
+  box-sizing:border-box;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected{
+  border:0;
+  border-top:1px solid var(--line);
+  border-radius:0;
+  background:var(--soft);
+  box-shadow:none;
+}
+[data-theme=dark] .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
+  background:transparent;
+  box-shadow:none;
+}
+[data-theme=dark] .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected{
+  background:var(--soft);
+  box-shadow:none;
+}
