@@ -701,3 +701,48 @@ body{padding-bottom:0}
   .workout-modal-actions{padding-top:10px}
   .workout-modal-actions .btn-wide{height:40px;min-height:40px;font-size:22px}
 }
+
+
+/* v31.2 — Semantic names for Start Workout form elements.
+   Typography restored to the app's existing mobile form scale; no layout/spacing changes. */
+.workout-form-title{}
+.workout-form-description{}
+.workout-date-section{}
+.workout-date-label{}
+.workout-date-field{}
+.workout-date-icon{}
+.workout-date-input{}
+.workout-time-section{}
+.workout-start-time-section{}
+.workout-start-time-label{}
+.workout-start-time-field{}
+.workout-start-time-icon{}
+.workout-start-time-input{}
+.workout-end-time-section{}
+.workout-end-time-label{}
+.workout-end-time-field{}
+.workout-end-time-icon{}
+.workout-end-time-input{}
+.workout-muscle-groups-section{}
+.workout-muscle-groups-label{}
+.workout-muscle-groups-grid{}
+.workout-muscle-button{}
+.workout-muscle-icon{}
+.workout-selection-hint{}
+.workout-next-button{}
+.workout-cancel-button{}
+
+/* Font-size corrections only */
+.workout-entry-header .workout-form-title{font-size:26px;}
+.workout-entry-header .workout-form-description{font-size:15px !important;line-height:1.38;}
+.workout-date-label,
+.workout-start-time-label,
+.workout-end-time-label,
+.workout-muscle-groups-label{font-size:14px !important;line-height:1.2;}
+.workout-date-input,
+.workout-start-time-input,
+.workout-end-time-input{font-size:16px !important;}
+.workout-muscle-button{font-size:15px !important;}
+.workout-selection-hint{font-size:14px !important;line-height:1.2;}
+.workout-next-button,
+.workout-cancel-button{font-size:15px !important;}
