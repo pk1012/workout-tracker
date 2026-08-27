@@ -578,3 +578,39 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
     border-radius:24px !important;
   }
 }
+
+/* 1.7.43 — Dim everything except the sheet and the nav island */
+body.workout-form-open .modal,
+body.workout-form-open .modal.show,
+body.workout-form-open .modal:has(.workout-entry-sheet){
+  inset:0 !important;
+  background:rgba(16,18,24,.42) !important;
+}
+body.workout-form-open .modal .sheet,
+body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+  height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (16px + 62px + 9px + env(safe-area-inset-bottom, 0px))) !important;
+  max-height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (16px + 62px + 9px + env(safe-area-inset-bottom, 0px))) !important;
+  margin-bottom:calc(16px + 62px + 9px + env(safe-area-inset-bottom, 0px)) !important;
+  border-radius:24px !important;
+}
+body.workout-form-open .bottom-nav{
+  z-index:80;
+}
+[data-theme=dark] body.workout-form-open .modal,
+[data-theme=dark] body.workout-form-open .modal.show,
+[data-theme=dark] body.workout-form-open .modal:has(.workout-entry-sheet){
+  background:rgba(0,0,0,.5) !important;
+}
+@media(max-width:600px){
+  body.workout-form-open .modal,
+  body.workout-form-open .modal.show,
+  body.workout-form-open .modal:has(.workout-entry-sheet){
+    inset:0 !important;
+  }
+  body.workout-form-open .modal .sheet,
+  body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
+    height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (16px + 62px + 9px + env(safe-area-inset-bottom, 0px))) !important;
+    max-height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (16px + 62px + 9px + env(safe-area-inset-bottom, 0px))) !important;
+    margin-bottom:calc(16px + 62px + 9px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
