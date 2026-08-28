@@ -62,26 +62,11 @@
   flex:none;
 }
 
-/* View Workout spacing: group header then 14px to exercise cards;
-   each exercise is a card with 8px 14px padding (workout-detail). */
-#library-management .library-group{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  margin:0 24px 18px;
-}
-#library-management .exercise-row{
-  padding:8px 14px;
-  border-top:0;
-}
-#library-management .library-group .empty{padding:8px 14px}
-
+/* Library group cards share the app card geometry. */
+#library-management .exercise-row{padding:12px 0}
 @media (max-width:600px){
-  #library-management .library-group,
   #library-management .section{
     margin:0 16px 14px;
-  }
-  #library-management .section{
     padding:14px;
     border-radius:16px;
   }
