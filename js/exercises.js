@@ -207,21 +207,22 @@ function openExerciseHistory(id){
  });
  const latest=history[0]?.entry;
  const unit=latest?.unit||history[0]?.workout?.unit||"kg";
- const body=history.length?history.slice(0,8).map(({workout,entry})=>{
+ const hasHistory=history.length>0;
+ const body=hasHistory?history.slice(0,8).map(({workout,entry})=>{
   const dateLabel=new Date(`${workout.date}T00:00:00`).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
   const sets=entry.sets||[];
   const rows=sets.length
    ?sets.map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${Number(s.weight)===0?`Bodyweight · ${Number(s.reps)} reps`:esc(formatSet(s,entry.unit||unit))}</span></div>`).join("")
    :`<div class="detail-set"><span>No sets recorded</span></div>`;
   return `<div class="workout-detail card"><strong>${esc(dateLabel)}</strong>${rows}</div>`;
- }).join(""):`<div class="empty card">Complete this exercise in a workout to see its history.</div>`;
+ }).join(""):`<p class="exercise-history-empty">Complete this exercise in a workout to see its history.</p>`;
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
    <h2 class="workout-form-title">${esc(exercise.name)}</h2>
    <div class="muted workout-form-description">${esc(exerciseMuscleName(exercise))} · Exercise history</div>
   </div>
-  <div class="workout-entry-scroll">${body}</div>
+  <div class="workout-entry-scroll${hasHistory?"":" exercise-history-empty-scroll"}">${body}</div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
   </div>
