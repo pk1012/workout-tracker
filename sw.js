@@ -1,25 +1,25 @@
-const CACHE_NAME = "workout-tracker-v124";
+const CACHE_NAME = "workout-tracker-v125";
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./apple-touch-icon.png",
-  "./css/styles.css?v=1.7.123",
-  "./css/components.css?v=1.7.123",
-  "./css/responsive.css?v=1.7.123",
-  "./css/home.css?v=1.7.123",
-  "./css/workouts.css?v=1.7.123",
-  "./css/progress.css?v=1.7.123",
-  "./css/exercises.css?v=1.7.123",
-  "./css/settings.css?v=1.7.123",
-  "./js/data.js",
-  "./js/workouts.js",
-  "./js/home.js",
-  "./js/exercises.js",
-  "./js/progress.js",
-  "./js/settings.js",
-  "./js/app.js",
+  "./css/styles.css?v=1.7.124",
+  "./css/components.css?v=1.7.124",
+  "./css/responsive.css?v=1.7.124",
+  "./css/home.css?v=1.7.124",
+  "./css/workouts.css?v=1.7.124",
+  "./css/progress.css?v=1.7.124",
+  "./css/exercises.css?v=1.7.124",
+  "./css/settings.css?v=1.7.124",
+  "./js/data.js?v=1.7.124",
+  "./js/workouts.js?v=1.7.124",
+  "./js/home.js?v=1.7.124",
+  "./js/exercises.js?v=1.7.124",
+  "./js/progress.js?v=1.7.124",
+  "./js/settings.js?v=1.7.124",
+  "./js/app.js?v=1.7.124",
   "./assets/icons/icon-180.png",
   "./assets/icons/icon-512.png",
   "./assets/workout-hero.png",
@@ -37,6 +37,10 @@ self.addEventListener("install", event => {
       .then(cache => cache.addAll(APP_SHELL))
       .then(() => self.skipWaiting())
   );
+});
+
+self.addEventListener("message", event => {
+  if(event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
@@ -67,7 +71,7 @@ self.addEventListener("fetch", event => {
 
   // Always prefer the newly deployed HTML/CSS/JS.
   // Use the cached copy only when offline.
-  if (NETWORK_FIRST_TYPES.has(request.destination)) {
+  if (request.mode === "navigate" || NETWORK_FIRST_TYPES.has(request.destination)) {
     event.respondWith(
       fetch(request, { cache: "no-store" })
         .then(response => {

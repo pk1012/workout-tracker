@@ -44,9 +44,36 @@ function appBasePath(){
  }
  return "";
 }
-if("serviceWorker" in navigator && !location.hostname.endsWith("github.io")){
+if("serviceWorker" in navigator){
  const base=appBasePath();
- const swUrl=`${base||"./"}sw.js`;
+ const swUrl=base?`${base}sw.js`:`./sw.js`;
  const scope=base||"./";
- window.addEventListener("load",()=>navigator.serviceWorker.register(swUrl,{scope,updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{}));
+ let watching=false;
+ const checkUpdate=()=>{
+  navigator.serviceWorker.register(swUrl,{scope,updateViaCache:"none"}).then(reg=>{
+   reg.update();
+   if(reg.waiting)reg.waiting.postMessage({type:"SKIP_WAITING"});
+   if(watching)return;
+   watching=true;
+   reg.addEventListener("updatefound",()=>{
+    const worker=reg.installing;
+    if(!worker)return;
+    worker.addEventListener("statechange",()=>{
+     if(worker.state==="installed"&&navigator.serviceWorker.controller){
+      worker.postMessage({type:"SKIP_WAITING"});
+     }
+    });
+   });
+  }).catch(()=>{});
+ };
+ window.addEventListener("load",checkUpdate);
+ document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible")checkUpdate();
+ });
+ let reloading=false;
+ navigator.serviceWorker.addEventListener("controllerchange",()=>{
+  if(reloading)return;
+  reloading=true;
+  location.reload();
+ });
 }

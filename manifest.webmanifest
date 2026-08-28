@@ -1,6 +1,8 @@
 {
   "name": "Workout Tracker",
   "short_name": "Workouts",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f7f8fa",
   "theme_color": "#5b43f3",
