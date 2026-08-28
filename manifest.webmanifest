@@ -1,20 +1,21 @@
 {
+  "id": "/workout-tracker/",
   "name": "Workout Tracker",
   "short_name": "Workouts",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/workout-tracker/",
+  "scope": "/workout-tracker/",
   "display": "standalone",
   "background_color": "#f7f8fa",
   "theme_color": "#5b43f3",
   "icons": [
     {
-      "src": "assets/icons/icon-180.png",
+      "src": "/workout-tracker/assets/icons/icon-180.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/icons/icon-512.png",
+      "src": "/workout-tracker/assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
