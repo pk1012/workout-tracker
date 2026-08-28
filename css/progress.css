@@ -95,30 +95,12 @@
   font-size:11px;
 }
 
-#progress .progress-history-list{
-  overflow:hidden;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  box-shadow:0 4px 18px rgba(20,22,35,.03);
-}
-
-/* History rows are the shared .workout-card; only the list container styling
-   (flat rows with dividers instead of floating cards) is overridden here. */
+/* Separate floating cards, same stack as Recent Workouts. */
 #progress .progress-history-list .workout-card{
-  margin:0;
-  border:0;
-  border-radius:0;
-  box-shadow:none;
-  background:var(--card);
+  margin-bottom:10px;
 }
-
-#progress .progress-history-list .workout-card + .workout-card{
-  border-top:1px solid var(--line);
-}
-
-#progress .progress-history-list .workout-card:active{
-  background:var(--soft);
+#progress .progress-history-list .workout-card:last-child{
+  margin-bottom:0;
 }
 
 /* Same 5px title→date, 7px date→meta rhythm as Workouts cards. */

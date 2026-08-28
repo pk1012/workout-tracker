@@ -55,12 +55,11 @@ function progressWorkoutMeta(workout){
   return parts.join(" • ");
 }
 
-/* History rows reuse the Workouts card anatomy (.workout-card) so both stay in
-   sync; the bordered list container with dividers is the one deliberate difference. */
+/* History cards reuse the Workouts card anatomy (.workout-card.card). */
 function progressWorkoutCard(workout){
   const muscles=(workout.muscles||[]).map(muscle).filter(Boolean);
   const title=muscles.length ? muscles.join(" + ") : "Workout";
-  return `<button type="button" class="workout-card" onclick="viewWorkout('${esc(workout.id||"")}')">
+  return `<button type="button" class="workout-card card" onclick="viewWorkout('${esc(workout.id||"")}')">
     <div class="workout-avatar" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></div>
     <div class="workout-card-copy">
       <strong>${esc(title)}</strong>
