@@ -47,7 +47,7 @@
     height:auto;
     padding:11px;
     gap:10px;
-    border-radius:15px;
+    border-radius:var(--radius);
   }
   .workout-avatar{
     width:54px;height:54px;border-radius:12px;
@@ -529,4 +529,19 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 }
 .modal:has(.workout-entry-sheet) .detail-set:last-child{
   padding-bottom:0;
+}
+
+/* Page cards share one corner radius (--radius: 16 phone / 18 desktop). */
+.card,
+.hero-card,
+.workout-card,
+.rest-card,
+.workout-week,
+.home-status,
+.weekly-card,
+.quick,
+.progress-overview,
+.exercise-screen-panel,
+.library-group{
+  border-radius:var(--radius);
 }

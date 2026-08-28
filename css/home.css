@@ -26,7 +26,7 @@
   #home .hero-card{
     height:166px;
     margin:0 16px 14px;
-    border-radius:16px;
+    border-radius:var(--radius);
   }
   #home .hero-copy{
     padding:18px 0 18px 18px;
@@ -59,7 +59,7 @@
     min-height:0;
     margin:0 16px 14px;
     padding:16px;
-    border-radius:16px;
+    border-radius:var(--radius);
     overflow:visible;
   }
   #home .home-status h2{font-size:17px;line-height:1.1}
@@ -104,7 +104,7 @@
   #home .weekly-card{
     margin:0 16px 14px;
     padding:15px 10px 11px;
-    border-radius:16px;
+    border-radius:var(--radius);
   }
   #home .weekly-card h2,#home .quick h2{font-size:17px}
   #home .week-select{gap:6px;font-size:12px}
@@ -131,7 +131,7 @@
   }
   #home .full-week .icon{width:16px;height:16px}
 
-  #home .quick{margin:0 16px 14px;padding:15px 6px 12px;border-radius:16px}
+  #home .quick{margin:0 16px 14px;padding:15px 6px 12px;border-radius:var(--radius)}
   #home .quick .section-head button{font-size:12px}
   #home .quick-grid{margin-top:12px}
   #home .quick-grid>div{padding:0 3px}

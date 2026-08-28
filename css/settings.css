@@ -31,7 +31,7 @@
   height:auto;
   padding:14px 16px;
   gap:11px;
-  border-radius:16px;
+  border-radius:var(--radius);
   box-shadow:0 4px 18px rgba(20,22,35,.03);
 }
 
@@ -95,7 +95,7 @@
   #more .settings .setting{
     padding:14px 16px;
     gap:11px;
-    border-radius:16px;
+    border-radius:var(--radius);
   }
 
   #more .setting-icon{
@@ -156,7 +156,7 @@
 @media (max-width:600px){
   #library-management .section{
     margin:0 16px 14px;
-    border-radius:16px;
+    border-radius:var(--radius);
   }
   #library-management .library-group{padding:12px 14px}
 }
