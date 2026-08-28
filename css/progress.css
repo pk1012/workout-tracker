@@ -95,15 +95,12 @@
 
   #progress .progress-section-head h2{font-size:17px}
 
-  #progress .progress-section-head p{font-size:12px}
-
   #progress .progress-stats{margin-top:14px}
 
   #progress .progress-stat{padding:12px 4px}
   #progress .progress-stat strong{font-size:18px}
-  #progress .progress-stat span{font-size:9px}
 
-  #progress .progress-footnote{font-size:10px;margin-top:11px}
+  #progress .progress-footnote{margin-top:11px}
 
   #progress .recent-section .workout-card{min-height:96px}
 }
