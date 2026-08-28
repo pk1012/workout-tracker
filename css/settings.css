@@ -1,0 +1,56 @@
+/* Settings (#more) and Exercise Library (#library-management).
+   About is a modal, so .about-row / .about-card are not scoped to #more. */
+
+#more .setting-main{min-width:0}
+#more .setting-title,
+#more .setting-desc{display:block;line-height:1.25}
+#more .setting-desc{line-height:1.35;overflow-wrap:anywhere}
+#more .theme-setting .setting-main{min-width:120px}
+
+#more .setting-section-title{
+  font-size:11px;
+  letter-spacing:1px;
+  font-weight:750;
+  color:#8a909b;
+}
+#more .settings .setting{
+  min-height:74px;
+  border-radius:16px;
+  box-shadow:0 4px 18px rgba(20,22,35,.03);
+}
+#more .setting-icon{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:var(--soft);
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+}
+#more .setting-icon .icon{
+  width:20px;
+  height:20px;
+  stroke-width:1.8;
+}
+#more .setting-title{font-size:15px;font-weight:700}
+#more .setting-desc{font-size:12px;color:#7b828f}
+#more .about-title{padding-top:31px}
+
+@media (max-width:600px){
+  #more .settings .setting{min-height:68px}
+  #more .setting-icon{width:36px;height:36px}
+  #more .setting-title{font-size:14px}
+  #more .setting-desc{font-size:11px}
+}
+
+#library-management .back-btn{padding:10px 14px}
+
+.about-row{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+}
+.about-row:last-child{border:0}
+.about-card{margin-top:20px}

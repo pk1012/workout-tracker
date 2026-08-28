@@ -1,9 +1,7 @@
-/* Supplemental component rules retained for existing Exercise Library / Settings flows. */
-.setting-main{min-width:0}.setting-title,.setting-desc{display:block;line-height:1.25}.setting-desc{line-height:1.35;overflow-wrap:anywhere}.theme-setting .setting-main{min-width:120px}
+/* Supplemental rules for Exercise Library actions and leftover list/progress polish. */
 .actions{display:flex;gap:14px;font-weight:700}.edit{color:var(--primary)}.delete{color:#d94b5b}
 .exercise-group .exercise-row{padding:10px 0}
 .set-editor-head{font-size:16px;margin-bottom:10px}
-.about-row{display:flex;justify-content:space-between;gap:18px;padding:14px 0;border-bottom:1px solid var(--line)}.about-row:last-child{border:0}
 
 /* 1.7.48 — Exercises page: match Home card geometry */
 @media (max-width: 600px) {
