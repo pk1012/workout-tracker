@@ -4,7 +4,7 @@
 }
 
 #exercises .page-head{
-  padding:26px 34px 18px;
+  padding:26px 24px 18px;
 }
 
 #exercises .compact-head h1{
@@ -19,7 +19,7 @@
 }
 
 #exercises #exerciseList{
-  padding:0 34px;
+  padding:0 24px;
 }
 
 #exercises .exercise-screen-toolbar{
@@ -216,8 +216,8 @@
 .exercise-history-entry span{display:block;color:var(--muted);font-size:14px;line-height:1.45}
 
 @media(max-width:600px){
-  #exercises .page-head{padding:26px 34px 17px}
-  #exercises #exerciseList{padding:0 34px}
+  #exercises .page-head{padding:19px 16px 13px}
+  #exercises #exerciseList{padding:0 16px}
   #exercises .exercise-screen-toolbar{grid-template-columns:minmax(0,1fr) 132px;gap:12px}
   #exercises .exercise-search,
   #exercises .exercise-filter-button{height:58px;border-radius:16px}
