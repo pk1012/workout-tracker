@@ -243,6 +243,7 @@
 
 /* Filter sheet — reuse week-picker list inside workout-entry-sheet. */
 .exercise-history-filter-list{
+  margin-top:14px;
   margin-bottom:0;
 }
 .exercise-history-filter-list button{
