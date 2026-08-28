@@ -1,0 +1,73 @@
+/* Workouts page only — all selectors are scoped to #workouts. */
+
+/* 1.7.62 — Workouts: even vertical rhythm */
+#workouts .page-head{
+  padding-bottom:14px;
+}
+#workouts .workout-week,
+#workouts .day-section,
+#workouts .recent-section{
+  margin-bottom:14px;
+}
+#workouts .workout-week-head{
+  margin-bottom:14px;
+}
+#workouts .workout-week .legend{
+  margin-top:14px;
+  margin-bottom:0;
+}
+#workouts .week-picker-link{
+  margin-top:14px;
+  padding-top:0;
+  padding-bottom:0;
+}
+#workouts .selected-date{
+  margin-bottom:10px;
+}
+#workouts .recent-section .section-head{
+  margin-bottom:10px;
+}
+#workouts .workout-card,
+#workouts .rest-card{
+  margin-bottom:10px;
+}
+#workouts .day-section .workout-card:last-child,
+#workouts .day-section .rest-card:last-child,
+#workouts .recent-section .workout-card:last-child{
+  margin-bottom:0;
+}
+
+/* 1.7.67 — Workout cards: 5px title→counts, 7px counts→time */
+#workouts .workout-card:not(.rest-card) .workout-card-copy>span{
+  margin-top:5px;
+}
+#workouts .workout-card:not(.rest-card) .workout-card-copy>span + span{
+  margin-top:7px;
+}
+#workouts .workout-metrics{
+  margin-top:5px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:5px 16px;
+}
+#workouts .workout-metrics b{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding-right:0;
+  margin-right:0;
+  border-right:0;
+  grid-template-columns:none;
+}
+#workouts .workout-metrics b .inline-icon{
+  grid-row:auto;
+  flex:none;
+  width:12px;
+  height:12px;
+}
+#workouts .workout-metrics small{
+  display:inline;
+  grid-column:auto;
+  margin-top:0;
+}
