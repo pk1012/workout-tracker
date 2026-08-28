@@ -61,7 +61,10 @@
   outline:0;
   background:transparent;
   color:var(--text);
-  font-size:16px;
+  font-size:16px !important;
+  line-height:1.25;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
 }
 
 #exercises .exercise-search input::placeholder{color:#697383;opacity:1}
@@ -267,7 +270,7 @@
   #exercises .exercise-filter-button{height:52px}
   #exercises .exercise-search{gap:10px;padding:0 14px}
   #exercises .exercise-search .icon{width:19px;height:19px}
-  #exercises .exercise-search input{font-size:16px}
+  #exercises .exercise-search input{font-size:16px !important}
   #exercises .exercise-filter-button{font-size:15px;gap:7px}
   #exercises .exercise-filter-button .icon{width:19px;height:19px}
   #exercises .exercise-chip-scroller{gap:8px;padding:0 0 14px;margin-bottom:14px}

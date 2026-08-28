@@ -109,31 +109,35 @@ function renderExerciseScreenRows(items){
  `).join("")}</div>`;
 }
 
-function renderExercises(){
- const target=document.getElementById("exerciseList");
- if(!target)return;
- const items=exerciseScreenItems();
- target.innerHTML=`
+function renderExerciseScreenToolbar(){
+ return `
   <div class="exercise-screen-toolbar">
    <label class="exercise-search">
     <svg class="icon" aria-hidden="true"><use href="#search"/></svg>
-    <input id="exerciseSearch" type="search" value="${esc(exerciseScreenState.search)}" placeholder="Search exercises" autocomplete="off" oninput="setExerciseSearch(this.value)">
+    <input id="exerciseSearch" type="text" inputmode="search" enterkeyhint="search" value="${esc(exerciseScreenState.search)}" placeholder="Search exercises" autocomplete="off" autocorrect="off" spellcheck="false" oninput="setExerciseSearch(this.value)">
    </label>
    <button type="button" class="exercise-filter-button" onclick="openExerciseFilter()">
     <svg class="icon" aria-hidden="true"><use href="#filter"/></svg><span>Filter</span>
    </button>
   </div>
-  <div class="exercise-chip-scroller" role="tablist" aria-label="Exercise muscle groups">${exerciseCategoryButtons()}</div>
-  ${renderExerciseScreenRows(items)}
- `;
+  <div class="exercise-chip-scroller" role="tablist" aria-label="Exercise muscle groups">${exerciseCategoryButtons()}</div>`;
+}
+
+function refreshExerciseScreenRows(){
+ const rows=document.getElementById("exerciseScreenRows");
+ if(!rows){renderExercises();return}
+ rows.innerHTML=renderExerciseScreenRows(exerciseScreenItems());
+}
+
+function renderExercises(){
+ const target=document.getElementById("exerciseList");
+ if(!target)return;
+ target.innerHTML=`${renderExerciseScreenToolbar()}<div id="exerciseScreenRows">${renderExerciseScreenRows(exerciseScreenItems())}</div>`;
 }
 
 function setExerciseSearch(value){
  exerciseScreenState.search=value;
- const target=document.getElementById("exerciseList");
- if(target)renderExercises();
- const input=document.getElementById("exerciseSearch");
- if(input){input.focus();input.setSelectionRange(value.length,value.length)}
+ refreshExerciseScreenRows();
 }
 
 function setExerciseFilter(filter){
