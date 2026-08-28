@@ -66,6 +66,7 @@ if("serviceWorker" in navigator){
    });
   }).catch(()=>{});
  };
+ checkUpdate();
  window.addEventListener("load",checkUpdate);
  document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState==="visible")checkUpdate();

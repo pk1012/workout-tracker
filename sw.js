@@ -1,25 +1,25 @@
-const CACHE_NAME = "workout-tracker-v125";
+const CACHE_NAME = "workout-tracker-v126";
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./apple-touch-icon.png",
-  "./css/styles.css?v=1.7.124",
-  "./css/components.css?v=1.7.124",
-  "./css/responsive.css?v=1.7.124",
-  "./css/home.css?v=1.7.124",
-  "./css/workouts.css?v=1.7.124",
-  "./css/progress.css?v=1.7.124",
-  "./css/exercises.css?v=1.7.124",
-  "./css/settings.css?v=1.7.124",
-  "./js/data.js?v=1.7.124",
-  "./js/workouts.js?v=1.7.124",
-  "./js/home.js?v=1.7.124",
-  "./js/exercises.js?v=1.7.124",
-  "./js/progress.js?v=1.7.124",
-  "./js/settings.js?v=1.7.124",
-  "./js/app.js?v=1.7.124",
+  "./css/styles.css?v=1.7.125",
+  "./css/components.css?v=1.7.125",
+  "./css/responsive.css?v=1.7.125",
+  "./css/home.css?v=1.7.125",
+  "./css/workouts.css?v=1.7.125",
+  "./css/progress.css?v=1.7.125",
+  "./css/exercises.css?v=1.7.125",
+  "./css/settings.css?v=1.7.125",
+  "./js/data.js?v=1.7.125",
+  "./js/workouts.js?v=1.7.125",
+  "./js/home.js?v=1.7.125",
+  "./js/exercises.js?v=1.7.125",
+  "./js/progress.js?v=1.7.125",
+  "./js/settings.js?v=1.7.125",
+  "./js/app.js?v=1.7.125",
   "./assets/icons/icon-180.png",
   "./assets/icons/icon-512.png",
   "./assets/workout-hero.png",
@@ -69,9 +69,19 @@ self.addEventListener("fetch", event => {
 
   if (url.origin !== self.location.origin) return;
 
-  // Always prefer the newly deployed HTML/CSS/JS.
-  // Use the cached copy only when offline.
-  if (request.mode === "navigate" || NETWORK_FIRST_TYPES.has(request.destination)) {
+  const path = url.pathname;
+  const isAppFile =
+    request.mode === "navigate" ||
+    NETWORK_FIRST_TYPES.has(request.destination) ||
+    path.endsWith(".js") ||
+    path.endsWith(".css") ||
+    path.endsWith(".html") ||
+    path.endsWith(".webmanifest") ||
+    path.endsWith("/");
+
+  // iOS home-screen requests often have an empty destination, so they
+  // used to hit cache-first and keep the old unversioned data.js.
+  if (isAppFile) {
     event.respondWith(
       fetch(request, { cache: "no-store" })
         .then(response => {
@@ -90,7 +100,6 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Static assets use cache-first for fast loading.
   event.respondWith(
     caches.match(request)
       .then(cached => {
