@@ -5,8 +5,7 @@
   padding-bottom:14px;
 }
 #workouts .workout-week,
-#workouts .day-section,
-#workouts .recent-section{
+#workouts .day-section{
   margin-bottom:14px;
 }
 #workouts .workout-week-head{
@@ -24,16 +23,12 @@
 #workouts .selected-date{
   margin-bottom:10px;
 }
-#workouts .recent-section .section-head{
-  margin-bottom:10px;
-}
 #workouts .workout-card,
 #workouts .rest-card{
   margin-bottom:10px;
 }
 #workouts .day-section .workout-card:last-child,
-#workouts .day-section .rest-card:last-child,
-#workouts .recent-section .workout-card:last-child{
+#workouts .day-section .rest-card:last-child{
   margin-bottom:0;
 }
 
