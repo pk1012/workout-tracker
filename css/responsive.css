@@ -16,153 +16,10 @@
     padding-bottom:calc(74px + env(safe-area-inset-bottom));
   }
 
-  /* Header */
-  .home-head{
-    min-height:82px;
-    padding:12px 16px 10px;
-    gap:10px;
-    align-items:flex-start;
-  }
-  .home-head>div:first-child{min-width:0;flex:1;padding-top:3px}
-  .home-head h1{
-    font-size:18px;
-    line-height:1.1;
-    letter-spacing:-.4px;
-    white-space:nowrap;
-  }
-  .home-head p{font-size:13px;line-height:1.25;margin-top:5px}
-  .head-actions{gap:6px}
-  .head-pill,.head-icon{height:42px;border-radius:21px}
-  .head-pill{min-width:50px;padding:0 10px;font-size:15px}
-  .head-pill span{font-size:14px}
-  .head-pill .icon,.settings-head .icon{width:19px;height:19px}
-  .head-icon{width:42px}
-  .head-icon i{right:6px;top:6px;width:6px;height:6px}
-
-  /* Hero */
-  .hero-card{
-    height:166px;
-    margin:0 16px 14px;
-    border-radius:18px;
-  }
-  .hero-copy{
-    padding:18px 0 18px 18px;
-    width:54%;
-    z-index:2;
-  }
-  .hero-copy h2{font-size:22px;line-height:1.05;letter-spacing:-.45px}
-  .hero-copy p{font-size:13px;line-height:1.38;margin:7px 0 11px}
-  .hero-btn{
-    height:40px;
-    padding:0 14px;
-    border-radius:10px;
-    font-size:13px;
-    display:inline-flex;
-    align-items:center;
-    gap:7px;
-  }
-  .hero-btn .icon{width:17px;height:17px}
-  .hero-art{
-    right:-2px;
-    bottom:0;
-    width:57%;
-    height:100%;
-    object-fit:contain;
-    filter:drop-shadow(0 10px 12px rgba(45,25,130,.10));
-  }
-
-  /* Today's Status — content-driven, never clipped */
-  .home-status{
-    height:auto;
-    min-height:0;
-    margin:0 16px 14px;
-    padding:16px;
-    border-radius:16px;
-    overflow:visible;
-  }
-  .home-status h2{font-size:17px;line-height:1.1}
-  .status-main{
-    display:grid;
-    grid-template-columns:46px minmax(0,1fr);
-    gap:11px;
-    align-items:center;
-    margin-top:14px;
-  }
-  .status-icon{width:46px;height:46px}
-  .status-icon .icon{width:25px;height:25px}
-  .status-copy{min-width:0}
-  .status-copy strong{font-size:14px;line-height:1.2}
-  .status-copy span{font-size:12px;line-height:1.3;margin-top:4px}
-  .status-action{
-    grid-column:2;
-    justify-self:start;
-    width:auto;
-    min-height:40px;
-    height:40px;
-    padding:0 14px;
-    border-radius:10px;
-    font-size:12px;
-  }
-  .meter-label{
-    margin-top:16px;
-    font-size:11px;
-    display:grid;
-    grid-template-columns:auto 1fr auto;
-    gap:8px;
-    align-items:center;
-  }
-  .meter-label b{font-size:12px;margin:0;color:var(--green)}
-  .meter{height:7px;margin:8px 10px 0 56px}
-  .meter em{width:11px;height:11px}
-  .meter span{right:-22px;top:-7px;font-size:18px}
-  .meter span .icon{width:18px;height:18px}
-  .target-badge{margin:9px auto 0;padding:5px 9px;font-size:10px;border-radius:7px}
-  .status-note{margin:14px 0 2px 57px;font-size:11px}
-
-  /* Weekly activity */
-  .weekly-card{
-    margin:0 16px 14px;
-    padding:15px 10px 11px;
-    border-radius:16px;
-  }
   .section-head{padding:0 5px;gap:7px}
-  .weekly-card h2,.quick h2{font-size:17px}
-  .week-select{gap:6px;font-size:12px}
-  .week-select b{padding:5px 6px;border-radius:7px}
-  .week-select span{font-size:12px}
-  .week-select i{display:grid;place-items:center}
-  .week-select i .icon{width:14px;height:14px}
-  .week-days{grid-template-columns:repeat(7,minmax(0,1fr));gap:0;width:100%}
-  .week-day{gap:6px;min-width:0}
-  .week-day>span{font-size:11px;white-space:nowrap}
-  .week-day i,.workout-days i{width:31px;height:31px;font-size:14px}
-  .week-day i .icon{width:17px;height:17px}
+  .workout-days i{width:31px;height:31px;font-size:14px}
   .legend{gap:12px;margin:9px 5px;font-size:10px}
   .dot{width:8px;height:8px}
-  .week-stats{font-size:10px;padding:9px 0}
-  .week-stats span{padding:0 5px}
-  .week-stats b{margin-left:3px;font-size:10px}
-  .full-week{
-    height:38px;
-    border-radius:9px;
-    font-size:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:7px;
-  }
-  .full-week .icon{width:16px;height:16px}
-
-  /* Quick progress */
-  .quick{margin:0 16px 14px;padding:15px 6px 12px;border-radius:16px}
-  .quick .section-head button{font-size:12px}
-  .quick-grid{margin-top:12px}
-  .quick-grid>div{padding:0 3px}
-  .quick-grid i{width:32px;height:32px;margin-bottom:5px}
-  .quick-grid i .icon{width:17px;height:17px}
-  .quick-grid b{font-size:13px}
-  .quick-grid span{font-size:10px;margin-top:2px}
-  .quick-grid small{font-size:9px;margin-top:3px}
 
   /* Other screens */
   .page-head{padding:18px 16px 12px}
@@ -230,31 +87,6 @@
   .week-list em{font-size:11px}
 }
 
-@media (max-width:380px){
-  .home-head{padding-left:12px;padding-right:12px}
-  .home-head h1{font-size:17px}
-  .home-head p{font-size:12px}
-  .head-actions{gap:4px}
-  .head-pill,.head-icon{height:38px}
-  .head-pill{min-width:44px;padding:0 8px}
-  .head-icon{width:38px}
-  .hero-card,.home-status,.weekly-card,.quick{margin-left:12px;margin-right:12px}
-  .hero-card{height:158px}
-  .hero-copy{padding-left:16px;width:55%}
-  .hero-copy h2{font-size:20px}
-  .hero-copy p{font-size:12px}
-  .hero-btn{font-size:12px;padding:0 12px}
-  .week-select span{font-size:11px}
-}
-
-@media (max-width:350px){
-  .home-head h1{font-size:16px}
-  .home-head p{font-size:11.5px}
-  .hero-card{height:154px}
-  .hero-copy h2{font-size:19px}
-  .hero-copy p{font-size:11.5px}
-}
-
 /* 1.7.2 workout-entry mobile overrides */
 @media (max-width:600px){
   .sheet{max-height:88vh;padding-left:16px;padding-right:16px}
@@ -283,31 +115,8 @@
 
 /* 1.7.3 final iPhone layout */
 @media (max-width:600px){
-  .home-head{padding-left:16px;padding-right:16px;align-items:center}
-  .home-head h1{font-size:19px;letter-spacing:-.35px}
-  .home-head p{font-size:13px}
-  .head-pill,.head-icon{height:40px}
-  .head-pill{min-width:48px;padding:0 10px;gap:6px}
-  .head-icon{width:40px}
-  .head-pill .icon,.settings-head .icon{width:18px;height:18px}
-  .hero-card{height:164px}
-  .hero-copy{width:52%;padding-left:18px}
-  .hero-copy h2{font-size:22px}
-  .hero-copy p{font-size:12.5px}
-  .hero-art{width:61%;right:-10px;filter:drop-shadow(0 12px 14px rgba(34,25,86,.13))}
-  .home-status{padding:15px}
-  .status-main{grid-template-columns:44px minmax(0,1fr) auto;gap:10px}
-  .status-action{grid-column:auto;align-self:center;justify-self:end;min-width:92px;font-size:11.5px;padding:0 11px}
-  .status-copy strong{font-size:13.5px}
-  .status-copy span{font-size:11.5px}
-  .meter-label{grid-template-columns:auto 1fr auto}
-  .weekly-card{padding-left:10px;padding-right:10px}
   .section-head{min-width:0}
-  .week-select{min-width:0}
-  .week-select span{overflow:hidden;text-overflow:ellipsis}
   .legend{gap:10px 13px}
-  .week-stats span{min-width:0;display:flex;align-items:center;justify-content:center;gap:2px}
-  .week-stats b{white-space:nowrap}
   .bottom-nav{height:60px;padding-top:5px}
   .nav-btn{font-size:10.5px}
   .nav-btn .icon{width:22px;height:22px}
@@ -317,18 +126,6 @@
   .input{font-size:16px}
   .pick{font-size:15px}
 }
-@media (max-width:370px){
-  .home-head{padding-left:12px;padding-right:12px}
-  .home-head h1{font-size:17px}
-  .home-head p{font-size:12px}
-  .head-pill,.head-icon{height:38px}
-  .head-icon{width:38px}
-  .hero-card{height:156px;margin-left:12px;margin-right:12px}
-  .home-status,.weekly-card,.quick{margin-left:12px;margin-right:12px}
-  .status-main{grid-template-columns:42px minmax(0,1fr)}
-  .status-action{grid-column:2;justify-self:start;margin-top:2px}
-}
-
 /* 1.7.8 nav override */
 .bottom-nav{
   left:16px;
