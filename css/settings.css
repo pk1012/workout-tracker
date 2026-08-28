@@ -43,8 +43,6 @@
   #more .setting-desc{font-size:11px}
 }
 
-#library-management .back-btn{padding:10px 14px}
-
 /* Group title left; Edit / Delete on the right, stacked above row actions. */
 #library-management .row{
   display:flex;
