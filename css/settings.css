@@ -45,6 +45,23 @@
 
 #library-management .back-btn{padding:10px 14px}
 
+/* Group title left; Add / Edit / Delete on the right, stacked above row actions. */
+#library-management .row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+#library-management .section-title{margin-bottom:0;min-width:0}
+#library-management .actions{
+  display:grid;
+  grid-template-columns:auto 2.75em 3.6em;
+  column-gap:14px;
+  align-items:center;
+  justify-items:end;
+  flex:none;
+}
+
 /* Library group cards share the app card geometry. */
 #library-management .exercise-row{padding:12px 0}
 @media (max-width:600px){
