@@ -45,7 +45,7 @@
 
 #library-management .back-btn{padding:10px 14px}
 
-/* Group title left; Add / Edit / Delete on the right, stacked above row actions. */
+/* Group title left; Edit / Delete on the right, stacked above row actions. */
 #library-management .row{
   display:flex;
   align-items:center;
@@ -55,7 +55,7 @@
 #library-management .section-title{margin-bottom:0;min-width:0}
 #library-management .actions{
   display:grid;
-  grid-template-columns:auto 2.75em 3.6em;
+  grid-template-columns:2.75em 3.6em;
   column-gap:14px;
   align-items:center;
   justify-items:end;
