@@ -145,24 +145,47 @@ function setExerciseFilter(filter){
  renderExercises();
 }
 
+function exerciseHistoryFilterOption(id,label){
+ const selected=exerciseScreenState.historyFilter===id;
+ return `<button type="button" data-history-filter="${id}" class="${selected?"chosen":""}" onclick="setExerciseHistoryFilter('${id}')"><span>${label}</span>${selected?'<em><svg class="icon" aria-hidden="true"><use href="#check"/></svg></em>':""}</button>`;
+}
+
 function openExerciseFilter(){
  modal(`
-  <div class="exercise-filter-sheet">
+  <div class="workout-entry-header">
    <div class="handle"></div>
-   <h2>Filter Exercises</h2>
-   <p class="muted">Choose which exercise history to show.</p>
-   <div class="exercise-filter-options">
-    <button class="${exerciseScreenState.historyFilter==="all"?"selected":""}" onclick="setExerciseHistoryFilter('all')"><span>All exercises</span><svg class="icon"><use href="#check"/></svg></button>
-    <button class="${exerciseScreenState.historyFilter==="logged"?"selected":""}" onclick="setExerciseHistoryFilter('logged')"><span>Logged exercises</span><svg class="icon"><use href="#check"/></svg></button>
-    <button class="${exerciseScreenState.historyFilter==="never"?"selected":""}" onclick="setExerciseHistoryFilter('never')"><span>Never logged</span><svg class="icon"><use href="#check"/></svg></button>
-   </div>
-   <button class="primary btn-wide" onclick="closeModal();renderExercises()">Done</button>
+   <h2 class="workout-form-title">Filter Exercises</h2>
+   <div class="muted workout-form-description">Choose which exercise history to show.</div>
   </div>
- `);
+  <div class="workout-entry-scroll">
+   <div class="week-list exercise-history-filter-list">
+    ${exerciseHistoryFilterOption("all","All exercises")}
+    ${exerciseHistoryFilterOption("logged","Logged exercises")}
+    ${exerciseHistoryFilterOption("never","Never logged")}
+   </div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="applyExerciseHistoryFilter()">Done</button>
+  </div>
+ `,"workout-entry-sheet exercise-filter-sheet");
+ document.body.classList.add("workout-form-open");
 }
 
 function setExerciseHistoryFilter(filter){
  exerciseScreenState.historyFilter=filter;
+ document.querySelectorAll("[data-history-filter]").forEach(btn=>{
+  const on=btn.dataset.historyFilter===filter;
+  btn.classList.toggle("chosen",on);
+  const check=btn.querySelector("em");
+  if(on&&!check){
+   btn.insertAdjacentHTML("beforeend",'<em><svg class="icon" aria-hidden="true"><use href="#check"/></svg></em>');
+  }else if(!on&&check){
+   check.remove();
+  }
+ });
+}
+
+function applyExerciseHistoryFilter(){
  closeModal();
  renderExercises();
 }

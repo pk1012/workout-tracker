@@ -218,9 +218,7 @@
   line-height:1.4;
 }
 
-/* Filter/history sheets are mounted in the global modal but all custom rules
-   remain scoped to their own sheet class so other modals are unaffected. */
-.exercise-filter-sheet,
+/* Exercise history sheet — legacy layout until migrated to workout-entry-sheet. */
 .exercise-history-sheet{
   width:100%;
   max-height:92vh;
@@ -229,31 +227,37 @@
   border-radius:28px 28px 0 0;
   padding:12px 24px 28px;
 }
-.exercise-filter-sheet h2,
 .exercise-history-sheet h2{font-size:27px;margin:0 0 7px}
-.exercise-filter-sheet>.muted,
 .exercise-history-sheet>.muted{font-size:15px;line-height:1.4}
-.exercise-filter-options{display:grid;gap:8px;margin:20px 0}
-.exercise-filter-options button{
-  min-height:56px;
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 16px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  background:var(--card);
-  text-align:left;
-  font-size:16px;
-}
-.exercise-filter-options button .icon{display:none;width:19px;height:19px;color:var(--primary)}
-.exercise-filter-options button.selected{border-color:#a99df5;background:var(--soft);color:var(--primary);font-weight:700}
-.exercise-filter-options button.selected .icon{display:block}
 .exercise-history-list{margin:20px 0}
 .exercise-history-entry{padding:14px 0;border-top:1px solid var(--line)}
 .exercise-history-entry strong{display:block;font-size:15px;margin-bottom:6px}
 .exercise-history-entry span{display:block;color:var(--muted);font-size:14px;line-height:1.45}
+
+/* Filter sheet — reuse week-picker list inside workout-entry-sheet. */
+.exercise-history-filter-list{
+  margin-bottom:0;
+}
+.exercise-history-filter-list button{
+  grid-template-columns:minmax(0,1fr) auto;
+}
+.exercise-history-filter-list button span{
+  color:var(--text);
+  font-weight:650;
+}
+.exercise-history-filter-list button.chosen span{
+  color:var(--primary);
+  font-weight:700;
+}
+.exercise-history-filter-list em{
+  display:inline-flex;
+  align-items:center;
+  color:var(--primary);
+}
+.exercise-history-filter-list em .icon{
+  width:19px;
+  height:19px;
+}
 
 @media(max-width:600px){
   #exercises .page-head{padding:19px 16px 13px}
