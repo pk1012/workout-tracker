@@ -34,42 +34,6 @@ function progressTotals(workouts){
   return {exerciseCount,setCount,volume};
 }
 
-function progressDateLabel(date){
-  if(!date)return "Unknown date";
-  return new Date(`${date}T00:00:00`).toLocaleDateString("en-IN",{
-    weekday:"short",day:"numeric",month:"short",year:"numeric"
-  });
-}
-
-function progressWorkoutDuration(workout){
-  if(typeof durationMinutes!=="function")return null;
-  return durationMinutes(workout);
-}
-
-function progressWorkoutMeta(workout){
-  const exercises=workout.exercises?.length||0;
-  const sets=(workout.exercises||[]).reduce((total,entry)=>total+progressEntrySets(normalizedEntry(entry,workout.unit||"kg")).length,0);
-  const duration=progressWorkoutDuration(workout);
-  const parts=[`${exercises} ${exercises===1?"Exercise":"Exercises"}`,`${sets} ${sets===1?"Set":"Sets"}`];
-  if(duration!=null)parts.push(durationLabel(duration));
-  return parts.join(" • ");
-}
-
-/* History cards reuse the Workouts card anatomy (.workout-card.card). */
-function progressWorkoutCard(workout){
-  const muscles=(workout.muscles||[]).map(muscle).filter(Boolean);
-  const title=muscles.length ? muscles.join(" + ") : "Workout";
-  return `<button type="button" class="workout-card card" onclick="viewWorkout('${esc(workout.id||"")}')">
-    <div class="workout-avatar" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></div>
-    <div class="workout-card-copy">
-      <strong>${esc(title)}</strong>
-      <span>${esc(progressDateLabel(workout.date))}</span>
-      <span>${esc(progressWorkoutMeta(workout))}</span>
-    </div>
-    <span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span>
-  </button>`;
-}
-
 function renderProgress(){
   const target=document.getElementById("progressView");
   if(!target)return;
@@ -98,15 +62,6 @@ function renderProgress(){
         <span>${muscleCount} muscle ${muscleCount===1?"group":"groups"} trained</span>
       </div>
     </section>
-
-    <section class="progress-history-section">
-      <div class="progress-history-head">
-        <h2>Workout History</h2>
-        <span>${workouts.length} ${workouts.length===1?"workout":"workouts"}</span>
-      </div>
-      ${workouts.length
-        ? `<div class="progress-history-list">${workouts.map(progressWorkoutCard).join("")}</div>`
-        : `<div class="progress-empty card"><svg class="icon" aria-hidden="true"><use href="#chart"/></svg><strong>No workouts yet</strong><span>Complete a workout and your progress will appear here.</span></div>`}
-    </section>
+    ${renderRecentWorkouts()}
   `;
 }
