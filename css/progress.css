@@ -1,0 +1,246 @@
+/* Progress page only — all selectors are scoped to #progress. */
+#progress #progressView{
+  display:grid;
+  gap:16px;
+  padding-bottom:8px;
+}
+
+#progress .progress-overview{
+  margin:0 24px;
+  padding:20px;
+}
+
+#progress .progress-section-head h2,
+#progress .progress-history-head h2{
+  margin:0;
+  font-size:17px;
+  font-weight:750;
+  letter-spacing:-.2px;
+}
+
+#progress .progress-section-head p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+
+#progress .progress-stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  margin-top:18px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+
+#progress .progress-stat{
+  min-width:0;
+  padding:14px 8px;
+  text-align:center;
+}
+
+#progress .progress-stat + .progress-stat{
+  border-left:1px solid var(--line);
+}
+
+#progress .progress-stat strong{
+  display:block;
+  color:var(--text);
+  font-size:21px;
+  line-height:1.1;
+  font-weight:760;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+#progress .progress-stat span{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.2;
+}
+
+#progress .progress-footnote{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:13px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+#progress .progress-footnote .icon{
+  width:15px;
+  height:15px;
+  color:var(--primary);
+  flex:none;
+}
+
+#progress .progress-history-section{
+  margin:0 24px;
+}
+
+#progress .progress-history-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 2px 10px;
+}
+
+#progress .progress-history-head > span{
+  color:var(--muted);
+  font-size:11px;
+}
+
+#progress .progress-history-list{
+  overflow:hidden;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:17px;
+  box-shadow:0 4px 18px rgba(20,22,35,.03);
+}
+
+#progress .progress-workout-card{
+  width:100%;
+  min-height:78px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  text-align:left;
+  background:var(--card);
+}
+
+#progress .progress-workout-card + .progress-workout-card{
+  border-top:1px solid var(--line);
+}
+
+#progress .progress-workout-card:active{
+  background:var(--soft);
+}
+
+#progress .progress-workout-icon{
+  width:44px;
+  height:44px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  background:var(--soft);
+  color:var(--primary);
+}
+
+#progress .progress-workout-icon .icon{
+  width:23px;
+  height:23px;
+}
+
+#progress .progress-workout-copy{
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+#progress .progress-workout-copy strong{
+  color:var(--text);
+  font-size:14px;
+  line-height:1.25;
+  font-weight:700;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+#progress .progress-workout-copy span,
+#progress .progress-workout-copy small{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.3;
+}
+
+#progress .progress-workout-copy small{
+  font-size:10px;
+}
+
+#progress .progress-workout-arrow{
+  color:var(--muted);
+  flex:none;
+  display:grid;
+  place-items:center;
+}
+
+#progress .progress-workout-arrow .icon{
+  width:17px;
+  height:17px;
+}
+
+#progress .progress-empty{
+  margin:0;
+  min-height:150px;
+  padding:28px 20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:7px;
+}
+
+#progress .progress-empty .icon{
+  width:28px;
+  height:28px;
+  margin-bottom:3px;
+  color:var(--primary);
+}
+
+#progress .progress-empty strong{
+  font-size:14px;
+}
+
+#progress .progress-empty span{
+  max-width:280px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.4;
+}
+
+@media(max-width:600px){
+  #progress #progressView{gap:14px}
+
+  #progress .progress-overview{
+    margin:0 16px;
+    padding:16px;
+    border-radius:17px;
+  }
+
+  #progress .progress-section-head h2,
+  #progress .progress-history-head h2{font-size:17px}
+
+  #progress .progress-section-head p{font-size:12px}
+
+  #progress .progress-stats{margin-top:14px}
+
+  #progress .progress-stat{padding:12px 4px}
+  #progress .progress-stat strong{font-size:18px}
+  #progress .progress-stat span{font-size:9px}
+
+  #progress .progress-footnote{font-size:10px;margin-top:11px}
+
+  #progress .progress-history-section{margin:0 16px}
+  #progress .progress-history-head{padding-bottom:8px}
+  #progress .progress-history-head > span{font-size:10px}
+
+  #progress .progress-history-list{border-radius:16px}
+  #progress .progress-workout-card{min-height:72px;padding:10px 12px;gap:10px}
+  #progress .progress-workout-icon{width:40px;height:40px;border-radius:12px}
+  #progress .progress-workout-icon .icon{width:21px;height:21px}
+  #progress .progress-workout-copy strong{font-size:13px}
+  #progress .progress-workout-copy span{font-size:10px}
+  #progress .progress-workout-copy small{font-size:9px}
+  #progress .progress-workout-arrow .icon{width:16px;height:16px}
+}
