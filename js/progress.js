@@ -55,17 +55,19 @@ function progressWorkoutMeta(workout){
   return parts.join(" • ");
 }
 
+/* History rows reuse the Workouts card anatomy (.workout-card) so both stay in
+   sync; the bordered list container with dividers is the one deliberate difference. */
 function progressWorkoutCard(workout){
   const muscles=(workout.muscles||[]).map(muscle).filter(Boolean);
   const title=muscles.length ? muscles.join(" + ") : "Workout";
-  return `<button type="button" class="progress-workout-card" onclick="viewWorkout('${esc(workout.id||"")}')">
-    <span class="progress-workout-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span>
-    <span class="progress-workout-copy">
+  return `<button type="button" class="workout-card" onclick="viewWorkout('${esc(workout.id||"")}')">
+    <div class="workout-avatar" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></div>
+    <div class="workout-card-copy">
       <strong>${esc(title)}</strong>
       <span>${esc(progressDateLabel(workout.date))}</span>
-      <small>${esc(progressWorkoutMeta(workout))}</small>
-    </span>
-    <span class="progress-workout-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span>
+      <span>${esc(progressWorkoutMeta(workout))}</span>
+    </div>
+    <span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span>
   </button>`;
 }
 

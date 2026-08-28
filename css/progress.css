@@ -103,81 +103,27 @@
   box-shadow:0 4px 18px rgba(20,22,35,.03);
 }
 
-#progress .progress-workout-card{
-  width:100%;
-  min-height:78px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:12px 14px;
-  text-align:left;
+/* History rows are the shared .workout-card; only the list container styling
+   (flat rows with dividers instead of floating cards) is overridden here. */
+#progress .progress-history-list .workout-card{
+  margin:0;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
   background:var(--card);
 }
 
-#progress .progress-workout-card + .progress-workout-card{
+#progress .progress-history-list .workout-card + .workout-card{
   border-top:1px solid var(--line);
 }
 
-#progress .progress-workout-card:active{
+#progress .progress-history-list .workout-card:active{
   background:var(--soft);
 }
 
-/* Rows share the workout-card anatomy: avatar tile, title, meta, chevron. */
-#progress .progress-workout-icon{
-  width:54px;
-  height:54px;
-  flex:none;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:var(--soft);
-  color:var(--primary);
-}
-
-#progress .progress-workout-icon .icon{
-  width:26px;
-  height:26px;
-  stroke-width:1.75;
-}
-
-#progress .progress-workout-copy{
-  min-width:0;
-  flex:1;
-}
-
-#progress .progress-workout-copy strong{
-  display:block;
-  color:var(--text);
-  font-size:16px;
-  line-height:1.25;
-  font-weight:720;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-#progress .progress-workout-copy span,
-#progress .progress-workout-copy small{
-  display:block;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.35;
-}
-
-#progress .progress-workout-copy strong + span{margin-top:5px}
-#progress .progress-workout-copy span + small{margin-top:7px}
-
-#progress .progress-workout-arrow{
-  color:#737b88;
-  flex:none;
-  display:grid;
-  place-items:center;
-}
-
-#progress .progress-workout-arrow .icon{
-  width:19px;
-  height:19px;
-}
+/* Same 5px title→date, 7px date→meta rhythm as Workouts cards. */
+#progress .progress-history-list .workout-card-copy>span{margin-top:5px}
+#progress .progress-history-list .workout-card-copy>span + span{margin-top:7px}
 
 #progress .progress-empty{
   margin:0;
@@ -236,6 +182,4 @@
   #progress .progress-history-head{padding-bottom:8px}
   #progress .progress-history-head > span{font-size:10px}
 
-  #progress .progress-workout-card{min-height:88px;padding:11px 12px;gap:10px}
-  #progress .progress-workout-arrow .icon{width:18px;height:18px}
 }
