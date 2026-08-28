@@ -62,14 +62,31 @@
   flex:none;
 }
 
-/* Library group cards share the app card geometry. */
-#library-management .exercise-row{padding:12px 0}
+/* Same 12px stack as View Workout cards: top, title→line, line→row, row→line, bottom. */
+#library-management .library-group{
+  padding:12px 14px;
+}
+#library-management .library-group .row{
+  padding:0 0 12px;
+}
+#library-management .library-group .section-title{line-height:1.25}
+#library-management .library-group .exercise-row{
+  padding:12px 0;
+  border-top:1px solid var(--line);
+}
+#library-management .library-group .exercise-row:last-child{padding-bottom:0}
+#library-management .library-group .empty{
+  margin:0;
+  padding:12px 0 0;
+  border-top:1px solid var(--line);
+}
+
 @media (max-width:600px){
   #library-management .section{
     margin:0 16px 14px;
-    padding:14px;
     border-radius:16px;
   }
+  #library-management .library-group{padding:12px 14px}
 }
 
 .about-row{
