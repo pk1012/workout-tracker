@@ -198,14 +198,16 @@
   color:var(--primary);
 }
 
+/* Empty states share the 16px title / 13px body scale. */
 #progress .progress-empty strong{
-  font-size:14px;
+  color:var(--text);
+  font-size:16px;
 }
 
 #progress .progress-empty span{
   max-width:280px;
   color:var(--muted);
-  font-size:11px;
+  font-size:13px;
   line-height:1.4;
 }
 

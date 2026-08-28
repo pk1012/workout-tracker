@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>Style Check</title></head>
+<body>
+<script>
+// This will run in browser console
+const modal = document.querySelector('.modal');
+const modalContent = document.querySelector('.modal-content');
+if (modalContent) {
+  const styles = window.getComputedStyle(modalContent);
+  console.log('Border radius:', styles.borderRadius);
+  console.log('Bottom left:', styles.borderBottomLeftRadius);
+  console.log('Bottom right:', styles.borderBottomRightRadius);
+}
+</script>
+</body>
+</html>
