@@ -1,10 +1,14 @@
 /* Settings (#more) and Exercise Library (#library-management).
    About is a modal, so .about-row / .about-card are not scoped to #more. */
 
+#more .page-head{
+  padding-bottom:14px;
+}
+
 #more .setting-main{min-width:0}
 #more .setting-title,
 #more .setting-desc{display:block;line-height:1.25}
-#more .setting-desc{line-height:1.35;overflow-wrap:anywhere}
+#more .setting-desc{line-height:1.35;overflow-wrap:anywhere;color:#737a87}
 #more .theme-setting .setting-main{min-width:120px}
 
 #more .setting-section-title{
@@ -12,12 +16,23 @@
   letter-spacing:1px;
   font-weight:750;
   color:#8a909b;
+  padding:18px 24px 10px;
 }
+
+#more .settings{
+  margin:0 24px;
+  display:grid;
+  gap:10px;
+}
+
 #more .settings .setting{
   min-height:74px;
+  padding:16px 20px;
+  gap:16px;
   border-radius:16px;
   box-shadow:0 4px 18px rgba(20,22,35,.03);
 }
+
 #more .setting-icon{
   width:40px;
   height:40px;
@@ -26,21 +41,59 @@
   color:var(--primary);
   display:grid;
   place-items:center;
+  flex:none;
 }
+
 #more .setting-icon .icon{
   width:20px;
   height:20px;
   stroke-width:1.8;
 }
-#more .setting-title{font-size:15px;font-weight:700}
-#more .setting-desc{font-size:12px;color:#7b828f}
-#more .about-title{padding-top:31px}
+
+#more .setting-title{font-size:15px;font-weight:720}
+#more .setting-desc{font-size:12px;margin-top:0}
+#more .chevron{display:inline-flex;align-items:center;justify-content:center;flex:none}
+#more .chevron .icon{width:18px;height:18px}
+#more .about-title{padding-top:14px}
 
 @media (max-width:600px){
-  #more .settings .setting{min-height:68px}
-  #more .setting-icon{width:36px;height:36px}
-  #more .setting-title{font-size:14px}
-  #more .setting-desc{font-size:11px}
+  #more .setting-section-title{
+    padding:18px 16px 10px;
+  }
+
+  #more .settings{
+    margin-left:16px;
+    margin-right:16px;
+    gap:10px;
+  }
+
+  #more .settings .setting{
+    min-height:100px;
+    padding:11px;
+    gap:10px;
+    border-radius:15px;
+  }
+
+  #more .setting-icon{
+    width:54px;
+    height:54px;
+    border-radius:12px;
+  }
+
+  #more .setting-icon .icon{
+    width:27px;
+    height:27px;
+  }
+
+  #more .setting-title{
+    font-size:14px !important;
+    font-weight:720;
+  }
+
+  #more .setting-desc{
+    font-size:10.5px !important;
+    margin-top:4px;
+  }
 }
 
 /* Group title left; Edit / Delete on the right, stacked above row actions. */
