@@ -126,24 +126,55 @@
   .input{font-size:16px}
   .pick{font-size:15px}
 }
-/* 1.7.8 nav override */
-.bottom-nav{
-  left:16px;
-  right:16px;
-  bottom:calc(10px + env(safe-area-inset-bottom));
-  width:auto;
-  height:64px;
-  padding:6px;
-  border:1px solid rgba(222,224,232,.92);
-  border-radius:34px;
-  box-shadow:0 10px 32px rgba(20,22,35,.13),0 2px 8px rgba(20,22,35,.06);
+/* Nav island — one spacing model
+   16px side inset (12px under 370px), matching page gutters
+   16px gap above the island for content, toasts, sheets, library actions
+   10px / 9px below the island for the home indicator */
+:root{
+  --nav-side:16px;
+  --nav-bottom:10px;
+  --nav-height:64px;
+  --nav-pad:6px;
+  --nav-radius:34px;
+  --nav-gap:16px;
 }
-.nav-btn.active:before{display:none}
 @media(max-width:600px){
-  .bottom-nav{height:62px;padding:5px;bottom:calc(9px + env(safe-area-inset-bottom))}
+  :root{
+    --nav-bottom:9px;
+    --nav-height:62px;
+    --nav-pad:5px;
+  }
 }
 @media(max-width:370px){
-  .bottom-nav{left:12px;right:12px}
+  :root{--nav-side:12px}
+}
+
+.bottom-nav{
+  left:var(--nav-side);
+  right:var(--nav-side);
+  bottom:calc(var(--nav-bottom) + env(safe-area-inset-bottom, 0px));
+  width:auto;
+  height:var(--nav-height);
+  padding:var(--nav-pad);
+  gap:4px;
+  border:1px solid rgba(222,224,232,.92);
+  border-radius:var(--nav-radius);
+  box-shadow:0 10px 32px rgba(20,22,35,.13),0 2px 8px rgba(20,22,35,.06);
+}
+.nav-btn{
+  min-height:0;
+  height:100%;
+  align-self:stretch;
+  border-radius:calc(var(--nav-radius) - var(--nav-pad));
+}
+.nav-btn.active:before{display:none}
+
+.app{
+  padding-bottom:calc(var(--nav-bottom) + var(--nav-height) + var(--nav-gap) + env(safe-area-inset-bottom, 0px));
+}
+#toastHost{
+  z-index:110;
+  bottom:calc(var(--nav-bottom) + var(--nav-height) + var(--nav-gap) + env(safe-area-inset-bottom, 0px));
 }
 
 /* 1.7.36 — Next/Cancel match the 16px form scale, not the 13px Home hero button */
@@ -388,9 +419,9 @@ body.workout-form-open .modal:has(.workout-entry-sheet){
 }
 body.workout-form-open .modal .sheet,
 body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
-  height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (16px + 62px + 9px + env(safe-area-inset-bottom, 0px))) !important;
-  max-height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (16px + 62px + 9px + env(safe-area-inset-bottom, 0px))) !important;
-  margin-bottom:calc(16px + 62px + 9px + env(safe-area-inset-bottom, 0px)) !important;
+  height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (var(--nav-gap) + var(--nav-height) + var(--nav-bottom) + env(safe-area-inset-bottom, 0px))) !important;
+  max-height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (var(--nav-gap) + var(--nav-height) + var(--nav-bottom) + env(safe-area-inset-bottom, 0px))) !important;
+  margin-bottom:calc(var(--nav-gap) + var(--nav-height) + var(--nav-bottom) + env(safe-area-inset-bottom, 0px)) !important;
   border-radius:24px !important;
 }
 body.workout-form-open .bottom-nav{
@@ -409,26 +440,26 @@ body.workout-form-open .bottom-nav{
   }
   body.workout-form-open .modal .sheet,
   body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
-    height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (16px + 62px + 9px + env(safe-area-inset-bottom, 0px))) !important;
-    max-height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (16px + 62px + 9px + env(safe-area-inset-bottom, 0px))) !important;
-    margin-bottom:calc(16px + 62px + 9px + env(safe-area-inset-bottom, 0px)) !important;
+    height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (var(--nav-gap) + var(--nav-height) + var(--nav-bottom) + env(safe-area-inset-bottom, 0px))) !important;
+    max-height:calc(100% - (36px + env(safe-area-inset-top, 0px)) - (var(--nav-gap) + var(--nav-height) + var(--nav-bottom) + env(safe-area-inset-bottom, 0px))) !important;
+    margin-bottom:calc(var(--nav-gap) + var(--nav-height) + var(--nav-bottom) + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
 /* 1.7.44 — Equal side gutters so the dim shows on both sides, matching the nav island */
 body.workout-form-open .modal .sheet,
 body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
-  width:calc(100% - 32px) !important;
+  width:calc(100% - (var(--nav-side) * 2)) !important;
   max-width:none !important;
-  margin-left:16px !important;
-  margin-right:16px !important;
+  margin-left:var(--nav-side) !important;
+  margin-right:var(--nav-side) !important;
 }
 @media(max-width:600px){
   body.workout-form-open .modal .sheet,
   body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-sheet{
-    width:calc(100% - 32px) !important;
-    margin-left:16px !important;
-    margin-right:16px !important;
+    width:calc(100% - (var(--nav-side) * 2)) !important;
+    margin-left:var(--nav-side) !important;
+    margin-right:var(--nav-side) !important;
   }
 }
 

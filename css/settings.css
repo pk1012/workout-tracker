@@ -162,13 +162,15 @@
 }
 
 /* Sheet-style actions, pinned above the nav island. */
-#library-management{padding-bottom:110px}
+#library-management{
+  padding-bottom:calc(var(--nav-bottom) + var(--nav-height) + var(--nav-gap) + 40px + 9px + 40px + var(--nav-gap) + env(safe-area-inset-bottom, 0px));
+}
 #library-management .library-actions{
   position:fixed;
   z-index:40;
-  left:16px;
-  right:16px;
-  bottom:calc(84px + env(safe-area-inset-bottom));
+  left:var(--nav-side);
+  right:var(--nav-side);
+  bottom:calc(var(--nav-bottom) + var(--nav-height) + var(--nav-gap) + env(safe-area-inset-bottom, 0px));
   display:grid;
   gap:9px;
 }
@@ -177,14 +179,6 @@
   height:40px;
   min-height:40px;
   border-radius:15px;
-}
-@media(max-width:600px){
-  #library-management .library-actions{
-    bottom:calc(81px + env(safe-area-inset-bottom));
-  }
-}
-@media(max-width:370px){
-  #library-management .library-actions{left:12px;right:12px}
 }
 @media(min-width:601px){
   #library-management .library-actions{
