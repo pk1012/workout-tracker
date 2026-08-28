@@ -723,3 +723,32 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 #workouts .recent-section .workout-card:last-child{
   margin-bottom:0;
 }
+
+/* 1.7.63 — Workout cards: unclutter Exercises / Sets / Duration */
+#workouts .workout-metrics{
+  margin-top:10px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:12px 16px;
+}
+#workouts .workout-metrics b{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding-right:0;
+  margin-right:0;
+  border-right:0;
+  grid-template-columns:none;
+}
+#workouts .workout-metrics b .inline-icon{
+  grid-row:auto;
+  flex:none;
+  width:12px;
+  height:12px;
+}
+#workouts .workout-metrics small{
+  display:inline;
+  grid-column:auto;
+  margin-top:0;
+}
