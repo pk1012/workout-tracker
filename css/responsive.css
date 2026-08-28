@@ -755,3 +755,19 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   grid-column:auto;
   margin-top:0;
 }
+
+/* 1.7.65 — View Workout cards: flat 8px inside the container */
+.modal:has(.workout-entry-sheet) .workout-detail{
+  padding:8px 14px;
+}
+.modal:has(.workout-entry-sheet) .workout-detail>strong{
+  display:block;
+  margin:0 0 8px;
+}
+.modal:has(.workout-entry-sheet) .detail-set{
+  margin-top:0;
+  padding:8px 0;
+}
+.modal:has(.workout-entry-sheet) .detail-set:last-child{
+  padding-bottom:0;
+}
