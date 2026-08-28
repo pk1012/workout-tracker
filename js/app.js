@@ -37,16 +37,4 @@ function confirmAction(message,onConfirm,asSheet){
 }
 let savedTheme=localStorage.getItem("wt_theme")||"light";theme(savedTheme);
 renderHome();renderCalendar();
-function appBasePath(){
- if(location.hostname.endsWith("github.io")){
-  const segment=location.pathname.split("/").filter(Boolean)[0];
-  if(segment)return `/${segment}/`;
- }
- return "";
-}
-if("serviceWorker" in navigator && !location.hostname.endsWith("github.io")){
- const base=appBasePath();
- const swUrl=`${base||"./"}sw.js`;
- const scope=base||"./";
- window.addEventListener("load",()=>navigator.serviceWorker.register(swUrl,{scope,updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{}));
-}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{}))}
