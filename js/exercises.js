@@ -114,7 +114,7 @@ function renderExerciseScreenToolbar(){
   <div class="exercise-screen-toolbar">
    <label class="exercise-search">
     <svg class="icon" aria-hidden="true"><use href="#search"/></svg>
-    <input id="exerciseSearch" type="text" inputmode="search" enterkeyhint="search" value="${esc(exerciseScreenState.search)}" placeholder="Search exercises" autocomplete="off" autocorrect="off" spellcheck="false" oninput="setExerciseSearch(this.value)">
+    <input id="exerciseSearch" type="text" inputmode="search" enterkeyhint="search" value="${esc(exerciseScreenState.search)}" placeholder="Search exercises" autocomplete="off" autocorrect="off" spellcheck="false" readonly onfocus="this.removeAttribute('readonly')" oninput="setExerciseSearch(this.value)">
    </label>
    <button type="button" class="exercise-filter-button" onclick="openExerciseFilter()">
     <svg class="icon" aria-hidden="true"><use href="#filter"/></svg><span>Filter</span>
