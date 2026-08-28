@@ -78,11 +78,16 @@ function about(){
    <div class="muted workout-form-description">Workout logging and exercise management.</div>
   </div>
   <div class="workout-entry-scroll">
-   <div class="card pad about-card"><div class="about-row"><span>Version</span><strong>${VERSION}</strong></div><div class="about-row"><span>Build</span><strong>${BUILD}</strong></div><div class="about-row"><span>App</span><strong>Workout Tracker</strong></div><div class="about-row"><span>Support</span><span class="link">support@workouttracker.app</span></div></div>
+   <div class="workout-detail card">
+    <div class="detail-set"><span>Version</span><strong>${VERSION}</strong></div>
+    <div class="detail-set"><span>Build</span><strong>${BUILD}</strong></div>
+    <div class="detail-set"><span>App</span><strong>Workout Tracker</strong></div>
+    <div class="detail-set"><span>Support</span><a class="about-link" href="mailto:support@workouttracker.app">support@workouttracker.app</a></div>
+   </div>
   </div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
   </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet about-sheet");
  document.body.classList.add("workout-form-open");
 }

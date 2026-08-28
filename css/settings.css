@@ -1,5 +1,5 @@
 /* Settings (#more) and Exercise Library (#library-management).
-   About is a modal, so .about-row / .about-card are not scoped to #more. */
+   About sheet styles are scoped to .about-sheet in modals. */
 
 /* Match Workouts/Home page-head rhythm. */
 #more .page-head{
@@ -205,12 +205,45 @@
   }
 }
 
-.about-row{
-  display:flex;
-  justify-content:space-between;
-  gap:18px;
-  padding:14px 0;
-  border-bottom:1px solid var(--line);
+/* About sheet — match View Workout detail card rhythm inside workout-entry-sheet. */
+.modal:has(.about-sheet) .workout-detail{
+  margin:0;
 }
-.about-row:last-child{border:0}
-.about-card{margin-top:20px}
+
+.modal:has(.about-sheet) .detail-set{
+  margin-top:0;
+  padding:12px 0;
+  align-items:center;
+  border-top:1px solid var(--line);
+}
+
+.modal:has(.about-sheet) .detail-set:first-child{
+  padding-top:0;
+  border-top:0;
+}
+
+.modal:has(.about-sheet) .detail-set:last-child{
+  padding-bottom:0;
+}
+
+.modal:has(.about-sheet) .detail-set>span{
+  color:#737a87;
+  font-size:13px !important;
+  line-height:1.35;
+}
+
+.modal:has(.about-sheet) .detail-set>strong{
+  font-size:14px !important;
+  font-weight:720;
+  line-height:1.35;
+  text-align:right;
+}
+
+.modal:has(.about-sheet) .about-link{
+  color:var(--primary);
+  font-size:14px !important;
+  font-weight:650;
+  line-height:1.35;
+  text-align:right;
+  text-decoration:none;
+}
