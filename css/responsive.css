@@ -158,19 +158,18 @@
   margin-bottom:8px;
 }
 
-/* 1.7.37 — App type scale (all screens except #exercises titles)
+/* 1.7.37 — App type scale (all screens)
    22 hero title
    20 screen title
    17 card title
    16 form body / primary form actions
    13 supporting copy + Home primary buttons
-   11–12 meta
-   Exercises screen title/subtitle come from exercises.css (1.7.69). */
+   11–12 meta */
 .hero-copy h2{font-size:22px !important;line-height:1.1}
 
 .home-head h1,
-:is(#workouts, #progress, #more, #library-management) .page-head h1,
-:is(#workouts, #progress, #more, #library-management) .compact-head h1,
+:is(#workouts, #exercises, #progress, #more, #library-management) .page-head h1,
+:is(#workouts, #exercises, #progress, #more, #library-management) .compact-head h1,
 .sheet h2,
 .sheet .workout-form-title,
 .modal:has(.workout-entry-sheet) .workout-entry-header h2,
@@ -207,7 +206,7 @@ select.input,
 .set-editor-head strong{font-size:16px !important}
 
 .home-head p,
-:is(#workouts, #progress, #more, #library-management) .subtitle,
+:is(#workouts, #exercises, #progress, #more, #library-management) .subtitle,
 .hero-copy p,
 .hero-btn,
 .status-copy strong,
@@ -268,14 +267,14 @@ select.input,
 @media(max-width:600px){
   .hero-copy h2{font-size:22px !important}
   .home-head h1,
-  :is(#workouts, #progress, #more, #library-management) .page-head h1,
-  :is(#workouts, #progress, #more, #library-management) .compact-head h1,
+  :is(#workouts, #exercises, #progress, #more, #library-management) .page-head h1,
+  :is(#workouts, #exercises, #progress, #more, #library-management) .compact-head h1,
   .sheet h2,
   .sheet .workout-form-title,
   .modal:has(.workout-entry-sheet) .workout-entry-header h2,
   .modal:has(.workout-entry-sheet) .workout-entry-header .workout-form-title{font-size:20px !important;line-height:1.2}
   .home-head p,
-  :is(#workouts, #progress, #more, #library-management) .subtitle,
+  :is(#workouts, #exercises, #progress, #more, #library-management) .subtitle,
   .hero-copy p,
   .hero-btn,
   .status-copy strong,
@@ -286,7 +285,7 @@ select.input,
 
 @media(max-width:370px){
   .home-head h1,
-  :is(#workouts, #progress, #more, #library-management) .compact-head h1{font-size:20px !important}
+  :is(#workouts, #exercises, #progress, #more, #library-management) .compact-head h1{font-size:20px !important}
 }
 
 /* 1.7.39 — Start Workout: +1px in three vertical gaps */
