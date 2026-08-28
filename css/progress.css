@@ -83,7 +83,7 @@
 #progress .recent-section .workout-card{margin-bottom:10px}
 #progress .recent-section .workout-card:last-child{margin-bottom:0}
 #progress .recent-section .workout-card .workout-card-copy>span{margin-top:5px}
-#progress .recent-section .workout-card .workout-card-copy>span + span{margin-top:7px}
+#progress .recent-section .workout-card .workout-card-copy>span + span{margin-top:5px}
 
 @media(max-width:600px){
   #progress #progressView{gap:14px}

@@ -32,12 +32,12 @@
   margin-bottom:0;
 }
 
-/* 1.7.67 — Workout cards: 5px title→counts, 7px counts→time */
+/* Workout cards: 5px between title, counts, and time. */
 #workouts .workout-card:not(.rest-card) .workout-card-copy>span{
   margin-top:5px;
 }
 #workouts .workout-card:not(.rest-card) .workout-card-copy>span + span{
-  margin-top:7px;
+  margin-top:5px;
 }
 #workouts .workout-metrics{
   margin-top:5px;
