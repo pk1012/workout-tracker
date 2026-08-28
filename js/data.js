@@ -1,17 +1,115 @@
-const VERSION="1.7.125",BUILD="2026.08.28";
+const VERSION="1.7.126",BUILD="2026.08.28";
 const defaults={Abs:["Cable Crunch","Hanging Leg Raise","Plank"],Back:["Lat Pulldown","Seated Cable Row","Single Arm Dumbbell Row","T-Bar Row"],Biceps:["Behind-the-Back Cable Curl","Cable Curl","Hammer Curl","Incline Dumbbell Curl"],Calves:["Calf Raise","Seated Calf Raise"],Cardio:["Cycling","Running","Walking"],Chest:["Flat Bench Press","Inclined Dumbbell Press","Pec Deck Fly","Wide Chest Press Machine"],Legs:["Leg Extension","Leg Press","Romanian Deadlift","Squat"],Shoulders:["Dumbbell Lateral Raise","Face Pull","Overhead Press","Rear Delt Fly"],Triceps:["Cable Pushdown","Overhead Cable Extension","Skull Crusher"]};
+const STORE_KEY="wt_state";
+const STORE_BACKUP_KEY="wt_state_backup";
+const IDB_NAME="workout-tracker";
+const IDB_SNAPSHOT_LIMIT=20;
 function newId(){return globalThis.crypto?.randomUUID?crypto.randomUUID():`id-${Date.now()}-${Math.random().toString(36).slice(2)}`}
 
-let state=JSON.parse(localStorage.getItem("wt_state")||"null");
-if(!state){state={muscles:Object.keys(defaults).map(name=>({id:newId(),name})),exercises:[],workouts:[]};state.muscles.forEach(m=>(defaults[m.name]||[]).forEach(name=>state.exercises.push({id:newId(),name,muscleId:m.id})));save();}
-// Migrate older builds without changing existing workout history.
-if(state){
- state.workouts=(state.workouts||[]).map(w=>({...w,startTime:w.startTime||"",endTime:w.endTime||""}));
- if(state.activeWorkout && !state.activeWorkout.date) delete state.activeWorkout;
- save();
+function looksLikeState(s){
+ return !!(s&&Array.isArray(s.muscles)&&Array.isArray(s.exercises)&&Array.isArray(s.workouts));
 }
+function readLocalState(key){
+ try{
+  const parsed=JSON.parse(localStorage.getItem(key)||"null");
+  return looksLikeState(parsed)?parsed:null;
+ }catch(err){return null}
+}
+function seedDefaults(){
+ const next={muscles:Object.keys(defaults).map(name=>({id:newId(),name})),exercises:[],workouts:[]};
+ next.muscles.forEach(m=>(defaults[m.name]||[]).forEach(name=>next.exercises.push({id:newId(),name,muscleId:m.id})));
+ return next;
+}
+function migrateState(s){
+ s.workouts=(s.workouts||[]).map(w=>({...w,startTime:w.startTime||"",endTime:w.endTime||""}));
+ if(s.activeWorkout&&!s.activeWorkout.date)delete s.activeWorkout;
+ return s;
+}
+function writeLocal(json){
+ try{localStorage.setItem(STORE_KEY,json)}catch(err){}
+ try{localStorage.setItem(STORE_BACKUP_KEY,json)}catch(err){}
+}
+function requestPersistentStorage(){
+ try{navigator.storage?.persist?.()}catch(err){}
+}
+function openIdb(){
+ return new Promise((resolve,reject)=>{
+  if(!globalThis.indexedDB){reject(new Error("no indexedDB"));return}
+  const req=indexedDB.open(IDB_NAME,1);
+  req.onupgradeneeded=()=>{
+   const db=req.result;
+   if(!db.objectStoreNames.contains("kv"))db.createObjectStore("kv");
+   if(!db.objectStoreNames.contains("snapshots"))db.createObjectStore("snapshots",{autoIncrement:true});
+  };
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+function idbGetState(db){
+ return new Promise((resolve,reject)=>{
+  const req=db.transaction("kv","readonly").objectStore("kv").get("state");
+  req.onsuccess=()=>resolve(looksLikeState(req.result)?req.result:null);
+  req.onerror=()=>reject(req.error);
+ });
+}
+function idbTrimSnapshots(db){
+ try{
+  const store=db.transaction("snapshots","readwrite").objectStore("snapshots");
+  const keysReq=store.getAllKeys();
+  keysReq.onsuccess=()=>{
+   const keys=keysReq.result||[];
+   if(keys.length<=IDB_SNAPSHOT_LIMIT)return;
+   keys.slice(0,keys.length-IDB_SNAPSHOT_LIMIT).forEach(key=>store.delete(key));
+  };
+ }catch(err){}
+}
+function idbWriteState(db,next){
+ return new Promise((resolve,reject)=>{
+  let copy;
+  try{copy=JSON.parse(JSON.stringify(next))}catch(err){reject(err);return}
+  const tx=db.transaction(["kv","snapshots"],"readwrite");
+  tx.objectStore("kv").put(copy,"state");
+  tx.objectStore("snapshots").add({at:Date.now(),state:copy});
+  tx.oncomplete=()=>{idbTrimSnapshots(db);resolve()};
+  tx.onerror=()=>reject(tx.error);
+ });
+}
+async function persistAll(){
+ let json;
+ try{json=JSON.stringify(state)}catch(err){return}
+ writeLocal(json);
+ requestPersistentStorage();
+ try{
+  const db=await openIdb();
+  await idbWriteState(db,state);
+ }catch(err){}
+}
+function save(){persistAll()}
+async function wipeStoredData(){
+ try{localStorage.removeItem(STORE_KEY)}catch(err){}
+ try{localStorage.removeItem(STORE_BACKUP_KEY)}catch(err){}
+ await new Promise(resolve=>{
+  if(!globalThis.indexedDB){resolve();return}
+  const req=indexedDB.deleteDatabase(IDB_NAME);
+  req.onsuccess=req.onerror=req.onblocked=()=>resolve();
+  setTimeout(resolve,1500);
+ });
+}
+
+let state=readLocalState(STORE_KEY)||readLocalState(STORE_BACKUP_KEY);
+const storageReady=(async()=>{
+ try{
+  const db=await openIdb();
+  if(!state){
+   const snap=await idbGetState(db);
+   if(snap)state=snap;
+  }
+ }catch(err){}
+ if(!state)state=seedDefaults();
+ migrateState(state);
+ await persistAll();
+})();
 let selected=new Date();selected.setHours(0,0,0,0);let month=new Date(selected.getFullYear(),selected.getMonth(),1);
-function save(){localStorage.setItem("wt_state",JSON.stringify(state))}
 function esc(s){
   return String(s).replace(/[&<>"']/g,c=>({
     "&":"&amp;",
