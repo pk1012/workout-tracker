@@ -89,6 +89,40 @@
   #library-management .library-group{padding:12px 14px}
 }
 
+/* Sheet-style actions, pinned above the nav island. */
+#library-management{padding-bottom:110px}
+#library-management .library-actions{
+  position:fixed;
+  z-index:40;
+  left:16px;
+  right:16px;
+  bottom:calc(84px + env(safe-area-inset-bottom));
+  display:grid;
+  gap:9px;
+}
+#library-management .library-actions .btn-wide{
+  width:100%;
+  height:40px;
+  min-height:40px;
+  border-radius:15px;
+}
+@media(max-width:600px){
+  #library-management .library-actions{
+    bottom:calc(81px + env(safe-area-inset-bottom));
+  }
+}
+@media(max-width:370px){
+  #library-management .library-actions{left:12px;right:12px}
+}
+@media(min-width:601px){
+  #library-management .library-actions{
+    left:50%;
+    right:auto;
+    width:min(560px,calc(100% - 32px));
+    transform:translateX(-50%);
+  }
+}
+
 .about-row{
   display:flex;
   justify-content:space-between;
