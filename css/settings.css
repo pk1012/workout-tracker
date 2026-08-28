@@ -45,6 +45,16 @@
 
 #library-management .back-btn{padding:10px 14px}
 
+/* Library group cards share the app card geometry. */
+#library-management .exercise-row{padding:12px 0}
+@media (max-width:600px){
+  #library-management .section{
+    margin:0 16px 14px;
+    padding:14px;
+    border-radius:16px;
+  }
+}
+
 .about-row{
   display:flex;
   justify-content:space-between;

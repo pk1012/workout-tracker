@@ -113,55 +113,64 @@
   margin-top:4px;
 }
 
+/* Rows share the workout-card anatomy: avatar tile, title, meta, chevron. */
 #exercises .exercise-screen-row{
   width:100%;
   min-height:94px;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 54px 150px;
+  display:flex;
   align-items:center;
-  column-gap:10px;
+  gap:12px;
   padding:12px 0;
   border-bottom:1px solid var(--line);
   text-align:left;
   background:transparent;
 }
 
-#exercises .exercise-screen-name{
+#exercises .exercise-screen-avatar{
+  width:54px;
+  height:54px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:var(--soft);
+  color:var(--primary);
+}
+#exercises .exercise-screen-avatar .icon{width:26px;height:26px;stroke-width:1.75}
+
+#exercises .exercise-screen-copy{
   min-width:0;
+  flex:1;
+}
+#exercises .exercise-screen-copy strong{
+  display:block;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
-  font-size:18px;
+  font-size:16px;
   line-height:1.25;
+  font-weight:720;
   color:var(--text);
 }
+#exercises .exercise-screen-copy span{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+#exercises .exercise-screen-copy strong + span{margin-top:5px}
+#exercises .exercise-screen-copy span + span{margin-top:7px}
 
-#exercises .exercise-screen-chart{
+#exercises .exercise-screen-arrow{
+  flex:none;
   display:grid;
   place-items:center;
-  color:var(--primary);
+  color:#737b88;
 }
-#exercises .exercise-screen-chart .icon{width:25px;height:25px;stroke-width:1.75}
-
-#exercises .exercise-screen-performance{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  justify-content:center;
-  min-width:0;
-  line-height:1.15;
-}
-#exercises .exercise-screen-performance strong{
-  font-size:18px;
-  font-weight:650;
-  white-space:nowrap;
-}
-#exercises .exercise-screen-performance small{
-  margin-top:6px;
-  color:var(--muted);
-  font-size:14px;
-  white-space:nowrap;
-}
+#exercises .exercise-screen-arrow .icon{width:19px;height:19px}
 
 #exercises .exercise-screen-empty{
   min-height:220px;
@@ -229,9 +238,6 @@
   #exercises .exercise-chip-scroller{gap:10px;padding:16px 0 12px}
   #exercises .exercise-chip{min-height:45px;padding:0 18px;font-size:16px;border-radius:15px}
   #exercises .exercise-screen-list{margin-top:1px}
-  #exercises .exercise-screen-row{min-height:91px;grid-template-columns:minmax(0,1fr) 42px 122px;column-gap:5px;padding:11px 0}
-  #exercises .exercise-screen-name{font-size:17px}
-  #exercises .exercise-screen-chart .icon{width:24px;height:24px}
-  #exercises .exercise-screen-performance strong{font-size:17px}
-  #exercises .exercise-screen-performance small{font-size:13px;margin-top:5px}
+  #exercises .exercise-screen-row{min-height:88px;gap:10px;padding:11px 0}
+  #exercises .exercise-screen-arrow .icon{width:18px;height:18px}
 }
