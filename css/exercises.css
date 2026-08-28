@@ -87,7 +87,7 @@
   display:flex;
   gap:10px;
   overflow-x:auto;
-  padding:0 0 14px;
+  padding:0;
   margin-bottom:14px;
   scrollbar-width:none;
   -webkit-overflow-scrolling:touch;
@@ -282,7 +282,7 @@
   #exercises .exercise-search input{font-size:16px}
   #exercises .exercise-filter-button{font-size:15px;gap:7px}
   #exercises .exercise-filter-button .icon{width:19px;height:19px}
-  #exercises .exercise-chip-scroller{gap:8px;padding:0 0 14px;margin-bottom:14px}
+  #exercises .exercise-chip-scroller{gap:8px;padding:0;margin-bottom:14px}
   #exercises .exercise-chip{min-height:38px;padding:0 14px;font-size:14px}
   #exercises .exercise-screen-row{gap:10px;padding:12px 14px}
   #exercises .exercise-screen-name{font-size:14px}
