@@ -215,7 +215,7 @@ function openExerciseHistory(id){
    ?sets.map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${Number(s.weight)===0?`Bodyweight · ${Number(s.reps)} reps`:esc(formatSet(s,entry.unit||unit))}</span></div>`).join("")
    :`<div class="detail-set"><span>No sets recorded</span></div>`;
   return `<div class="workout-detail card"><strong>${esc(dateLabel)}</strong>${rows}</div>`;
- }).join(""):`<p class="exercise-history-empty">Complete this exercise in a workout to see its history.</p>`;
+ }).join(""):`<div class="card exercise-history-empty-card"><p class="exercise-history-empty">Complete this exercise in a workout to see its history.</p></div>`;
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
