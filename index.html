@@ -2,6 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>
+(function(){
+ var host=location.hostname,path=location.pathname;
+ if(!host.endsWith("github.io"))return;
+ if(path==="/"||path===""){
+  location.replace("https://pk1012.github.io/workout-tracker/");
+  return;
+ }
+ if(path==="/workout-tracker"){
+  location.replace("https://pk1012.github.io/workout-tracker/");
+ }
+})();
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#5b43f3">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,14 +25,14 @@
 <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180.png">
 <link rel="apple-touch-icon" sizes="512x512" href="assets/icons/icon-512.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="css/styles.css?v=1.7.111">
-<link rel="stylesheet" href="css/components.css?v=1.7.111">
-<link rel="stylesheet" href="css/responsive.css?v=1.7.111">
-<link rel="stylesheet" href="css/home.css?v=1.7.111">
-<link rel="stylesheet" href="css/workouts.css?v=1.7.111">
-<link rel="stylesheet" href="css/progress.css?v=1.7.111">
-<link rel="stylesheet" href="css/exercises.css?v=1.7.111">
-<link rel="stylesheet" href="css/settings.css?v=1.7.111">
+<link rel="stylesheet" href="css/styles.css?v=1.7.112">
+<link rel="stylesheet" href="css/components.css?v=1.7.112">
+<link rel="stylesheet" href="css/responsive.css?v=1.7.112">
+<link rel="stylesheet" href="css/home.css?v=1.7.112">
+<link rel="stylesheet" href="css/workouts.css?v=1.7.112">
+<link rel="stylesheet" href="css/progress.css?v=1.7.112">
+<link rel="stylesheet" href="css/exercises.css?v=1.7.112">
+<link rel="stylesheet" href="css/settings.css?v=1.7.112">
 </head>
 <body>
 <div class="app">
