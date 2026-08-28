@@ -207,7 +207,7 @@
 
 /* About sheet — match View Workout detail card rhythm inside workout-entry-sheet. */
 .modal:has(.about-sheet) .workout-detail{
-  margin:0;
+  margin:14px 0 0;
 }
 
 .modal:has(.about-sheet) .detail-set{
