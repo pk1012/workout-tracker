@@ -33,7 +33,7 @@
 #exercises .exercise-filter-button{
   height:62px;
   border:1px solid var(--line);
-  border-radius:17px;
+  border-radius:var(--radius);
   background:var(--card);
 }
 
@@ -95,7 +95,7 @@
   min-height:46px;
   padding:0 20px;
   border:1px solid var(--line);
-  border-radius:15px;
+  border-radius:16px;
   background:var(--card);
   color:#394151;
   font-size:16px;
@@ -230,14 +230,14 @@
   #exercises #exerciseList{padding:0 16px}
   #exercises .exercise-screen-toolbar{grid-template-columns:minmax(0,1fr) 132px;gap:12px}
   #exercises .exercise-search,
-  #exercises .exercise-filter-button{height:58px;border-radius:16px}
+  #exercises .exercise-filter-button{height:58px}
   #exercises .exercise-search{gap:12px;padding:0 15px}
   #exercises .exercise-search .icon{width:24px;height:24px}
   #exercises .exercise-search input{font-size:17px}
   #exercises .exercise-filter-button{font-size:17px;gap:9px}
   #exercises .exercise-filter-button .icon{width:23px;height:23px}
   #exercises .exercise-chip-scroller{gap:10px;padding:16px 0 12px}
-  #exercises .exercise-chip{min-height:45px;padding:0 18px;font-size:16px;border-radius:15px}
+  #exercises .exercise-chip{min-height:45px;padding:0 18px;font-size:16px}
   #exercises .exercise-screen-list{margin-top:1px}
   #exercises .exercise-screen-row{min-height:88px;gap:10px;padding:11px 0}
   #exercises .exercise-screen-arrow .icon{width:18px;height:18px}

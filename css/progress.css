@@ -99,7 +99,7 @@
   overflow:hidden;
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:17px;
+  border-radius:var(--radius);
   box-shadow:0 4px 18px rgba(20,22,35,.03);
 }
 
@@ -217,7 +217,6 @@
   #progress .progress-overview{
     margin:0 16px;
     padding:16px;
-    border-radius:17px;
   }
 
   #progress .progress-section-head h2,
@@ -237,7 +236,6 @@
   #progress .progress-history-head{padding-bottom:8px}
   #progress .progress-history-head > span{font-size:10px}
 
-  #progress .progress-history-list{border-radius:16px}
   #progress .progress-workout-card{min-height:88px;padding:11px 12px;gap:10px}
   #progress .progress-workout-arrow .icon{width:18px;height:18px}
 }
