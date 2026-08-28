@@ -77,7 +77,7 @@
   flex:none;
 }
 
-/* Same Recent Workouts block as the Workouts tab. */
+/* Workout History on Progress — same cards as the old Workouts recent list. */
 #progress .recent-section{margin-bottom:14px}
 #progress .recent-section .section-head{margin-bottom:10px}
 #progress .recent-section .workout-card{margin-bottom:10px}
