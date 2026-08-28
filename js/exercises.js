@@ -93,15 +93,17 @@ function exerciseCategoryButtons(){
 
 function renderExerciseScreenRows(items){
  if(!items.length){
-  return `<div class="exercise-screen-empty"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No exercises found</strong><span>Try another search or filter.</span></div>`;
+  return `<div class="exercise-screen-panel card exercise-screen-empty"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No exercises found</strong><span>Try another search or filter.</span></div>`;
  }
- return `<div class="exercise-screen-list">${items.map(({exercise,history})=>`
+ return `<div class="exercise-screen-panel card">${items.map(({exercise,history})=>`
   <button type="button" class="exercise-screen-row" onclick="openExerciseHistory('${esc(exercise.id)}')">
    <span class="exercise-screen-name">${esc(exercise.name)}</span>
-   <span class="exercise-screen-chart" aria-hidden="true"><svg class="icon"><use href="#chart"/></svg></span>
-   <span class="exercise-screen-stats">
-    <strong>${history?esc(exerciseDisplayWeight(history)):"—"}</strong>
-    ${history?`<span>${esc(exerciseDisplayDate(history))}</span>`:""}
+   <span class="exercise-screen-side">
+    <span class="exercise-screen-chart" aria-hidden="true"><svg class="icon"><use href="#chart"/></svg></span>
+    <span class="exercise-screen-stats">
+     <strong>${history?esc(exerciseDisplayWeight(history)):"—"}</strong>
+     <span>${history?esc(exerciseDisplayDate(history)):"No history"}</span>
+    </span>
    </span>
   </button>
  `).join("")}</div>`;
