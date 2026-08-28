@@ -1,0 +1,241 @@
+/* Exercises screen only. Do not use these selectors for other screens. */
+#exercises{
+  padding-bottom:4px;
+}
+
+#exercises .page-head{
+  padding:26px 34px 18px;
+}
+
+#exercises .compact-head h1{
+  font-size:34px;
+  line-height:1.05;
+  letter-spacing:-1.05px;
+  font-weight:780;
+}
+
+#exercises .subtitle{
+  font-size:17px;
+  line-height:1.35;
+  margin-top:8px;
+}
+
+#exercises #exerciseList{
+  padding:0 34px;
+}
+
+#exercises .exercise-screen-toolbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 164px;
+  gap:16px;
+  align-items:center;
+}
+
+#exercises .exercise-search,
+#exercises .exercise-filter-button{
+  height:62px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:var(--card);
+}
+
+#exercises .exercise-search{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:0 18px;
+  color:#697383;
+}
+
+#exercises .exercise-search .icon{
+  width:25px;
+  height:25px;
+  stroke-width:1.8;
+}
+
+#exercises .exercise-search input{
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:var(--text);
+  font-size:18px;
+}
+
+#exercises .exercise-search input::placeholder{color:#697383;opacity:1}
+#exercises .exercise-search input::-webkit-search-cancel-button{display:none}
+
+#exercises .exercise-filter-button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:11px;
+  color:var(--primary);
+  font-size:18px;
+  font-weight:700;
+}
+
+#exercises .exercise-filter-button .icon{
+  width:24px;
+  height:24px;
+  stroke-width:1.8;
+}
+
+#exercises .exercise-chip-scroller{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding:17px 0 13px;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+#exercises .exercise-chip-scroller::-webkit-scrollbar{display:none}
+
+#exercises .exercise-chip{
+  flex:0 0 auto;
+  min-height:46px;
+  padding:0 20px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:var(--card);
+  color:#394151;
+  font-size:16px;
+  font-weight:600;
+}
+
+#exercises .exercise-chip.active{
+  border-color:var(--primary);
+  background:var(--primary);
+  color:#fff;
+  box-shadow:0 4px 10px rgba(75,43,231,.14);
+}
+
+#exercises .exercise-screen-list{
+  margin-top:4px;
+}
+
+#exercises .exercise-screen-row{
+  width:100%;
+  min-height:94px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 54px 150px;
+  align-items:center;
+  column-gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+  text-align:left;
+  background:transparent;
+}
+
+#exercises .exercise-screen-name{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:18px;
+  line-height:1.25;
+  color:var(--text);
+}
+
+#exercises .exercise-screen-chart{
+  display:grid;
+  place-items:center;
+  color:var(--primary);
+}
+#exercises .exercise-screen-chart .icon{width:25px;height:25px;stroke-width:1.75}
+
+#exercises .exercise-screen-performance{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:center;
+  min-width:0;
+  line-height:1.15;
+}
+#exercises .exercise-screen-performance strong{
+  font-size:18px;
+  font-weight:650;
+  white-space:nowrap;
+}
+#exercises .exercise-screen-performance small{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:14px;
+  white-space:nowrap;
+}
+
+#exercises .exercise-screen-empty{
+  min-height:220px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  color:var(--muted);
+  text-align:center;
+}
+#exercises .exercise-screen-empty .icon{width:30px;height:30px;color:var(--primary);margin-bottom:5px}
+#exercises .exercise-screen-empty strong{color:var(--text);font-size:17px}
+#exercises .exercise-screen-empty span{font-size:14px}
+#exercises .exercise-screen-empty.compact{min-height:160px}
+
+/* Filter/history sheets are mounted in the global modal but all custom rules
+   remain scoped to their own sheet class so other modals are unaffected. */
+.exercise-filter-sheet,
+.exercise-history-sheet{
+  width:100%;
+  max-height:92vh;
+  overflow:auto;
+  background:var(--card);
+  border-radius:28px 28px 0 0;
+  padding:12px 24px 28px;
+}
+.exercise-filter-sheet h2,
+.exercise-history-sheet h2{font-size:27px;margin:0 0 7px}
+.exercise-filter-sheet>.muted,
+.exercise-history-sheet>.muted{font-size:15px;line-height:1.4}
+.exercise-filter-options{display:grid;gap:8px;margin:20px 0}
+.exercise-filter-options button{
+  min-height:56px;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:var(--card);
+  text-align:left;
+  font-size:16px;
+}
+.exercise-filter-options button .icon{display:none;width:19px;height:19px;color:var(--primary)}
+.exercise-filter-options button.selected{border-color:#a99df5;background:var(--soft);color:var(--primary);font-weight:700}
+.exercise-filter-options button.selected .icon{display:block}
+.exercise-history-list{margin:20px 0}
+.exercise-history-entry{padding:14px 0;border-top:1px solid var(--line)}
+.exercise-history-entry strong{display:block;font-size:15px;margin-bottom:6px}
+.exercise-history-entry span{display:block;color:var(--muted);font-size:14px;line-height:1.45}
+
+@media(max-width:600px){
+  #exercises .page-head{padding:26px 34px 17px}
+  #exercises .compact-head h1{font-size:31px;letter-spacing:-.8px}
+  #exercises .subtitle{font-size:16px;margin-top:7px}
+  #exercises #exerciseList{padding:0 34px}
+  #exercises .exercise-screen-toolbar{grid-template-columns:minmax(0,1fr) 132px;gap:12px}
+  #exercises .exercise-search,
+  #exercises .exercise-filter-button{height:58px;border-radius:16px}
+  #exercises .exercise-search{gap:12px;padding:0 15px}
+  #exercises .exercise-search .icon{width:24px;height:24px}
+  #exercises .exercise-search input{font-size:17px}
+  #exercises .exercise-filter-button{font-size:17px;gap:9px}
+  #exercises .exercise-filter-button .icon{width:23px;height:23px}
+  #exercises .exercise-chip-scroller{gap:10px;padding:16px 0 12px}
+  #exercises .exercise-chip{min-height:45px;padding:0 18px;font-size:16px;border-radius:15px}
+  #exercises .exercise-screen-list{margin-top:1px}
+  #exercises .exercise-screen-row{min-height:91px;grid-template-columns:minmax(0,1fr) 42px 122px;column-gap:5px;padding:11px 0}
+  #exercises .exercise-screen-name{font-size:17px}
+  #exercises .exercise-screen-chart .icon{width:24px;height:24px}
+  #exercises .exercise-screen-performance strong{font-size:17px}
+  #exercises .exercise-screen-performance small{font-size:13px;margin-top:5px}
+}
