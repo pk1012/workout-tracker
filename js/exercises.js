@@ -5,15 +5,200 @@ function sortedExercisesForMuscle(muscleId){
  return state.exercises.filter(e=>e.muscleId===muscleId).sort((a,b)=>a.name.localeCompare(b.name));
 }
 
+/* --------------------------------------------------------------------------
+ * Exercises screen
+ * --------------------------------------------------------------------------
+ * The management/library functions below are intentionally unchanged in
+ * behaviour. The public Exercises screen is rendered separately so its UI
+ * can evolve without changing the Exercise Library in Settings.
+ */
+let exerciseScreenState={search:"",filter:"All",historyFilter:"all"};
+
+function exerciseMuscleName(exercise){
+ return state.muscles.find(m=>m.id===exercise.muscleId)?.name||"";
+}
+
+function exerciseCategoryMatches(exercise,filter){
+ if(filter==="All")return true;
+ const group=exerciseMuscleName(exercise).toLowerCase();
+ if(filter==="Arms")return group==="biceps"||group==="triceps"||group==="forearms";
+ if(filter==="Core")return group==="abs"||group==="core";
+ return group===filter.toLowerCase();
+}
+
+function exerciseHistory(exerciseId){
+ let latest=null;
+ for(const workout of state.workouts||[]){
+  for(const raw of workout.exercises||[]){
+   const entry=normalizedEntry(raw,workout.unit||"kg");
+   if(entry.exerciseId!==exerciseId)continue;
+   const sets=Array.isArray(entry.sets)?entry.sets:[];
+   const validSets=sets.filter(s=>Number.isFinite(Number(s?.weight))&&Number.isFinite(Number(s?.reps)));
+   if(!validSets.length)continue;
+   const candidate={
+    date:workout.date||"",
+    createdAt:Number(workout.createdAt)||0,
+    unit:entry.unit||workout.unit||"kg",
+    set:validSets[validSets.length-1]
+   };
+   if(!latest || candidate.date>latest.date || (candidate.date===latest.date&&candidate.createdAt>latest.createdAt)){
+    latest=candidate;
+   }
+  }
+ }
+ return latest;
+}
+
+function exerciseDisplayWeight(history){
+ if(!history)return "No history";
+ const weight=Number(history.set.weight);
+ if(weight===0)return "Bodyweight";
+ const unit=history.unit||"kg";
+ const text=Number.isInteger(weight)?String(weight):String(Math.round(weight*10)/10);
+ return `${text} ${unit}`;
+}
+
+function exerciseDisplayDate(history){
+ if(!history?.date)return "";
+ return new Date(`${history.date}T00:00:00`).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+}
+
+function exerciseScreenItems(){
+ const search=exerciseScreenState.search.trim().toLowerCase();
+ return state.exercises
+  .filter(e=>exerciseCategoryMatches(e,exerciseScreenState.filter))
+  .filter(e=>!search||e.name.toLowerCase().includes(search)||exerciseMuscleName(e).toLowerCase().includes(search))
+  .filter(e=>{
+   const history=exerciseHistory(e.id);
+   if(exerciseScreenState.historyFilter==="logged")return !!history;
+   if(exerciseScreenState.historyFilter==="never")return !history;
+   return true;
+  })
+  .map(e=>({exercise:e,history:exerciseHistory(e.id)}))
+  .sort((a,b)=>{
+   const ad=a.history?.date||"";
+   const bd=b.history?.date||"";
+   if(ad!==bd)return bd.localeCompare(ad);
+   const ac=a.history?.createdAt||0;
+   const bc=b.history?.createdAt||0;
+   if(ac!==bc)return bc-ac;
+   return a.exercise.name.localeCompare(b.exercise.name);
+  });
+}
+
+function exerciseCategoryButtons(){
+ const names=["All","Chest","Back","Legs","Shoulders","Arms","Core","Calves","Cardio"];
+ return names.map(name=>`<button type="button" class="exercise-chip ${exerciseScreenState.filter===name?"active":""}" onclick="setExerciseFilter('${name}')">${name}</button>`).join("");
+}
+
+function exerciseHistoryIcon(){
+ return `<svg class="icon" aria-hidden="true"><use href="#chart"/></svg>`;
+}
+
+function renderExerciseScreenRows(items){
+ if(!items.length){
+  return `<div class="exercise-screen-empty"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No exercises found</strong><span>Try another search or filter.</span></div>`;
+ }
+ return `<div class="exercise-screen-list">${items.map(({exercise,history})=>`
+  <button type="button" class="exercise-screen-row" onclick="openExerciseHistory('${esc(exercise.id)}')">
+   <span class="exercise-screen-name">${esc(exercise.name)}</span>
+   <span class="exercise-screen-chart">${exerciseHistoryIcon()}</span>
+   <span class="exercise-screen-performance">
+    <strong>${esc(exerciseDisplayWeight(history))}</strong>
+    ${history?`<small>${esc(exerciseDisplayDate(history))}</small>`:""}
+   </span>
+  </button>
+ `).join("")}</div>`;
+}
+
 function renderExercises(){
  const target=document.getElementById("exerciseList");
  if(!target)return;
- target.innerHTML=sortedMuscles().map(m=>{
-  const ex=sortedExercisesForMuscle(m.id);
-  return `<div class="section card pad exercise-group"><div class="section-title">${esc(m.name)}</div>${ex.length?ex.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span></div>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`;
- }).join("") || `<div class="empty card section pad">No muscle groups yet.</div>`;
+ const items=exerciseScreenItems();
+ target.innerHTML=`
+  <div class="exercise-screen-toolbar">
+   <label class="exercise-search">
+    <svg class="icon" aria-hidden="true"><use href="#search"/></svg>
+    <input id="exerciseSearch" type="search" value="${esc(exerciseScreenState.search)}" placeholder="Search exercises" autocomplete="off" oninput="setExerciseSearch(this.value)">
+   </label>
+   <button type="button" class="exercise-filter-button" onclick="openExerciseFilter()">
+    <svg class="icon" aria-hidden="true"><use href="#filter"/></svg><span>Filter</span>
+   </button>
+  </div>
+  <div class="exercise-chip-scroller" role="tablist" aria-label="Exercise muscle groups">${exerciseCategoryButtons()}</div>
+  ${renderExerciseScreenRows(items)}
+ `;
 }
 
+function setExerciseSearch(value){
+ exerciseScreenState.search=value;
+ const target=document.getElementById("exerciseList");
+ if(target)renderExercises();
+ const input=document.getElementById("exerciseSearch");
+ if(input){input.focus();input.setSelectionRange(value.length,value.length)}
+}
+
+function setExerciseFilter(filter){
+ exerciseScreenState.filter=filter;
+ renderExercises();
+}
+
+function openExerciseFilter(){
+ modal(`
+  <div class="exercise-filter-sheet">
+   <div class="handle"></div>
+   <h2>Filter Exercises</h2>
+   <p class="muted">Choose which exercise history to show.</p>
+   <div class="exercise-filter-options">
+    <button class="${exerciseScreenState.historyFilter==="all"?"selected":""}" onclick="setExerciseHistoryFilter('all')"><span>All exercises</span><svg class="icon"><use href="#check"/></svg></button>
+    <button class="${exerciseScreenState.historyFilter==="logged"?"selected":""}" onclick="setExerciseHistoryFilter('logged')"><span>Logged exercises</span><svg class="icon"><use href="#check"/></svg></button>
+    <button class="${exerciseScreenState.historyFilter==="never"?"selected":""}" onclick="setExerciseHistoryFilter('never')"><span>Never logged</span><svg class="icon"><use href="#check"/></svg></button>
+   </div>
+   <button class="primary btn-wide" onclick="closeModal();renderExercises()">Done</button>
+  </div>
+ `);
+}
+
+function setExerciseHistoryFilter(filter){
+ exerciseScreenState.historyFilter=filter;
+ closeModal();
+ renderExercises();
+}
+
+function openExerciseHistory(id){
+ const exercise=state.exercises.find(e=>e.id===id);
+ if(!exercise)return;
+ const history=[];
+ for(const workout of state.workouts||[]){
+  for(const raw of workout.exercises||[]){
+   const entry=normalizedEntry(raw,workout.unit||"kg");
+   if(entry.exerciseId!==id)continue;
+   history.push({workout,entry});
+  }
+ }
+ history.sort((a,b)=>{
+  const d=(b.workout.date||"").localeCompare(a.workout.date||"");
+  return d||(Number(b.workout.createdAt)||0)-(Number(a.workout.createdAt)||0);
+ });
+ const latest=history[0]?.entry;
+ const unit=latest?.unit||history[0]?.workout?.unit||"kg";
+ const body=history.length?history.slice(0,8).map(({workout,entry})=>`
+   <div class="exercise-history-entry">
+    <strong>${esc(new Date(`${workout.date}T00:00:00`).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}))}</strong>
+    <span>${(entry.sets||[]).map(s=>esc(`${s.weight===0?"Bodyweight":`${s.weight} ${entry.unit||unit}`} × ${s.reps}`)).join("  •  ")||"No sets recorded"}</span>
+   </div>`).join(""):`<div class="exercise-screen-empty compact"><svg class="icon"><use href="#chart"/></svg><strong>No history yet</strong><span>Complete this exercise in a workout to see its history.</span></div>`;
+ modal(`
+  <div class="exercise-history-sheet">
+   <div class="handle"></div>
+   <h2>${esc(exercise.name)}</h2>
+   <p class="muted">${esc(exerciseMuscleName(exercise))} · Exercise history</p>
+   <div class="exercise-history-list">${body}</div>
+   <button class="outline btn-wide" onclick="closeModal()">Close</button>
+  </div>
+ `);
+}
+
+/* Exercise Library / Settings management */
 function renderLibrary(){
  const target=document.getElementById("library");
  if(!target)return;
