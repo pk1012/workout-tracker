@@ -44,7 +44,7 @@ function appBasePath(){
  }
  return "";
 }
-if("serviceWorker" in navigator){
+if("serviceWorker" in navigator && !location.hostname.endsWith("github.io")){
  const base=appBasePath();
  const swUrl=`${base||"./"}sw.js`;
  const scope=base||"./";
