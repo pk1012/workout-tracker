@@ -11,15 +11,6 @@
 #more .setting-desc{display:block}
 #more .theme-setting .setting-main{min-width:120px}
 
-#more .setting-section-title{
-  margin:0;
-  padding:0 24px 10px;
-  font-size:11px;
-  letter-spacing:1px;
-  font-weight:750;
-  color:#8a909b;
-}
-
 #more .settings{
   margin:0 24px 14px;
   display:grid;
@@ -100,16 +91,7 @@
   font-size:14px;
 }
 
-#more .about-title{
-  margin-top:0;
-  padding-top:0;
-}
-
 @media (max-width:600px){
-  #more .setting-section-title{
-    padding:0 16px 10px;
-  }
-
   #more .settings{
     margin-left:16px;
     margin-right:16px;
@@ -135,7 +117,6 @@
 }
 
 @media (max-width:380px){
-  #more .setting-section-title,
   #more .settings{
     margin-left:12px;
     margin-right:12px;
