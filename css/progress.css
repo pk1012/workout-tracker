@@ -81,7 +81,7 @@
 #progress .recent-section{margin-bottom:14px}
 #progress .recent-section .section-head{margin-bottom:10px}
 #progress .recent-section .workout-card{margin-bottom:10px;padding-top:10px;padding-bottom:10px;align-items:flex-start}
-#progress .recent-section .workout-card .card-arrow{align-self:center;margin-top:2px}
+#progress .recent-section .workout-card .card-arrow{align-self:center;margin-top:0}
 #progress .recent-section .workout-card:last-child{margin-bottom:0}
 #progress .recent-section .workout-card .workout-card-copy>span{margin-top:5px}
 #progress .recent-section .workout-card .workout-card-date{
@@ -99,20 +99,22 @@
   display:flex;
   flex-wrap:nowrap;
   align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  width:100%;
+  justify-content:flex-start;
+  gap:14px;
+  width:auto;
+  max-width:100%;
 }
 #progress .recent-section .workout-card .workout-metrics b{
   display:flex;
   align-items:center;
   gap:5px;
-  padding-right:0;
-  margin-right:0;
-  border-right:0;
+  padding:0;
+  margin:0;
+  border:0;
   grid-template-columns:none;
   font-weight:650;
   white-space:nowrap;
+  flex:none;
 }
 #progress .recent-section .workout-card .workout-metrics b .inline-icon{
   flex:none;
