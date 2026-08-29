@@ -60,6 +60,14 @@ function formatDriveSaved(iso){
  return d.toLocaleString("en-IN",{day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"});
 }
 
+function driveStatusLine(){
+ if(drivePending())return "Waiting to save…";
+ const saved=lsGet(K_SAVED);
+ if(saved)return `Last saved ${formatDriveSaved(saved)}`;
+ if(!hasCompletedWorkouts(state))return "No workouts to save yet";
+ return "Not saved yet";
+}
+
 function renderDriveCard(){
  const host=document.getElementById("driveCard");
  if(!host)return;
@@ -68,8 +76,7 @@ function renderDriveCard(){
   return;
  }
  const email=lsGet(K_EMAIL)||"Google Drive";
- const status=drivePending()?"Waiting to save…":(lsGet(K_SAVED)?`Last saved ${formatDriveSaved(lsGet(K_SAVED))}`:"Not saved yet");
- host.innerHTML=`<div class="setting card drive-card"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">${esc(email)}</span><span class="setting-desc">${esc(status)}</span></span><div class="drive-actions"><button class="primary" type="button" onclick="syncDrive()">Sync</button><button class="outline" type="button" onclick="disconnectDrive()">Disconnect</button></div></div>`;
+ host.innerHTML=`<div class="setting card drive-card"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">${esc(email)}</span><span class="setting-desc">${esc(driveStatusLine())}</span></span><div class="drive-actions"><button class="primary" type="button" onclick="syncDrive()">Sync</button><button class="outline" type="button" onclick="disconnectDrive()">Disconnect</button></div></div>`;
 }
 
 function consumeOAuthRedirect(){
@@ -393,6 +400,18 @@ async function runDriveHandshake(reason){
    return;
   }
   if(reason==="sync"){
+   if(!remote.exists){
+    if(!navigator.onLine){setDrivePending(true);renderDriveCard();return}
+    try{
+     await uploadDriveSnapshot("sync");
+    }catch(err){
+     if(err.code==="unauthorized")return;
+     setDrivePending(true);
+     renderDriveCard();
+     notify("Could not save to Google Drive.","error");
+    }
+    return;
+   }
    const emptyWarn=!hasCompletedWorkouts(state);
    const message=emptyWarn
     ?"This phone has no workouts. Replace the Drive backup with this phone’s data? That can erase the copy on Drive."
