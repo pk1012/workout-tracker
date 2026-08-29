@@ -1,4 +1,14 @@
-function theme(t){document.documentElement.dataset.theme=t;localStorage.setItem("wt_theme",t);document.getElementById("lightBtn")?.classList.toggle("active",t==="light");document.getElementById("darkBtn")?.classList.toggle("active",t==="dark")}
+function theme(t){
+ if(t!=="dark"&&t!=="light")t="light";
+ const root=document.documentElement;
+ root.dataset.theme=t;
+ root.style.colorScheme=t;
+ localStorage.setItem("wt_theme",t);
+ const meta=document.querySelector('meta[name="theme-color"]');
+ if(meta)meta.content=t==="dark"?"#111216":"#5b43f3";
+ document.getElementById("lightBtn")?.classList.toggle("active",t==="light");
+ document.getElementById("darkBtn")?.classList.toggle("active",t==="dark");
+}
 
 function backup(){
  const payload={format:"workout-tracker-backup",version:VERSION,exportedAt:new Date().toISOString(),theme:localStorage.getItem("wt_theme")||"light",state};

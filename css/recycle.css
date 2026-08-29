@@ -125,7 +125,7 @@
   display:block;
   font-size:13px;
   line-height:1.4;
-  color:#737a87;
+  color:var(--muted);
 }
 #recycle .recycle-meta{margin-top:5px}
 #recycle .recycle-age{margin-top:4px}

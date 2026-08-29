@@ -36,7 +36,7 @@
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
   margin:0 0 12px;
-  color:#303540;
+  color:var(--muted);
   font-size:11px;
   font-weight:400;
   text-align:center;
@@ -60,7 +60,7 @@
   font-size:11px;
   line-height:1;
   font-weight:650;
-  color:#27303c;
+  color:var(--text);
 }
 #workouts .workout-month-days i{
   width:31px;
@@ -167,7 +167,7 @@
   margin:0;
   font-size:inherit;
   font-weight:500;
-  color:#737a87;
+  color:var(--muted);
 }
 #workouts .workout-metrics b .inline-icon{
   grid-row:auto;
