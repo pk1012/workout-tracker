@@ -26,8 +26,8 @@
 #workouts .workout-card,
 #workouts .rest-card{
   margin-bottom:10px;
-  padding-top:12px;
-  padding-bottom:12px;
+  padding-top:8px;
+  padding-bottom:8px;
 }
 #workouts .workout-card:not(.rest-card){
   align-items:center;
@@ -98,8 +98,8 @@
 @media (max-width: 600px){
   #workouts .workout-card,
   #workouts .rest-card{
-    padding-top:9px;
-    padding-bottom:9px;
-    min-height:96px;
+    padding-top:8px;
+    padding-bottom:8px;
+    min-height:92px;
   }
 }
