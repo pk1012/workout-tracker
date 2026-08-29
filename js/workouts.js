@@ -39,7 +39,11 @@ function weekNumber(d){
  const yearStart=new Date(x.getFullYear(),0,1);
  return Math.ceil((((x-yearStart)/86400000)+1)/7);
 }
-function rangeLabel(start){let end=weekEnd(start),a=start.toLocaleDateString("en-IN",{month:"short",day:"numeric"}),b=end.toLocaleDateString("en-IN",{month:"short",day:"numeric"});return `${a} – ${b}`}
+function rangeLabel(start){
+ let end=weekEnd(start);
+ const part=d=>`${pad2(d.getDate())} ${d.toLocaleDateString("en-IN",{month:"short"})}`;
+ return `${part(start)} – ${part(end)}`;
+}
 function pad2(n){return String(n).padStart(2,"0")}
 function monthNumberChip(month){return `#${pad2(monthStart(month).getMonth()+1)}`}
 function monthRangeLabel(month){
