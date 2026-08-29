@@ -36,9 +36,10 @@
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
   margin:0 0 12px;
-  color:#303540;
-  font-size:14px;
-  font-weight:400;
+  color:#27303c;
+  font-size:13px;
+  font-weight:650;
+  line-height:1.35;
   text-align:center;
 }
 #workouts .workout-month-weekdays span{
