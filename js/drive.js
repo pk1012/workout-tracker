@@ -448,7 +448,7 @@ async function runDriveHandshake(reason){
  if(!isDriveConnected())return;
  if(driveBusy){driveQueued=reason;return}
  if(!navigator.onLine){
-  const wait=reason==="auto"||reason==="empty"||reason==="retry"||reason==="overwrite"||reason==="sync"||(reason==="connect"&&(hasCompletedWorkouts(state)||driveAdopted()))||(reason==="boot"&&(drivePending()||isDriveDirty()));
+  const wait=reason==="auto"||reason==="empty"||reason==="library"||reason==="retry"||reason==="overwrite"||reason==="sync"||(reason==="connect"&&(hasCompletedWorkouts(state)||driveAdopted()))||(reason==="boot"&&(drivePending()||isDriveDirty()));
   if(wait)setDrivePending(true);
   renderDriveCard();
   return;
@@ -465,10 +465,12 @@ async function runDriveHandshake(reason){
    adopted:driveAdopted(),
    forceOverwrite:reason==="overwrite",
    flushEmpty:reason==="empty",
+   flushLibrary:reason==="library",
    remoteHasWorkouts:remote.unreadable?true:hasCompletedWorkouts(remote.state)
   });
   if(decision.action==="offer-restore"){
    setDrivePending(false);
+   if(reason==="library"){renderDriveCard();return}
    if(remote.unreadable||!remote.state||!isValidState(remote.state)){
     notify("Drive backup could not be read.","error");
    }else{
@@ -483,10 +485,10 @@ async function runDriveHandshake(reason){
    setDriveDiverge(true);
   }
   if(decision.action==="upload"){
-   const allowUpload=reason==="auto"||reason==="empty"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"||(reason==="boot"&&(drivePending()||isDriveDirty()||!remote.exists));
+   const allowUpload=reason==="auto"||reason==="empty"||reason==="library"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"||(reason==="boot"&&(drivePending()||isDriveDirty()||!remote.exists));
    if(allowUpload){
     if(!navigator.onLine){setDrivePending(true);renderDriveCard();return}
-    const notifyReason=reason==="retry"||(drivePending()&&(reason==="auto"||reason==="empty"||reason==="boot"))?"retry":reason;
+    const notifyReason=reason==="retry"||(drivePending()&&(reason==="auto"||reason==="empty"||reason==="library"||reason==="boot"))?"retry":reason;
     try{
      await uploadDriveSnapshot(notifyReason);
     }catch(err){
@@ -522,7 +524,7 @@ async function runDriveHandshake(reason){
   renderDriveCard();
  }catch(err){
   if(err.code==="unauthorized")return;
-  if(reason==="auto"||reason==="empty"||reason==="retry"||reason==="overwrite")setDrivePending(true);
+  if(reason==="auto"||reason==="empty"||reason==="library"||reason==="retry"||reason==="overwrite")setDrivePending(true);
   else if(reason==="boot"&&(drivePending()||isDriveDirty()))setDrivePending(true);
   else if(reason==="connect"&&hasCompletedWorkouts(state))setDrivePending(true);
   else if(reason==="sync")setDrivePending(true);
@@ -541,16 +543,16 @@ async function runDriveHandshake(reason){
 
 function queueDriveSave(reason){
  if(!isDriveConnected()){
-  if((reason==="auto"||reason==="empty")&&(lsGet(K_FILE)||lsGet(K_SAVED)||drivePending())){
+  if((reason==="auto"||reason==="empty"||reason==="library")&&(lsGet(K_FILE)||lsGet(K_SAVED)||drivePending())){
    setDrivePending(true);
    notifyDriveReconnect();
    renderDriveCard();
   }
   return;
  }
- const canQueue=reason==="overwrite"||reason==="sync"||reason==="connect"||reason==="retry"||reason==="auto"||reason==="empty";
+ const canQueue=reason==="overwrite"||reason==="sync"||reason==="connect"||reason==="retry"||reason==="auto"||reason==="empty"||reason==="library";
  if(!canQueue)return;
- if(reason==="auto"||reason==="empty"){
+ if(reason==="auto"||reason==="empty"||reason==="library"){
   const remoteExists=!!lsGet(K_FILE)||!!lsGet(K_REMOTE)||!!lsGet(K_SAVED);
   const preview=drivePolicy({
    hasLocalWorkouts:hasCompletedWorkouts(state),
@@ -559,7 +561,8 @@ function queueDriveSave(reason){
    localDeviceId:getDeviceId(),
    restoreDeclined:driveDeclined(),
    adopted:driveAdopted(),
-   flushEmpty:reason==="empty"
+   flushEmpty:reason==="empty",
+   flushLibrary:reason==="library"
   });
   if(preview.action!=="upload"){
    if(preview.action==="need-confirm")setDriveDiverge(true);
@@ -576,7 +579,7 @@ function syncDrive(){
  queueDriveSave("sync");
 }
 
-function driveAfterLibraryChange(){queueDriveSave("auto")}
+function driveAfterLibraryChange(){queueDriveSave("library")}
 function driveAfterWorkoutChange(){
  if(hasCompletedWorkouts(state)){
   clearRestoreNotification();

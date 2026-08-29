@@ -38,6 +38,7 @@
   const restoreDeclined=!!input.restoreDeclined;
   const forceOverwrite=!!input.forceOverwrite;
   const flushEmpty=!!input.flushEmpty;
+  const flushLibrary=!!input.flushLibrary;
   const adopted=!!input.adopted;
   const localDeviceId=input.localDeviceId||"";
   const remoteDeviceId=input.remoteDeviceId||"";
@@ -47,6 +48,14 @@
   if(forceOverwrite)return{action:"upload",sameWriter,otherWriter};
   if(flushEmpty){
    if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};
+   return{action:"upload",sameWriter,otherWriter};
+  }
+  if(flushLibrary){
+   if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};
+   if(!hasLocalWorkouts&&remoteExists&&!restoreDeclined&&input.remoteHasWorkouts!==false){
+    return{action:"offer-restore",sameWriter,otherWriter};
+   }
+   if(!hasLocalWorkouts&&remoteExists&&restoreDeclined)return{action:"need-confirm",sameWriter,otherWriter};
    return{action:"upload",sameWriter,otherWriter};
   }
 
