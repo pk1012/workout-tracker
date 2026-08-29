@@ -73,9 +73,7 @@ function recycleCard(row){
  const id=esc(row.item.id);
  const restore=row.kind==="workout"?`restoreBinWorkout('${id}')`:row.kind==="muscle"?`restoreBinMuscle('${id}')`:`restoreBinExercise('${id}')`;
  const remove=row.kind==="workout"?`dropBinWorkout('${id}')`:row.kind==="muscle"?`dropBinMuscle('${id}')`:`dropBinExercise('${id}')`;
- const meta=row.kind==="workout"&&row.meta
-  ?`<span class="recycle-meta recycle-workout-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(row.meta)}</span></span>`
-  :(row.meta?`<span class="recycle-meta">${esc(row.meta)}</span>`:"");
+ const meta=row.meta?`<span class="recycle-meta">${esc(row.meta)}</span>`:"";
  return `<div class="recycle-card card">
   <div class="recycle-card-copy">
    <strong class="recycle-title">${esc(row.title)}</strong>

@@ -128,17 +128,6 @@
   color:#737a87;
 }
 #recycle .recycle-meta{margin-top:5px}
-#recycle .recycle-workout-date{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-#recycle .recycle-workout-date .inline-icon{
-  flex:none;
-  display:block;
-  width:13px;
-  height:13px;
-}
 #recycle .recycle-age{margin-top:4px}
 #recycle .recycle-card-actions{
   display:flex;
