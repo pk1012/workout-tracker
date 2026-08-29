@@ -17,6 +17,7 @@ const K_REAUTH="wt_drive_need_connect";
 const K_RESTORE_NOTE="wt_drive_restore_note";
 const K_DIVERGE="wt_drive_diverge";
 const K_HASH="wt_drive_sync_hash";
+const K_PENDING_WHY="wt_drive_pending_why";
 
 let driveBusy=false;
 let driveQueued=null;
@@ -58,7 +59,29 @@ function refreshDriveUi(){
  if(typeof renderDriveCard==="function")renderDriveCard();
  if(typeof renderNotificationBell==="function")renderNotificationBell();
 }
-function setDrivePending(on){if(on)lsSet(K_PENDING,"1");else lsDel(K_PENDING);refreshDriveUi()}
+function setDrivePending(on,why){
+ if(on){
+  lsSet(K_PENDING,"1");
+  if(why)lsSet(K_PENDING_WHY,why);
+ }else{
+  lsDel(K_PENDING);
+  lsDel(K_PENDING_WHY);
+ }
+ refreshDriveUi();
+}
+function drivePendingWhy(){return lsGet(K_PENDING_WHY)}
+function classifyDriveFail(err){
+ if(err&&(err.code==="folder"||err.message==="folder"))return "folder";
+ if(typeof navigator!=="undefined"&&navigator.onLine===false)return "offline";
+ if(err&&err.name==="TypeError")return "offline";
+ return "retry";
+}
+function drivePendingDetail(){
+ const why=drivePendingWhy();
+ if(why==="folder")return "Workout Tracker folder not found on Drive";
+ if(why==="retry")return "Couldn’t reach Google Drive. Will keep trying";
+ return "Google Drive will retry when you’re online";
+}
 
 function driveClientId(){
  return (typeof GOOGLE_DRIVE_CLIENT_ID==="string"&&GOOGLE_DRIVE_CLIENT_ID.trim())||lsGet(K_CLIENT).trim();
@@ -94,7 +117,7 @@ function notifyDriveReconnect(){
 function clearDriveSession(opts={}){
  lsDel(K_TOKEN);lsDel(K_EXP);lsDel(K_EMAIL);
  if(!opts.keepMeta){lsDel(K_FILE);lsDel(K_FOLDER);lsDel(K_SAVED);lsDel(K_REMOTE);lsDel(K_HASH)}
- if(!opts.keepPending)lsDel(K_PENDING);
+ if(!opts.keepPending){lsDel(K_PENDING);lsDel(K_PENDING_WHY)}
  if(!opts.keepDeclined)lsDel(K_DECLINED);
  if(!opts.keepAdopted)lsDel(K_ADOPTED);
 }
@@ -127,7 +150,7 @@ function formatDriveSaved(iso){
 }
 
 function driveStatusLine(){
- if(drivePending())return "Waiting to save…";
+ if(drivePending())return `Waiting to save. ${drivePendingDetail()}`;
  if(lsGet(K_DIVERGE)==="1")return "Phone and Drive differ. Sync to update.";
  const saved=lsGet(K_SAVED);
  if(saved)return `Last saved ${formatDriveSaved(saved)}`;
@@ -289,14 +312,22 @@ async function driveFind(query){
 
 async function ensureDriveFolder(){
  const cached=lsGet(K_FOLDER);
- if(cached)return cached;
+ if(cached){
+  const check=await driveApi(`https://www.googleapis.com/drive/v3/files/${cached}?fields=id,trashed`);
+  if(check.status!==404){
+   if(!check.ok)return cached;
+   const info=await check.json();
+   if(!info.trashed)return cached;
+  }
+  lsDel(K_FOLDER);
+ }
  const found=await driveFind(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
  if(found[0]){lsSet(K_FOLDER,found[0].id);return found[0].id}
  const res=await driveApi("https://www.googleapis.com/drive/v3/files",{
   method:"POST",
   body:JSON.stringify({name:DRIVE_FOLDER_NAME,mimeType:"application/vnd.google-apps.folder"})
  });
- if(!res.ok)throw new Error("folder");
+ if(!res.ok)throw Object.assign(new Error("folder"),{code:"folder"});
  const created=await res.json();
  lsSet(K_FOLDER,created.id);
  return created.id;
@@ -327,7 +358,7 @@ async function loadDriveRemote(){
  return{exists:true,deviceId,savedAt,state:parsed?parsed.state:null,fileId:file.id,unreadable:!parsed};
 }
 
-async function uploadDriveSnapshot(reason){
+async function uploadDriveSnapshot(reason,retried){
  const savedAt=new Date().toISOString();
  const deviceId=getDeviceId();
  const payload=driveSnapshot(state,{version:VERSION,savedAt,deviceId});
@@ -347,7 +378,14 @@ async function uploadDriveSnapshot(reason){
    method:"POST",
    body:JSON.stringify({...meta,parents:[folderId]})
   });
-  if(!createdRes.ok)throw new Error("create");
+  if(!createdRes.ok){
+   if(createdRes.status===404){
+    lsDel(K_FOLDER);
+    if(!retried)return uploadDriveSnapshot(reason,true);
+    throw Object.assign(new Error("folder"),{code:"folder"});
+   }
+   throw new Error("create");
+  }
   fileId=(await createdRes.json()).id;
   lsSet(K_FILE,fileId);
  }
@@ -449,7 +487,7 @@ async function runDriveHandshake(reason){
  if(driveBusy){driveQueued=reason;return}
  if(!navigator.onLine){
   const wait=reason==="auto"||reason==="empty"||reason==="library"||reason==="retry"||reason==="overwrite"||reason==="sync"||(reason==="connect"&&(hasCompletedWorkouts(state)||driveAdopted()))||(reason==="boot"&&(drivePending()||isDriveDirty()));
-  if(wait)setDrivePending(true);
+  if(wait)setDrivePending(true,"offline");
   renderDriveCard();
   return;
  }
@@ -487,13 +525,13 @@ async function runDriveHandshake(reason){
   if(decision.action==="upload"){
    const allowUpload=reason==="auto"||reason==="empty"||reason==="library"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"||(reason==="boot"&&(drivePending()||isDriveDirty()||!remote.exists));
    if(allowUpload){
-    if(!navigator.onLine){setDrivePending(true);renderDriveCard();return}
+    if(!navigator.onLine){setDrivePending(true,"offline");renderDriveCard();return}
     const notifyReason=reason==="retry"||(drivePending()&&(reason==="auto"||reason==="empty"||reason==="library"||reason==="boot"))?"retry":reason;
     try{
      await uploadDriveSnapshot(notifyReason);
     }catch(err){
      if(err.code==="unauthorized")return;
-     setDrivePending(true);
+     setDrivePending(true,classifyDriveFail(err));
      renderDriveCard();
      if(reason==="sync"||reason==="connect"||reason==="overwrite"||reason==="retry")notify("Could not save to Google Drive.","error");
     }
@@ -502,12 +540,12 @@ async function runDriveHandshake(reason){
   }
   if(reason==="sync"){
    if(!remote.exists){
-    if(!navigator.onLine){setDrivePending(true);renderDriveCard();return}
+    if(!navigator.onLine){setDrivePending(true,"offline");renderDriveCard();return}
     try{
      await uploadDriveSnapshot("sync");
     }catch(err){
      if(err.code==="unauthorized")return;
-     setDrivePending(true);
+     setDrivePending(true,classifyDriveFail(err));
      renderDriveCard();
      notify("Could not save to Google Drive.","error");
     }
@@ -524,10 +562,11 @@ async function runDriveHandshake(reason){
   renderDriveCard();
  }catch(err){
   if(err.code==="unauthorized")return;
-  if(reason==="auto"||reason==="empty"||reason==="library"||reason==="retry"||reason==="overwrite")setDrivePending(true);
-  else if(reason==="boot"&&(drivePending()||isDriveDirty()))setDrivePending(true);
-  else if(reason==="connect"&&hasCompletedWorkouts(state))setDrivePending(true);
-  else if(reason==="sync")setDrivePending(true);
+  const why=classifyDriveFail(err);
+  if(reason==="auto"||reason==="empty"||reason==="library"||reason==="retry"||reason==="overwrite")setDrivePending(true,why);
+  else if(reason==="boot"&&(drivePending()||isDriveDirty()))setDrivePending(true,why);
+  else if(reason==="connect"&&hasCompletedWorkouts(state))setDrivePending(true,why);
+  else if(reason==="sync")setDrivePending(true,why);
   renderDriveCard();
   if(reason==="sync"||reason==="connect"||reason==="overwrite"||reason==="retry")notify("Could not save to Google Drive.","error");
  }finally{
@@ -617,7 +656,7 @@ function driveAfterFileRestore(){
 function openNotifications(){
  const items=[];
  if(drivePending()){
-  items.push(`<button class="notice-item" type="button" onclick="openWaitingSaveNotice()"><strong>Waiting to save</strong><span>Google Drive will retry when you’re online</span></button>`);
+  items.push(`<button class="notice-item" type="button" onclick="openWaitingSaveNotice()"><strong>Waiting to save</strong><span>${esc(drivePendingDetail())}</span></button>`);
  }else if(hasDivergeNotice()){
   items.push(`<button class="notice-item" type="button" onclick="openDriveDivergeNotice()"><strong>Phone and Drive differ</strong><span>Sync to update Drive</span></button>`);
  }
