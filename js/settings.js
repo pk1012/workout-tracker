@@ -67,8 +67,8 @@ function isValidState(s){
  });
 }
 
-function applyRestore(restored,parsed){state=restored;save();if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);closeModal();go("workouts");notify("Backup restored successfully.","success")}
-function clearData(){confirmAction("Delete all workout data, exercises and muscle groups? This cannot be undone.",()=>{localStorage.removeItem("wt_state");location.reload()},true)}
+function applyRestore(restored,parsed){state=restored;save();if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);closeModal();go("workouts");notify("Backup restored successfully.","success");if(typeof driveAfterFileRestore==="function")driveAfterFileRestore()}
+function clearData(){confirmAction("Delete all workout data, exercises and muscle groups on this phone? Google Drive is not changed.",()=>{wipeStoredData().then(()=>{resetDriveAfterPhoneWipe();location.reload()})},true)}
 
 function about(){
  modal(`

@@ -8,6 +8,7 @@ function go(id){
  if(id==="exercises")renderExercises();
  if(id==="library-management")renderLibrary();
  if(id==="progress")renderProgress();
+ if(id==="more")renderDriveCard();
 }
 function modal(html,sheetClass=""){document.getElementById("modal").innerHTML=`<div class="sheet ${sheetClass}">${html}</div>`;document.getElementById("modal").classList.add("show");document.body.classList.add("modal-open")}
 function closeModal(){document.getElementById("modal").classList.remove("show");document.body.classList.remove("modal-open","workout-form-open")}
@@ -36,7 +37,7 @@ function confirmAction(message,onConfirm,asSheet){
  modal(`<div class="handle"></div><div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div><h2 class="confirm-title">Are you sure?</h2><p class="muted confirm-copy">${esc(message)}</p><div class="modal-actions"><button class="primary btn-wide" onclick="const fn=pendingConfirm;pendingConfirm=null;closeModal();fn&&fn()">Continue</button><button class="outline btn-wide" onclick="pendingConfirm=null;closeModal()">Cancel</button></div>`);
 }
 let savedTheme=localStorage.getItem("wt_theme")||"light";theme(savedTheme);
-renderHome();renderCalendar();
+storageReady.then(()=>{renderHome();renderCalendar();initDrive()});
 function appBasePath(){
  if(location.hostname.endsWith("github.io")){
   const segment=location.pathname.split("/").filter(Boolean)[0];

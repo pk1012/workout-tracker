@@ -75,6 +75,31 @@
 
 #more .chevron .icon{width:18px;height:18px}
 
+#more #driveCard{display:contents}
+#more .drive-card{
+  display:grid;
+  grid-template-columns:46px 1fr;
+  grid-template-areas:"icon main" "actions actions";
+  align-items:center;
+}
+#more .drive-card .setting-icon{grid-area:icon}
+#more .drive-card .setting-main{grid-area:main}
+#more .drive-card .drive-actions{
+  grid-area:actions;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:12px;
+}
+#more .drive-card .drive-actions .primary,
+#more .drive-card .drive-actions .outline{
+  height:40px;
+  min-height:40px;
+  width:100%;
+  border-radius:var(--radius);
+  font-size:14px;
+}
+
 #more .about-title{
   margin-top:0;
   padding-top:0;

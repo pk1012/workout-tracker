@@ -183,7 +183,7 @@ function saveWorkout(){
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
  let record={id:state.activeWorkout?.id||newId(),date,muscles,startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt:Date.now()};
  let old=record.id&&state.workouts.find(w=>w.id===record.id);if(old)Object.assign(old,record);else state.workouts.push(record);
- delete state.activeWorkout;save();selected=new Date(date+"T00:00:00");selectedWeekStart=weekStart(selected);workoutDraft={date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""};closeModal();go("home");
+ delete state.activeWorkout;save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();selected=new Date(date+"T00:00:00");selectedWeekStart=weekStart(selected);workoutDraft={date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""};closeModal();go("home");
 }
 function workoutSignature(w){const muscles=[...(w.muscles||[])].sort();const exercises=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg")).sort((a,b)=>a.exerciseId.localeCompare(b.exerciseId));return JSON.stringify({date:w.date,muscles,exercises})}
 function normalizedEntry(entry,fallbackUnit="kg"){if(typeof entry==="string")return {exerciseId:entry,sets:[],unit:fallbackUnit};const e=entry||{exerciseId:"",sets:[]};return {...e,unit:e.unit||fallbackUnit}}
@@ -211,4 +211,4 @@ function viewWorkout(id){
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
 }
-function deleteWorkout(id){confirmAction("Delete this workout?",()=>{state.workouts=state.workouts.filter(w=>w.id!==id);save();closeModal();renderCalendar();renderHome()},true)}
+function deleteWorkout(id){confirmAction("Delete this workout?",()=>{state.workouts=state.workouts.filter(w=>w.id!==id);save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();closeModal();renderCalendar();renderHome()},true)}
