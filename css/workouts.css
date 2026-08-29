@@ -11,6 +11,27 @@
 #workouts .workout-week-head{
   margin-bottom:14px;
 }
+#workouts .workout-month .section-head{
+  padding:0 2px;
+  margin-bottom:14px;
+  gap:8px;
+}
+#workouts .workout-month .section-head h2{
+  font-size:21px;
+  font-weight:760;
+  letter-spacing:-.3px;
+  min-width:0;
+}
+#workouts .workout-month .week-select{
+  min-width:0;
+}
+#workouts .workout-month .week-select span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+[data-theme=dark] #workouts .workout-month .week-select{
+  color:var(--primary);
+}
 #workouts .workout-month-weekdays{
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
@@ -67,11 +88,6 @@
 }
 #workouts .workout-month .week-stats b{
   white-space:nowrap;
-}
-#workouts .week-picker-link{
-  margin-top:14px;
-  padding-top:0;
-  padding-bottom:0;
 }
 #workouts .selected-date{
   margin-bottom:10px;
@@ -149,6 +165,32 @@
   vertical-align:middle;
 }
 @media (max-width: 600px){
+  #workouts .workout-month .section-head{
+    margin-bottom:12px;
+    padding:0 4px;
+  }
+  #workouts .workout-month .section-head h2{
+    font-size:17px;
+  }
+  #workouts .workout-month .week-select{
+    gap:6px;
+    font-size:12px;
+  }
+  #workouts .workout-month .week-select b{
+    padding:5px 6px;
+    border-radius:7px;
+  }
+  #workouts .workout-month .week-select span{
+    font-size:12px;
+  }
+  #workouts .workout-month .week-select i{
+    display:grid;
+    place-items:center;
+  }
+  #workouts .workout-month .week-select i .icon{
+    width:14px;
+    height:14px;
+  }
   #workouts .workout-month-days i{
     width:26px;
     height:26px;

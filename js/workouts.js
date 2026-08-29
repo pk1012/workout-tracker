@@ -40,6 +40,14 @@ function weekNumber(d){
  return Math.ceil((((x-yearStart)/86400000)+1)/7);
 }
 function rangeLabel(start){let end=weekEnd(start),a=start.toLocaleDateString("en-IN",{month:"short",day:"numeric"}),b=end.toLocaleDateString("en-IN",{month:"short",day:"numeric"});return `${a} – ${b}`}
+function pad2(n){return String(n).padStart(2,"0")}
+function monthNumberChip(month){return `#${pad2(monthStart(month).getMonth()+1)}`}
+function monthRangeLabel(month){
+ const start=monthStart(month);
+ const end=new Date(start.getFullYear(),start.getMonth()+1,0);
+ const part=d=>`${pad2(d.getDate())} ${d.toLocaleDateString("en-IN",{month:"short"})}`;
+ return `${part(start)} – ${part(end)}`;
+}
 function weekKey(d){return dateKey(weekStart(d))}
 function weekDates(start){return Array.from({length:7},(_,i)=>{let d=new Date(start);d.setDate(d.getDate()+i);return d})}
 function isToday(d){return dateKey(d)===dateKey(new Date())}
@@ -67,7 +75,7 @@ function renderCalendar(){
  const remaining=remainingDays(inMonth);
  const sel=dateKey(selected);
  const heads=weekdayHeads();
- document.getElementById("workoutView").innerHTML=`<section class="workout-week workout-month card"><div class="workout-week-head"><button type="button" aria-label="Previous month" onclick="moveMonth(-1)"><svg class="icon"><use href="#chevron-left"/></svg></button><div><strong>${month.getFullYear()}</strong><span>${month.toLocaleDateString("en-IN",{month:"long"})}</span></div><button type="button" aria-label="Next month" onclick="moveMonth(1)"><svg class="icon"><use href="#chevron-right"/></svg></button></div><div class="workout-month-weekdays">${heads.map(h=>`<span>${h}</span>`).join("")}</div><div class="workout-days workout-month-days">${days.map(d=>{const k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d),out=inSelectedMonth(d)?"":" out-month";return `<button type="button" class="${k===sel?"selected ":""}${today?"is-today":""}${out}" aria-label="${d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}" onclick="selectWorkoutDay('${k}')"><small>${d.getDate()}</small><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><div class="week-stats"><span><svg class="icon" aria-hidden="true"><use href="#calendar-icon"/></svg><b>${count} workout${count===1?"":"s"}</b></span><span><svg class="icon" aria-hidden="true"><use href="#activity"/></svg><b>${restCount} rest days</b></span><span><svg class="icon" aria-hidden="true"><use href="#target"/></svg><b>${remaining} day${remaining===1?"":"s"} remaining</b></span></div><button class="week-picker-link" type="button" onclick="openMonthPicker()">Select Month <svg class="icon"><use href="#chevron-down"/></svg></button></section>${renderSelectedDay(sel)}`;
+ document.getElementById("workoutView").innerHTML=`<section class="workout-week workout-month card"><div class="section-head"><h2>Monthly Activity</h2><button class="week-select" type="button" onclick="openMonthPicker()" aria-label="Select month"><b>${monthNumberChip(month)}</b><span>${monthRangeLabel(month)}</span><i><svg class="icon" aria-hidden="true"><use href="#chevron-down"/></svg></i></button></div><div class="workout-month-weekdays">${heads.map(h=>`<span>${h}</span>`).join("")}</div><div class="workout-days workout-month-days">${days.map(d=>{const k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d),out=inSelectedMonth(d)?"":" out-month";return `<button type="button" class="${k===sel?"selected ":""}${today?"is-today":""}${out}" aria-label="${d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}" onclick="selectWorkoutDay('${k}')"><small>${d.getDate()}</small><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><div class="week-stats"><span><svg class="icon" aria-hidden="true"><use href="#calendar-icon"/></svg><b>${count} workout${count===1?"":"s"}</b></span><span><svg class="icon" aria-hidden="true"><use href="#activity"/></svg><b>${restCount} rest days</b></span><span><svg class="icon" aria-hidden="true"><use href="#target"/></svg><b>${remaining} day${remaining===1?"":"s"} remaining</b></span></div></section>${renderSelectedDay(sel)}`;
 }
 function renderSelectedDay(k){
  let d=new Date(k+"T00:00:00"),ws=state.workouts.filter(w=>w.date===k);
@@ -90,17 +98,6 @@ function workoutCard(w){
 }
 function renderRecentWorkouts(){ /* Progress page. */ const ws=[...state.workouts].sort((a,b)=>{const dateDiff=(b.date||"").localeCompare(a.date||"");return dateDiff||(b.createdAt||0)-(a.createdAt||0)});return `<section class="recent-section"><div class="section-head"><h2>Workout History</h2></div>${ws.length?ws.map(workoutCard).join(""):`<div class="empty card">No workouts logged yet.</div>`}</section>`}
 function moveWeek(n){selectedWeekStart=new Date(selectedWeekStart);selectedWeekStart.setDate(selectedWeekStart.getDate()+n*7);selected=new Date(selectedWeekStart);selectedMonth=monthStart(selected);renderCalendar();renderHome()}
-function moveMonth(n){
- selectedMonth=monthStart(selectedMonth);
- selectedMonth.setMonth(selectedMonth.getMonth()+n);
- const same=selected.getFullYear()===selectedMonth.getFullYear()&&selected.getMonth()===selectedMonth.getMonth();
- if(!same){
-  const today=new Date();today.setHours(0,0,0,0);
-  selected=iAmThisMonth(selectedMonth)?today:new Date(selectedMonth);
- }
- selectedWeekStart=weekStart(selected);
- renderCalendar();renderHome();
-}
 function selectWorkoutDay(k){selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);renderCalendar();renderHome()}
 function goToWeekDay(k){go("workouts");selectWorkoutDay(k)}
 function openWeekPicker(){
