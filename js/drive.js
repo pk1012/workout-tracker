@@ -519,6 +519,7 @@ function syncDrive(){
  queueDriveSave("sync");
 }
 
+function driveAfterLibraryChange(){queueDriveSave("auto")}
 function driveAfterWorkoutChange(){
  if(hasCompletedWorkouts(state))clearRestoreNotification();
  queueDriveSave("auto");

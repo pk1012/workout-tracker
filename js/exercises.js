@@ -264,13 +264,13 @@ function saveExercise(id){
  if(!mid||!state.muscles.some(m=>m.id===mid)){notify("Choose a valid muscle group.");return}
  if(state.exercises.some(e=>e.name.toLowerCase()===name.toLowerCase()&&e.muscleId===mid&&e.id!==id)){notify("That exercise already exists in this muscle group.");return}
  if(id){let e=state.exercises.find(x=>x.id===id);if(!e){notify("Exercise not found.");return}e.name=name;e.muscleId=mid}else state.exercises.push({id:newId(),name,muscleId:mid});
- save();closeModal();
+ save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();closeModal();
  if(document.getElementById("library-management")?.classList.contains("active"))renderLibrary();
  if(document.getElementById("exercises")?.classList.contains("active"))renderExercises();
 }
 function deleteExercise(id){
  let e=state.exercises.find(x=>x.id===id);if(!e)return;
- confirmAction(`Delete “${e.name}”? Existing workout history will remain.`,()=>{state.exercises=state.exercises.filter(x=>x.id!==id);save();renderLibrary();renderExercises();},true)
+ confirmAction(`Delete “${e.name}”? Existing workout history will remain.`,()=>{state.exercises=state.exercises.filter(x=>x.id!==id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();},true)
 }
 function openMuscle(id=""){
  let m=id?state.muscles.find(x=>x.id===id):null;
@@ -294,9 +294,9 @@ function saveMuscle(id){
  if(!name){notify("Enter a name.");return}
  if(state.muscles.some(m=>m.name.toLowerCase()===name.toLowerCase()&&m.id!==id)){notify("That muscle group already exists.");return}
  if(id){let m=state.muscles.find(x=>x.id===id);if(!m){notify("Muscle group not found.");return}m.name=name}else state.muscles.push({id:newId(),name});
- save();closeModal();renderLibrary();renderExercises();
+ save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();closeModal();renderLibrary();renderExercises();
 }
 function deleteMuscle(id){
  let m=state.muscles.find(x=>x.id===id),n=state.exercises.filter(e=>e.muscleId===id).length;if(!m)return;
- confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also be removed from the library.`:""}`,()=>{state.muscles=state.muscles.filter(x=>x.id!==id);state.exercises=state.exercises.filter(e=>e.muscleId!==id);save();renderLibrary();renderExercises();},true)
+ confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also be removed from the library.`:""}`,()=>{state.muscles=state.muscles.filter(x=>x.id!==id);state.exercises=state.exercises.filter(e=>e.muscleId!==id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();},true)
 }
