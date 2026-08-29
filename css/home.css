@@ -127,9 +127,28 @@
   #home .week-day>span{font-size:11px;white-space:nowrap}
   #home .week-day i{width:31px;height:31px;font-size:14px}
   #home .week-day i .icon{width:17px;height:17px}
-  #home .week-stats{font-size:10px;padding:9px 0}
-  #home .week-stats span{padding:0 5px}
-  #home .week-stats b{margin-left:3px;font-size:10px}
+  #home .week-stats{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    column-gap:8px;
+    align-items:center;
+    font-size:10px;
+    padding:9px 0;
+  }
+  #home .week-stats span{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    min-width:0;
+    padding:0;
+  }
+  #home .week-stats span+span{border-left:0}
+  #home .week-stats b{
+    margin-left:0;
+    font-size:10px;
+    white-space:nowrap;
+  }
   #home .full-week{
     height:38px;
     border-radius:9px;
@@ -172,8 +191,6 @@
   #home .weekly-card{padding-left:10px;padding-right:10px}
   #home .week-select{min-width:0}
   #home .week-select span{overflow:hidden;text-overflow:ellipsis}
-  #home .week-stats span{min-width:0;display:flex;align-items:center;justify-content:center;gap:2px}
-  #home .week-stats b{white-space:nowrap}
 }
 
 @media (max-width:380px){
