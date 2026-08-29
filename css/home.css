@@ -132,7 +132,7 @@
     grid-template-columns:repeat(3,minmax(0,1fr));
     align-items:center;
     font-size:10px;
-    padding:10px 2px 9px;
+    padding:10px 2px 10px;
   }
   #home .week-stats span{
     display:flex;
@@ -166,6 +166,7 @@
     align-items:center;
     justify-content:center;
     gap:7px;
+    margin-top:0;
   }
   #home .full-week .icon{width:16px;height:16px}
 

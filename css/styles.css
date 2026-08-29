@@ -340,7 +340,7 @@ body{padding-bottom:0}
   grid-template-columns:repeat(3,minmax(0,1fr));
   align-items:center;
   margin-top:0;
-  padding:10px 2px 14px;
+  padding:10px 2px 10px;
 }
 .weekly-card .week-stats span{
   display:flex;
@@ -362,7 +362,7 @@ body{padding-bottom:0}
 }
 .weekly-card .week-stats span+span{border-left:1px solid var(--line)}
 .weekly-card .week-stats b{margin-left:0}
-.weekly-card .full-week{height:46px}
+.weekly-card .full-week{height:46px;margin-top:0}
 .week-stats span{min-width:0}
 .week-stats .icon{width:18px;height:18px;flex:none;vertical-align:middle}
 
@@ -399,7 +399,7 @@ body{padding-bottom:0}
   .weekly-card .section-head{margin-bottom:12px}
   .weekly-card .week-days{gap:1px}
   .weekly-card .legend{margin:11px 1px 10px;gap:14px}
-  .weekly-card .week-stats{padding:10px 2px 12px}
+  .weekly-card .week-stats{padding:10px 2px 10px}
   .weekly-card .full-week{height:42px}
   .quick{padding:17px 10px 15px}
   .quick .section-head{padding:0 2px}
@@ -913,10 +913,10 @@ body.workout-form-open .bottom-nav{
 
 /* 1.7.35 — Weekly Activity: a few extra pixels between day row, legend, and stats */
 .weekly-card .legend{margin:18px 2px 10px}
-.weekly-card .week-stats{padding:10px 2px 14px}
+.weekly-card .week-stats{padding:10px 2px 10px}
 @media(max-width:600px){
   .weekly-card .legend{margin:16px 1px 10px}
-  .weekly-card .week-stats{padding:10px 2px 12px}
+  .weekly-card .week-stats{padding:10px 2px 10px}
 }
 
 /* 1.7.36 — Start Workout: match Home type scale, same-size labels/values, tighter field gaps */
