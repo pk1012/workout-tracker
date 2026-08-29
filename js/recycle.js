@@ -1,4 +1,4 @@
-let recycleState={search:"",filter:"all"};
+let recycleState={search:"",filter:"all",sort:"newest"};
 
 function driveAfterBinChange(){
  if(typeof hasCompletedWorkouts==="function"&&hasCompletedWorkouts(state)&&typeof driveAfterWorkoutChange==="function"){
@@ -52,7 +52,13 @@ function recycleItems(){
  if(recycleState.filter==="all"||recycleState.filter==="muscles")rows=rows.concat(muscles);
  if(recycleState.filter==="all"||recycleState.filter==="exercises")rows=rows.concat(exercises);
  if(q)rows=rows.filter(r=>r.search.toLowerCase().includes(q));
- rows.sort((a,b)=>(Number(b.item.deletedAt)||0)-(Number(a.item.deletedAt)||0));
+ rows.sort((a,b)=>{
+  const ad=Number(a.item.deletedAt)||0;
+  const bd=Number(b.item.deletedAt)||0;
+  if(recycleState.sort==="oldest")return ad-bd;
+  if(recycleState.sort==="expiring")return binDaysLeft(ad)-binDaysLeft(bd);
+  return bd-ad;
+ });
  return rows;
 }
 
@@ -75,30 +81,92 @@ function recycleCard(row){
  </div>`;
 }
 
-function renderRecycle(){
- const host=document.getElementById("recycleView");
- if(!host)return;
- ensureBin(state);
+function recycleEmptyHtml(){
+ const bin=state.bin||emptyBin();
+ const hasAny=(bin.workouts||[]).length+(bin.muscles||[]).length+(bin.exercises||[]).length;
+ const hint=hasAny?"Try another search or filter.":"Deleted workouts and exercises stay here for 30 days.";
+ return `<div class="exercise-screen-panel card exercise-screen-empty"><svg class="icon" aria-hidden="true"><use href="#trash"/></svg><strong>No deleted items</strong><span>${hint}</span></div>`;
+}
+
+function recycleListHtml(){
  const rows=recycleItems();
- const body=rows.length?rows.map(recycleCard).join(""):`<div class="exercise-screen-panel card exercise-screen-empty"><svg class="icon" aria-hidden="true"><use href="#trash"/></svg><strong>No deleted items</strong><span>Deleted workouts and exercises stay here for 30 days.</span></div>`;
- host.innerHTML=`
-  <div class="exercise-screen-toolbar recycle-toolbar">
+ return rows.length?rows.map(recycleCard).join(""):recycleEmptyHtml();
+}
+
+function renderRecycleToolbar(){
+ return `
+  <div class="exercise-screen-toolbar">
    <label class="exercise-search">
     <svg class="icon" aria-hidden="true"><use href="#search"/></svg>
     <input id="recycleSearch" type="search" value="${esc(recycleState.search)}" placeholder="Search deleted items" autocomplete="off" oninput="setRecycleSearch(this.value)">
    </label>
+   <button type="button" class="exercise-filter-button" onclick="openRecycleFilter()">
+    <svg class="icon" aria-hidden="true"><use href="#filter"/></svg><span>Filter</span>
+   </button>
   </div>
-  <div class="exercise-chip-scroller">${recycleChip("all","All")}${recycleChip("workouts","Workouts")}${recycleChip("muscles","Muscle groups")}${recycleChip("exercises","Exercises")}</div>
-  <div class="recycle-list">${body}</div>
- `;
+  <div class="exercise-chip-scroller" role="tablist" aria-label="Deleted item types">${recycleChip("all","All")}${recycleChip("workouts","Workouts")}${recycleChip("muscles","Muscle groups")}${recycleChip("exercises","Exercises")}</div>`;
+}
+
+function refreshRecycleList(){
+ const list=document.getElementById("recycleList");
+ if(!list){renderRecycle();return}
+ list.innerHTML=recycleListHtml();
+}
+
+function renderRecycle(){
+ const host=document.getElementById("recycleView");
+ if(!host)return;
+ ensureBin(state);
+ host.innerHTML=`${renderRecycleToolbar()}<div id="recycleList" class="recycle-list">${recycleListHtml()}</div>`;
 }
 
 function setRecycleSearch(value){
  recycleState.search=value||"";
- renderRecycle();
+ refreshRecycleList();
 }
 function setRecycleFilter(filter){
  recycleState.filter=filter||"all";
+ renderRecycle();
+}
+function recycleSortOption(id,label){
+ const selected=recycleState.sort===id;
+ return `<button type="button" data-recycle-sort="${id}" class="${selected?"chosen":""}" onclick="setRecycleSort('${id}')"><span>${label}</span>${selected?'<em><svg class="icon" aria-hidden="true"><use href="#check"/></svg></em>':""}</button>`;
+}
+function openRecycleFilter(){
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <h2 class="workout-form-title">Filter Recycle Bin</h2>
+   <div class="muted workout-form-description">Choose how to sort deleted items.</div>
+  </div>
+  <div class="workout-entry-scroll">
+   <div class="week-list exercise-history-filter-list">
+    ${recycleSortOption("newest","Newest first")}
+    ${recycleSortOption("oldest","Oldest first")}
+    ${recycleSortOption("expiring","Expiring soon")}
+   </div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="applyRecycleFilter()">Done</button>
+  </div>
+ `,"workout-entry-sheet exercise-filter-sheet");
+ document.body.classList.add("workout-form-open");
+}
+function setRecycleSort(sort){
+ recycleState.sort=sort||"newest";
+ document.querySelectorAll("[data-recycle-sort]").forEach(btn=>{
+  const on=btn.dataset.recycleSort===recycleState.sort;
+  btn.classList.toggle("chosen",on);
+  const check=btn.querySelector("em");
+  if(on&&!check){
+   btn.insertAdjacentHTML("beforeend",'<em><svg class="icon" aria-hidden="true"><use href="#check"/></svg></em>');
+  }else if(!on&&check){
+   check.remove();
+  }
+ });
+}
+function applyRecycleFilter(){
+ closeModal();
  renderRecycle();
 }
 
