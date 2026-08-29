@@ -68,7 +68,7 @@
   opacity:.38;
 }
 #workouts .workout-month .legend{
-  margin:18px 2px 14px;
+  margin:18px 2px 10px;
   gap:20px;
 }
 #workouts .workout-month .week-stats{
@@ -77,7 +77,7 @@
   justify-content:space-between;
   gap:8px;
   margin:0;
-  padding:16px 2px 14px;
+  padding:10px 2px 14px;
   color:#69707c;
 }
 #workouts .workout-month .week-stats span{
@@ -198,11 +198,11 @@
     height:14px;
   }
   #workouts .workout-month .legend{
-    margin:16px 1px 14px;
+    margin:16px 1px 10px;
     gap:14px;
   }
   #workouts .workout-month .week-stats{
-    padding:14px 2px 12px;
+    padding:10px 2px 12px;
   }
   #workouts .workout-month-days i{
     width:26px;
