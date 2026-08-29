@@ -45,7 +45,13 @@ function clearRestoreNotification(){
 function renderNotificationBell(){
  const btn=document.querySelector(".notification-head");
  if(!btn)return;
- btn.classList.toggle("has-unread",!!((lsGet(K_RESTORE_NOTE)&&!hasCompletedWorkouts(state))||drivePending()));
+ btn.classList.toggle("has-unread",!!((lsGet(K_RESTORE_NOTE)&&!hasCompletedWorkouts(state))||drivePending()||hasDivergeNotice()));
+}
+function hasDivergeNotice(){return lsGet(K_DIVERGE)==="1"&&!drivePending()}
+function setDriveDiverge(on){
+ if(on)lsSet(K_DIVERGE,"1");
+ else lsDel(K_DIVERGE);
+ refreshDriveUi();
 }
 function refreshDriveUi(){
  if(typeof renderDriveCard==="function")renderDriveCard();
@@ -203,7 +209,7 @@ function disconnectDrive(){
  confirmAction("Stop using Google Drive on this phone? The file on Drive is kept.",()=>{
   clearDriveSession();
   lsDel(K_REAUTH);
-  lsDel(K_DIVERGE);
+  setDriveDiverge(false);
   clearRestoreNotification();
   restorePrompted=false;
   renderDriveCard();
@@ -216,7 +222,7 @@ function resetDriveAfterPhoneWipe(){
  setDrivePending(false);
  lsDel(K_DECLINED);
  lsDel(K_ADOPTED);
- lsDel(K_DIVERGE);
+ setDriveDiverge(false);
  clearRestoreNotification();
  restorePrompted=false;
 }
@@ -347,7 +353,7 @@ async function uploadDriveSnapshot(reason){
  lsDel(K_ADOPTED);
  lsDel(K_DECLINED);
  lsDel(K_REAUTH);
- lsDel(K_DIVERGE);
+ setDriveDiverge(false);
  clearRestoreNotification();
  setDrivePending(false);
  renderDriveCard();
@@ -446,7 +452,10 @@ async function runDriveHandshake(reason){
    renderDriveCard();
    return;
   }
-  if(decision.action==="need-confirm")setDrivePending(false);
+  if(decision.action==="need-confirm"){
+   setDrivePending(false);
+   setDriveDiverge(true);
+  }
   if(decision.action==="upload"){
    if(reason==="auto"||reason==="empty"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"){
     if(!navigator.onLine){setDrivePending(true);renderDriveCard();return}
@@ -524,7 +533,10 @@ function queueDriveSave(reason){
    adopted:driveAdopted(),
    flushEmpty:reason==="empty"
   });
-  if(preview.action!=="upload")return;
+  if(preview.action!=="upload"){
+   if(preview.action==="need-confirm")setDriveDiverge(true);
+   return;
+  }
   setDrivePending(true);
   renderDriveCard();
  }
@@ -549,9 +561,8 @@ function driveAfterFileRestore(){
  if(hasCompletedWorkouts(state))clearRestoreNotification();
  if(!isDriveConnected()){
   if(lsGet(K_FILE)||lsGet(K_SAVED)){
-   lsSet(K_DIVERGE,"1");
+   setDriveDiverge(true);
    notify("This phone was restored. Connect Google Drive, then Sync to update Drive.");
-   renderDriveCard();
   }
   return;
  }
@@ -564,19 +575,20 @@ function driveAfterFileRestore(){
   adopted:driveAdopted()
  });
  if(preview.action==="upload"){
-  lsDel(K_DIVERGE);
+  setDriveDiverge(false);
   queueDriveSave("auto");
   return;
  }
- lsSet(K_DIVERGE,"1");
+ setDriveDiverge(true);
  notify("This phone was restored. Sync and confirm to update Google Drive.");
- renderDriveCard();
 }
 
 function openNotifications(){
  const items=[];
  if(drivePending()){
   items.push(`<button class="notice-item" type="button" onclick="openWaitingSaveNotice()"><strong>Waiting to save</strong><span>Google Drive will retry when you’re online</span></button>`);
+ }else if(hasDivergeNotice()){
+  items.push(`<button class="notice-item" type="button" onclick="openDriveDivergeNotice()"><strong>Phone and Drive differ</strong><span>Sync to update Drive</span></button>`);
  }
  const note=restoreNotePayload();
  if(note){
@@ -596,6 +608,10 @@ function openNotifications(){
  document.body.classList.add("workout-form-open");
 }
 function openWaitingSaveNotice(){
+ closeModal();
+ go("more");
+}
+function openDriveDivergeNotice(){
  closeModal();
  go("more");
 }
