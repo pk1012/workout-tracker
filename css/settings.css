@@ -43,7 +43,7 @@
   stroke-width:1.8;
   transform-origin:center;
 }
-#more .setting-icon[data-glyph=book] .icon{transform:scale(.884)}
+#more .setting-icon[data-glyph=book] .icon{transform:scale(.964)}
 #more .setting-icon[data-glyph=theme] .icon{transform:scale(.881)}
 #more .setting-icon[data-glyph=cloud] .icon{transform:scale(.972)}
 #more .setting-icon[data-glyph=upload] .icon{transform:scale(1.133)}
