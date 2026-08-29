@@ -45,8 +45,9 @@ function clearRestoreNotification(){
 function renderNotificationBell(){
  const btn=document.querySelector(".notification-head");
  if(!btn)return;
- btn.classList.toggle("has-unread",!!(lsGet(K_RESTORE_NOTE)&&!hasCompletedWorkouts(state)));
+ btn.classList.toggle("has-unread",!!((lsGet(K_RESTORE_NOTE)&&!hasCompletedWorkouts(state))||drivePending()));
 }
+function setDrivePending(on){if(on)lsSet(K_PENDING,"1");else lsDel(K_PENDING);renderNotificationBell()}
 
 function driveClientId(){
  return (typeof GOOGLE_DRIVE_CLIENT_ID==="string"&&GOOGLE_DRIVE_CLIENT_ID.trim())||lsGet(K_CLIENT).trim();
@@ -86,7 +87,6 @@ function clearDriveSession(opts={}){
  if(!opts.keepAdopted)lsDel(K_ADOPTED);
 }
 function drivePending(){return lsGet(K_PENDING)==="1"}
-function setDrivePending(on){if(on)lsSet(K_PENDING,"1");else lsDel(K_PENDING)}
 function driveDeclined(){return lsGet(K_DECLINED)==="1"}
 function driveAdopted(){return lsGet(K_ADOPTED)==="1"}
 
@@ -202,6 +202,7 @@ function disconnectDrive(){
   clearRestoreNotification();
   restorePrompted=false;
   renderDriveCard();
+  renderNotificationBell();
   notify("Google Drive disconnected.","success");
  },true);
 }
@@ -558,10 +559,15 @@ function driveAfterFileRestore(){
 }
 
 function openNotifications(){
+ const items=[];
+ if(drivePending()){
+  items.push(`<button class="notice-item" type="button" onclick="openWaitingSaveNotice()"><strong>Waiting to save</strong><span>Google Drive will retry when you’re online</span></button>`);
+ }
  const note=restoreNotePayload();
- const body=note
-  ?`<button class="notice-item" type="button" onclick="openPendingDriveRestore()"><strong>Restore Drive backup</strong><span>${esc(note.savedAt?`Backup from ${formatDriveSaved(note.savedAt)}`:"Google Drive backup")}</span></button>`
-  :`<p class="muted notice-empty">No notifications</p>`;
+ if(note){
+  items.push(`<button class="notice-item" type="button" onclick="openPendingDriveRestore()"><strong>Restore Drive backup</strong><span>${esc(note.savedAt?`Backup from ${formatDriveSaved(note.savedAt)}`:"Google Drive backup")}</span></button>`);
+ }
+ const body=items.length?`<div class="notice-list">${items.join("")}</div>`:`<p class="muted notice-empty">No notifications</p>`;
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
@@ -573,6 +579,10 @@ function openNotifications(){
   </div>
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
+}
+function openWaitingSaveNotice(){
+ closeModal();
+ go("more");
 }
 
 async function openPendingDriveRestore(){

@@ -1,6 +1,7 @@
 /* Exercise Library actions and Start Workout set-editor heading. */
 .actions{display:flex;gap:14px;font-weight:700}.edit{color:var(--primary)}.delete{color:#d94b5b}
 .set-editor-head{font-size:16px;margin-bottom:10px}
+.notice-list{display:grid;gap:10px;margin-top:14px}
 .notice-item{
   width:100%;
   text-align:left;
