@@ -133,7 +133,7 @@
     justify-content:space-between;
     gap:8px;
     font-size:10px;
-    padding:9px 0;
+    padding:9px 2px;
   }
   #home .week-stats span{
     display:flex;
