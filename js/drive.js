@@ -453,7 +453,7 @@ function confirmDriveRestore(){
  lsSet(K_ADOPTED,"1");
  lsDel(K_DECLINED);
  clearRestoreNotification();
- selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);
+ selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);if(typeof monthStart==="function")selectedMonth=monthStart(selected);
  closeModal();
  go("workouts");
  notify("Backup restored successfully.","success");

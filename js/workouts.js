@@ -1,5 +1,6 @@
 let workoutDraft={date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""};
 let selectedWeekStart=weekStart(new Date());
+let selectedMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 
 
 function workoutIconName(type){
@@ -42,11 +43,22 @@ function rangeLabel(start){let end=weekEnd(start),a=start.toLocaleDateString("en
 function weekKey(d){return dateKey(weekStart(d))}
 function weekDates(start){return Array.from({length:7},(_,i)=>{let d=new Date(start);d.setDate(d.getDate()+i);return d})}
 function isToday(d){return dateKey(d)===dateKey(new Date())}
+function monthStart(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(1);return x}
+function monthGrid(d){
+ const first=monthStart(d);
+ const start=weekStart(first);
+ return Array.from({length:42},(_,i)=>{const day=new Date(start);day.setDate(start.getDate()+i);return day});
+}
+function inSelectedMonth(d){return d.getFullYear()===selectedMonth.getFullYear()&&d.getMonth()===selectedMonth.getMonth()}
+function iAmThisMonth(d){const n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()}
+function weekdayHeads(){return weekDates(weekStart(new Date())).map(d=>d.toLocaleDateString("en-IN",{weekday:"short"}))}
 
 function renderCalendar(){
- const start=weekStart(selectedWeekStart),days=weekDates(start),sel=dateKey(selected);
- const count=days.filter(d=>state.workouts.some(w=>w.date===dateKey(d))).length;
- document.getElementById("workoutView").innerHTML=`<section class="workout-week card"><div class="workout-week-head"><button aria-label="Previous week" onclick="moveWeek(-1)"><svg class="icon"><use href="#chevron-left"/></svg></button><div><strong>#${weekNumber(start)}</strong><span>${rangeLabel(start)}</span></div><button aria-label="Next week" onclick="moveWeek(1)"><svg class="icon"><use href="#chevron-right"/></svg></button></div><div class="workout-days">${days.map(d=>{let k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d);return `<button class="${k===sel?"selected ":""}${today?"is-today":""}" onclick="selectWorkoutDay('${k}')"><span>${d.toLocaleDateString("en-IN",{weekday:"short"})}</span><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i><small>${d.getDate()}</small></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><button class="week-picker-link" onclick="openWeekPicker()">Select Week <svg class="icon"><use href="#chevron-down"/></svg></button></section>${renderSelectedDay(sel)}`;
+ const month=monthStart(selectedMonth);
+ const days=monthGrid(month);
+ const sel=dateKey(selected);
+ const heads=weekdayHeads();
+ document.getElementById("workoutView").innerHTML=`<section class="workout-week workout-month card"><div class="workout-week-head"><button type="button" aria-label="Previous month" onclick="moveMonth(-1)"><svg class="icon"><use href="#chevron-left"/></svg></button><div><strong>${month.getFullYear()}</strong><span>${month.toLocaleDateString("en-IN",{month:"long"})}</span></div><button type="button" aria-label="Next month" onclick="moveMonth(1)"><svg class="icon"><use href="#chevron-right"/></svg></button></div><div class="workout-month-weekdays">${heads.map(h=>`<span>${h}</span>`).join("")}</div><div class="workout-days workout-month-days">${days.map(d=>{const k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d),out=inSelectedMonth(d)?"":" out-month";return `<button type="button" class="${k===sel?"selected ":""}${today?"is-today":""}${out}" aria-label="${d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}" onclick="selectWorkoutDay('${k}')"><small>${d.getDate()}</small><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><button class="week-picker-link" type="button" onclick="openMonthPicker()">Select Month <svg class="icon"><use href="#chevron-down"/></svg></button></section>${renderSelectedDay(sel)}`;
 }
 function renderSelectedDay(k){
  let d=new Date(k+"T00:00:00"),ws=state.workouts.filter(w=>w.date===k);
@@ -68,8 +80,19 @@ function workoutCard(w){
  return `<button class="workout-card card" onclick="viewWorkout('${w.id}')"><div class="workout-avatar"><svg class="icon"><use href="#dumbbell"/></svg></div><div class="workout-card-copy"><strong>${esc(w.muscles.map(muscle).join(" + "))}</strong>${date?`<span class="workout-card-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(date)}</span></span>`:""}<div class="workout-metrics"><b><svg class="inline-icon"><use href="#dumbbell"/></svg><span>${ex}</span><small>Exercises</small></b><b><svg class="inline-icon"><use href="#layers"/></svg><span>${sets}</span><small>Sets</small></b><b><svg class="inline-icon"><use href="#clock"/></svg><span>${durationLabel(dur)}</span></b></div></div><span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span></button>`;
 }
 function renderRecentWorkouts(){ /* Progress page. */ const ws=[...state.workouts].sort((a,b)=>{const dateDiff=(b.date||"").localeCompare(a.date||"");return dateDiff||(b.createdAt||0)-(a.createdAt||0)});return `<section class="recent-section"><div class="section-head"><h2>Workout History</h2></div>${ws.length?ws.map(workoutCard).join(""):`<div class="empty card">No workouts logged yet.</div>`}</section>`}
-function moveWeek(n){selectedWeekStart=new Date(selectedWeekStart);selectedWeekStart.setDate(selectedWeekStart.getDate()+n*7);selected=new Date(selectedWeekStart);renderCalendar();renderHome()}
-function selectWorkoutDay(k){selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);renderCalendar();renderHome()}
+function moveWeek(n){selectedWeekStart=new Date(selectedWeekStart);selectedWeekStart.setDate(selectedWeekStart.getDate()+n*7);selected=new Date(selectedWeekStart);selectedMonth=monthStart(selected);renderCalendar();renderHome()}
+function moveMonth(n){
+ selectedMonth=monthStart(selectedMonth);
+ selectedMonth.setMonth(selectedMonth.getMonth()+n);
+ const same=selected.getFullYear()===selectedMonth.getFullYear()&&selected.getMonth()===selectedMonth.getMonth();
+ if(!same){
+  const today=new Date();today.setHours(0,0,0,0);
+  selected=iAmThisMonth(selectedMonth)?today:new Date(selectedMonth);
+ }
+ selectedWeekStart=weekStart(selected);
+ renderCalendar();renderHome();
+}
+function selectWorkoutDay(k){selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);renderCalendar();renderHome()}
 function goToWeekDay(k){go("workouts");selectWorkoutDay(k)}
 function openWeekPicker(){
  let s=weekStart(new Date()),items=[];for(let i=0;i<52;i++){let d=new Date(s);d.setDate(d.getDate()-i*7);items.push(d)}
@@ -91,7 +114,38 @@ function openWeekPicker(){
  document.body.classList.add("workout-form-open");
 }
 function iAmThisWeek(d){return dateKey(d)===dateKey(weekStart(new Date()))}
-function chooseWeek(k){selectedWeekStart=weekStart(new Date(k+"T00:00:00"));selected=new Date(selectedWeekStart);closeModal();renderCalendar();renderHome()}
+function chooseWeek(k){selectedWeekStart=weekStart(new Date(k+"T00:00:00"));selected=new Date(selectedWeekStart);selectedMonth=monthStart(selected);closeModal();renderCalendar();renderHome()}
+function openMonthPicker(){
+ const now=monthStart(new Date());
+ const items=[];
+ for(let i=0;i<24;i++){const d=monthStart(now);d.setMonth(d.getMonth()-i);items.push(new Date(d))}
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <div class="picker-title">
+    <h2 class="workout-form-title">Select Month</h2>
+    <button aria-label="Close" onclick="closeModal()"><svg class="icon"><use href="#close"/></svg></button>
+   </div>
+  </div>
+  <div class="workout-entry-scroll">
+   <div class="week-list">${items.map(d=>`<button type="button" onclick="chooseMonth('${dateKey(d)}')" class="${dateKey(d)===dateKey(monthStart(selectedMonth))?"chosen":""}"><b>${d.toLocaleDateString("en-IN",{month:"short"})}</b><span>${d.getFullYear()}</span>${iAmThisMonth(d)?'<em>This Month <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Close</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
+}
+function chooseMonth(k){
+ selectedMonth=monthStart(new Date(k+"T00:00:00"));
+ const same=selected.getFullYear()===selectedMonth.getFullYear()&&selected.getMonth()===selectedMonth.getMonth();
+ if(!same){
+  const today=new Date();today.setHours(0,0,0,0);
+  selected=iAmThisMonth(selectedMonth)?today:new Date(selectedMonth);
+ }
+ selectedWeekStart=weekStart(selected);
+ closeModal();renderCalendar();renderHome();
+}
 
 function openWorkout(muscleIds=[],dateValue=dateKey(selected),resume=false){
  let ms=sortedMuscles(), chosen=new Set(muscleIds), existing=resume&&state.activeWorkout;
@@ -196,7 +250,7 @@ function saveWorkout(){
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
  let record={id:state.activeWorkout?.id||newId(),date,muscles,startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt:Date.now()};
  let old=record.id&&state.workouts.find(w=>w.id===record.id);if(old)Object.assign(old,record);else state.workouts.push(record);
- delete state.activeWorkout;save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();selected=new Date(date+"T00:00:00");selectedWeekStart=weekStart(selected);workoutDraft={date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""};closeModal();go("home");
+ delete state.activeWorkout;save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();selected=new Date(date+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);workoutDraft={date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""};closeModal();go("home");
 }
 function workoutSignature(w){const muscles=[...(w.muscles||[])].sort();const exercises=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg")).sort((a,b)=>a.exerciseId.localeCompare(b.exerciseId));return JSON.stringify({date:w.date,muscles,exercises})}
 function normalizedEntry(entry,fallbackUnit="kg"){if(typeof entry==="string")return {exerciseId:entry,sets:[],unit:fallbackUnit};const e=entry||{exerciseId:"",sets:[]};return {...e,unit:e.unit||fallbackUnit}}

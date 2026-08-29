@@ -11,6 +11,38 @@
 #workouts .workout-week-head{
   margin-bottom:14px;
 }
+#workouts .workout-month-weekdays{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  margin:0 0 6px;
+  color:#737a87;
+  font-size:11px;
+  font-weight:650;
+  text-align:center;
+}
+#workouts .workout-month-days{
+  gap:2px 0;
+}
+#workouts .workout-month-days button{
+  gap:4px;
+  padding:4px 0;
+  min-width:0;
+}
+#workouts .workout-month-days button>small{
+  font-size:11px;
+  line-height:1;
+}
+#workouts .workout-month-days i{
+  width:28px;
+  height:28px;
+}
+#workouts .workout-month-days i .icon{
+  width:14px;
+  height:14px;
+}
+#workouts .workout-month-days button.out-month{
+  opacity:.38;
+}
 #workouts .workout-week .legend{
   margin-top:14px;
   margin-bottom:0;
@@ -96,6 +128,14 @@
   vertical-align:middle;
 }
 @media (max-width: 600px){
+  #workouts .workout-month-days i{
+    width:26px;
+    height:26px;
+  }
+  #workouts .workout-month-days i .icon{
+    width:13px;
+    height:13px;
+  }
   #workouts .workout-card,
   #workouts .rest-card{
     padding-top:8px;
