@@ -278,6 +278,8 @@ select.input,
 .stat strong{font-size:13px !important}
 
 .week-day>span,
+.workout-month-weekdays,
+.workout-month-weekdays span,
 .legend,
 .week-stats,
 .week-stats b,
