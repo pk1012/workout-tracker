@@ -37,6 +37,7 @@
   const remoteExists=!!input.remoteExists;
   const restoreDeclined=!!input.restoreDeclined;
   const forceOverwrite=!!input.forceOverwrite;
+  const flushEmpty=!!input.flushEmpty;
   const adopted=!!input.adopted;
   const localDeviceId=input.localDeviceId||"";
   const remoteDeviceId=input.remoteDeviceId||"";
@@ -44,8 +45,13 @@
   const otherWriter=remoteExists&&!adopted&&(!remoteDeviceId||remoteDeviceId!==localDeviceId);
 
   if(forceOverwrite)return{action:"upload",sameWriter,otherWriter};
+  if(flushEmpty){
+   if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};
+   return{action:"upload",sameWriter,otherWriter};
+  }
 
   if(!hasLocalWorkouts&&remoteExists&&!restoreDeclined){
+   if(input.remoteHasWorkouts===false)return{action:"idle",sameWriter,otherWriter};
    return{action:"offer-restore",sameWriter,otherWriter};
   }
   if(!hasLocalWorkouts){

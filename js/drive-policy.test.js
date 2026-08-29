@@ -40,5 +40,10 @@ assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:oth
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:other,restoreDeclined:true}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:local,restoreDeclined:true}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:local,restoreDeclined:true,forceOverwrite:true}).action,"upload");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true}).action,"upload");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushEmpty:true}).action,"upload");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:other,flushEmpty:true}).action,"need-confirm");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:false}).action,"idle");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:true}).action,"offer-restore");
 
 console.log("drive-policy tests passed");

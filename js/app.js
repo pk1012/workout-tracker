@@ -11,8 +11,23 @@ function go(id){
  if(id==="more")renderDriveCard();
  if(typeof renderNotificationBell==="function")renderNotificationBell();
 }
-function modal(html,sheetClass=""){document.getElementById("modal").innerHTML=`<div class="sheet ${sheetClass}">${html}</div>`;document.getElementById("modal").classList.add("show");document.body.classList.add("modal-open")}
-function closeModal(){document.getElementById("modal").classList.remove("show");document.body.classList.remove("modal-open","workout-form-open")}
+function modal(html,sheetClass="",opts={}){
+ const host=document.getElementById("modal");
+ host.innerHTML=`<div class="sheet ${sheetClass}">${html}</div>`;
+ host.classList.toggle("modal-locked",!!opts.lockDismiss);
+ host.classList.add("show");
+ document.body.classList.add("modal-open");
+}
+function tryDismissModal(){
+ if(document.getElementById("modal")?.classList.contains("modal-locked"))return;
+ closeModal();
+}
+function closeModal(){
+ const host=document.getElementById("modal");
+ host.classList.remove("show","modal-locked");
+ document.body.classList.remove("modal-open","workout-form-open");
+ if(typeof pendingDriveRestore!=="undefined"&&pendingDriveRestore)declineDriveRestore();
+}
 function notify(message,type="info"){let host=document.getElementById("toastHost");if(!host){host=document.createElement("div");host.id="toastHost";document.body.appendChild(host)}const toast=document.createElement("div");toast.className=`toast ${type}`;toast.innerHTML=`<svg class="icon"><use href="#${type==="success"?"check":type==="error"?"close":"info"}"/></svg><span>${esc(message)}</span>`;host.appendChild(toast);requestAnimationFrame(()=>toast.classList.add("show"));setTimeout(()=>{toast.classList.remove("show");setTimeout(()=>toast.remove(),220)},2800)}
 let pendingConfirm=null;
 function confirmAction(message,onConfirm,asSheet){

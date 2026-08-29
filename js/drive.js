@@ -368,7 +368,7 @@ function showDriveRestoreSheet(remote){
    <button class="primary btn-wide workout-next-button" type="button" onclick="confirmDriveRestore()">Restore</button>
    <button class="outline btn-wide workout-cancel-button" type="button" onclick="declineDriveRestore()">Not now</button>
   </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{lockDismiss:true});
  document.body.classList.add("workout-form-open");
 }
 
@@ -376,6 +376,7 @@ let pendingDriveRestore=null;
 function confirmDriveRestore(){
  const remote=pendingDriveRestore;
  pendingDriveRestore=null;
+ restorePrompted=false;
  if(!remote?.state||!isValidState(remote.state)){
   closeModal();
   notify("Could not restore this Drive backup.","error");
@@ -415,7 +416,7 @@ async function runDriveHandshake(reason){
  if(!isDriveConnected())return;
  if(driveBusy){driveQueued=reason;return}
  if(!navigator.onLine){
-  const wait=reason==="auto"||reason==="retry"||reason==="overwrite"||reason==="sync"||(reason==="connect"&&(hasCompletedWorkouts(state)||driveAdopted()));
+  const wait=reason==="auto"||reason==="empty"||reason==="retry"||reason==="overwrite"||reason==="sync"||(reason==="connect"&&(hasCompletedWorkouts(state)||driveAdopted()));
   if(wait)setDrivePending(true);
   renderDriveCard();
   return;
@@ -430,7 +431,9 @@ async function runDriveHandshake(reason){
    localDeviceId:getDeviceId(),
    restoreDeclined:driveDeclined(),
    adopted:driveAdopted(),
-   forceOverwrite:reason==="overwrite"
+   forceOverwrite:reason==="overwrite",
+   flushEmpty:reason==="empty",
+   remoteHasWorkouts:remote.unreadable?true:hasCompletedWorkouts(remote.state)
   });
   if(decision.action==="offer-restore"){
    setDrivePending(false);
@@ -445,9 +448,9 @@ async function runDriveHandshake(reason){
   }
   if(decision.action==="need-confirm")setDrivePending(false);
   if(decision.action==="upload"){
-   if(reason==="auto"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"){
+   if(reason==="auto"||reason==="empty"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"){
     if(!navigator.onLine){setDrivePending(true);renderDriveCard();return}
-    const notifyReason=reason==="retry"||(drivePending()&&reason==="auto")?"retry":reason;
+    const notifyReason=reason==="retry"||(drivePending()&&(reason==="auto"||reason==="empty"))?"retry":reason;
     try{
      await uploadDriveSnapshot(notifyReason);
     }catch(err){
@@ -483,7 +486,7 @@ async function runDriveHandshake(reason){
   renderDriveCard();
  }catch(err){
   if(err.code==="unauthorized")return;
-  if(reason==="auto"||reason==="retry"||reason==="overwrite")setDrivePending(true);
+  if(reason==="auto"||reason==="empty"||reason==="retry"||reason==="overwrite")setDrivePending(true);
   else if(reason==="connect"&&hasCompletedWorkouts(state))setDrivePending(true);
   else if(reason==="sync")setDrivePending(true);
   renderDriveCard();
@@ -501,16 +504,16 @@ async function runDriveHandshake(reason){
 
 function queueDriveSave(reason){
  if(!isDriveConnected()){
-  if(reason==="auto"&&(lsGet(K_FILE)||lsGet(K_SAVED)||drivePending())){
+  if((reason==="auto"||reason==="empty")&&(lsGet(K_FILE)||lsGet(K_SAVED)||drivePending())){
    setDrivePending(true);
    notifyDriveReconnect();
    renderDriveCard();
   }
   return;
  }
- const canQueue=reason==="overwrite"||reason==="sync"||reason==="connect"||reason==="retry"||reason==="auto";
+ const canQueue=reason==="overwrite"||reason==="sync"||reason==="connect"||reason==="retry"||reason==="auto"||reason==="empty";
  if(!canQueue)return;
- if(reason==="auto"){
+ if(reason==="auto"||reason==="empty"){
   const remoteExists=!!lsGet(K_FILE)||!!lsGet(K_REMOTE)||!!lsGet(K_SAVED);
   const preview=drivePolicy({
    hasLocalWorkouts:hasCompletedWorkouts(state),
@@ -518,7 +521,8 @@ function queueDriveSave(reason){
    remoteDeviceId:lsGet(K_REMOTE),
    localDeviceId:getDeviceId(),
    restoreDeclined:driveDeclined(),
-   adopted:driveAdopted()
+   adopted:driveAdopted(),
+   flushEmpty:reason==="empty"
   });
   if(preview.action!=="upload")return;
   setDrivePending(true);
@@ -534,8 +538,12 @@ function syncDrive(){
 
 function driveAfterLibraryChange(){queueDriveSave("auto")}
 function driveAfterWorkoutChange(){
- if(hasCompletedWorkouts(state))clearRestoreNotification();
- queueDriveSave("auto");
+ if(hasCompletedWorkouts(state)){
+  clearRestoreNotification();
+  queueDriveSave("auto");
+  return;
+ }
+ queueDriveSave("empty");
 }
 function driveAfterFileRestore(){
  if(hasCompletedWorkouts(state))clearRestoreNotification();
