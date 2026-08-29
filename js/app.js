@@ -2,11 +2,12 @@ function go(id){
  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
  const screen=document.getElementById(id); if(!screen)return;
  screen.classList.add("active");
- const navId=id==="more"||id==="library-management"?"more":id; document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x.dataset.screen===navId));
+ const navId=id==="more"||id==="library-management"||id==="recycle"?"more":id; document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x.dataset.screen===navId));
  if(id==="home")renderHome();
  if(id==="workouts")renderCalendar();
  if(id==="exercises")renderExercises();
  if(id==="library-management")renderLibrary();
+ if(id==="recycle")renderRecycle();
  if(id==="progress")renderProgress();
  if(id==="more")renderDriveCard();
  if(typeof renderNotificationBell==="function")renderNotificationBell();

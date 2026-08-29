@@ -17,10 +17,13 @@ const snap=driveSnapshot(state,{version:"1",savedAt:"t",deviceId:local});
 assert.strictEqual(snap.format,"workout-tracker-drive");
 assert.ok(!("activeWorkout" in snap.state));
 assert.strictEqual(snap.state.workouts.length,1);
+assert.ok(snap.state.bin);
+assert.deepStrictEqual(snap.state.bin,{workouts:[],exercises:[],muscles:[]});
 
 const parsed=parseDriveBackup(snap);
 assert.strictEqual(parsed.deviceId,local);
-assert.ok(!parsed.state.activeWorkout);
+assert.ok(parsed.state.bin);
+assert.deepStrictEqual(parsed.state.bin,{workouts:[],exercises:[],muscles:[]});
 assert.strictEqual(parseDriveBackup({format:"workout-tracker-backup",state}),null);
 assert.strictEqual(parseDriveBackup({foo:1}),null);
 

@@ -7,12 +7,17 @@
   const muscles=Array.isArray(state?.muscles)?state.muscles:[];
   const exercises=Array.isArray(state?.exercises)?state.exercises:[];
   const workouts=Array.isArray(state?.workouts)?state.workouts:[];
+  const bin=state?.bin&&typeof state.bin==="object"?{
+   workouts:Array.isArray(state.bin.workouts)?state.bin.workouts:[],
+   exercises:Array.isArray(state.bin.exercises)?state.bin.exercises:[],
+   muscles:Array.isArray(state.bin.muscles)?state.bin.muscles:[]
+  }:{workouts:[],exercises:[],muscles:[]};
   return{
    format:"workout-tracker-drive",
    version:meta.version,
    savedAt:meta.savedAt,
    deviceId:meta.deviceId,
-   state:JSON.parse(JSON.stringify({muscles,exercises,workouts}))
+   state:JSON.parse(JSON.stringify({muscles,exercises,workouts,bin}))
   };
  }
 
@@ -23,6 +28,10 @@
   if(!next||!Array.isArray(next.muscles)||!Array.isArray(next.exercises)||!Array.isArray(next.workouts))return null;
   const state=JSON.parse(JSON.stringify(next));
   delete state.activeWorkout;
+  if(!state.bin||typeof state.bin!=="object")state.bin={workouts:[],exercises:[],muscles:[]};
+  if(!Array.isArray(state.bin.workouts))state.bin.workouts=[];
+  if(!Array.isArray(state.bin.exercises))state.bin.exercises=[];
+  if(!Array.isArray(state.bin.muscles))state.bin.muscles=[];
   return{
    deviceId:typeof payload.deviceId==="string"?payload.deviceId:"",
    savedAt:typeof payload.savedAt==="string"?payload.savedAt:"",

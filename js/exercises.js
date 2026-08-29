@@ -270,7 +270,7 @@ function saveExercise(id){
 }
 function deleteExercise(id){
  let e=state.exercises.find(x=>x.id===id);if(!e)return;
- confirmAction(`Delete “${e.name}”? Existing workout history will remain.`,()=>{state.exercises=state.exercises.filter(x=>x.id!==id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();},true)
+ confirmAction(`Delete “${e.name}”? It will stay in Recycle Bin for 30 days. Workout history is kept.`,()=>{moveExerciseToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();},true)
 }
 function openMuscle(id=""){
  let m=id?state.muscles.find(x=>x.id===id):null;
@@ -298,5 +298,5 @@ function saveMuscle(id){
 }
 function deleteMuscle(id){
  let m=state.muscles.find(x=>x.id===id),n=state.exercises.filter(e=>e.muscleId===id).length;if(!m)return;
- confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also be removed from the library.`:""}`,()=>{state.muscles=state.muscles.filter(x=>x.id!==id);state.exercises=state.exercises.filter(e=>e.muscleId!==id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();},true)
+ confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also move to Recycle Bin.`:""} Items stay for 30 days.`,()=>{moveMuscleToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();},true)
 }

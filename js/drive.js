@@ -448,7 +448,7 @@ function confirmDriveRestore(){
  }
  const next=JSON.parse(JSON.stringify(remote.state));
  delete next.activeWorkout;
- state=next;
+ state=migrateState(next);
  save();
  lsSet(K_ADOPTED,"1");
  lsDel(K_DECLINED);
