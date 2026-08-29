@@ -29,9 +29,12 @@ function binWorkoutTitle(w){
  return (w.muscles||[]).map(id=>muscle(id)).join(" + ")||"Workout";
 }
 function binWorkoutWhen(w){
+ if(typeof workoutCardDate==="function")return workoutCardDate(w);
  if(!w.date||!isValidDateString(w.date))return "";
- const day=new Date(w.date+"T00:00:00").toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"short",year:"numeric"});
- return `${day} · ${durationLabel(durationMinutes(w))}`;
+ const d=new Date(w.date+"T00:00:00");
+ const weekday=d.toLocaleDateString("en-IN",{weekday:"long"});
+ const month=d.toLocaleDateString("en-IN",{month:"long"});
+ return `${weekday}, ${d.getDate()} ${month} ${d.getFullYear()}`;
 }
 
 function recycleItems(){
@@ -70,9 +73,12 @@ function recycleCard(row){
  const id=esc(row.item.id);
  const restore=row.kind==="workout"?`restoreBinWorkout('${id}')`:row.kind==="muscle"?`restoreBinMuscle('${id}')`:`restoreBinExercise('${id}')`;
  const remove=row.kind==="workout"?`dropBinWorkout('${id}')`:row.kind==="muscle"?`dropBinMuscle('${id}')`:`dropBinExercise('${id}')`;
+ const meta=row.kind==="workout"&&row.meta
+  ?`<span class="recycle-meta recycle-workout-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(row.meta)}</span></span>`
+  :(row.meta?`<span class="recycle-meta">${esc(row.meta)}</span>`:"");
  return `<div class="recycle-card card">
   <strong class="recycle-title">${esc(row.title)}</strong>
-  ${row.meta?`<span class="recycle-meta">${esc(row.meta)}</span>`:""}
+  ${meta}
   <span class="recycle-age">${esc(binMetaLine(row.item.deletedAt))}</span>
   <div class="recycle-actions">
    <button class="primary" type="button" onclick="${restore}">Restore</button>
