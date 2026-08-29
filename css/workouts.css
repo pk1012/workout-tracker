@@ -78,7 +78,7 @@
   justify-content:flex-start;
   gap:0;
   margin:0;
-  padding:10px 2px 14px;
+  padding:10px 2px 10px;
   color:#69707c;
 }
 #workouts .workout-month .week-stats span{
@@ -206,7 +206,7 @@
     gap:14px;
   }
   #workouts .workout-month .week-stats{
-    padding:10px 2px 12px;
+    padding:10px 2px 10px;
   }
   #workouts .workout-card,
   #workouts .rest-card{
