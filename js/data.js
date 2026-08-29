@@ -1,7 +1,8 @@
-const VERSION="1.7.134",BUILD="2026.08.29";
+const VERSION="1.7.135",BUILD="2026.08.29";
 const defaults={Abs:["Cable Crunch","Hanging Leg Raise","Plank"],Back:["Lat Pulldown","Seated Cable Row","Single Arm Dumbbell Row","T-Bar Row"],Biceps:["Behind-the-Back Cable Curl","Cable Curl","Hammer Curl","Incline Dumbbell Curl"],Calves:["Calf Raise","Seated Calf Raise"],Cardio:["Cycling","Running","Walking"],Chest:["Flat Bench Press","Inclined Dumbbell Press","Pec Deck Fly","Wide Chest Press Machine"],Legs:["Leg Extension","Leg Press","Romanian Deadlift","Squat"],Shoulders:["Dumbbell Lateral Raise","Face Pull","Overhead Press","Rear Delt Fly"],Triceps:["Cable Pushdown","Overhead Cable Extension","Skull Crusher"]};
 const STORE_KEY="wt_state";
 const STORE_BACKUP_KEY="wt_state_backup";
+const STORE_AT_KEY="wt_state_at";
 const DEVICE_KEY="wt_device_id";
 const IDB_NAME="workout-tracker";
 function newId(){return globalThis.crypto?.randomUUID?crypto.randomUUID():`id-${Date.now()}-${Math.random().toString(36).slice(2)}`}
@@ -25,9 +26,13 @@ function migrateState(s){
  if(s.activeWorkout&&!s.activeWorkout.date)delete s.activeWorkout;
  return s;
 }
-function writeLocal(json){
+function readLocalAt(){
+ try{return Number(localStorage.getItem(STORE_AT_KEY)||0)||0}catch(err){return 0}
+}
+function writeLocal(json,at){
  try{localStorage.setItem(STORE_KEY,json)}catch(err){}
  try{localStorage.setItem(STORE_BACKUP_KEY,json)}catch(err){}
+ try{localStorage.setItem(STORE_AT_KEY,String(at))}catch(err){}
 }
 function getDeviceId(){
  try{
@@ -51,19 +56,29 @@ function openIdb(){
   req.onerror=()=>reject(req.error);
  });
 }
+function unwrapIdb(raw){
+ if(looksLikeState(raw))return{state:raw,at:0};
+ if(raw&&looksLikeState(raw.state))return{state:raw.state,at:Number(raw.at)||0};
+ return{state:null,at:0};
+}
+function pickNewerState(localState,localAt,idbState,idbAt){
+ if(!localState)return idbState;
+ if(!idbState)return localState;
+ return idbAt>=localAt?idbState:localState;
+}
 function idbGetState(db){
  return new Promise((resolve,reject)=>{
   const req=db.transaction("kv","readonly").objectStore("kv").get("state");
-  req.onsuccess=()=>resolve(looksLikeState(req.result)?req.result:null);
+  req.onsuccess=()=>resolve(unwrapIdb(req.result));
   req.onerror=()=>reject(req.error);
  });
 }
-function idbWriteState(db,next){
+function idbWriteState(db,next,at){
  return new Promise((resolve,reject)=>{
   let copy;
   try{copy=JSON.parse(JSON.stringify(next))}catch(err){reject(err);return}
   const tx=db.transaction("kv","readwrite");
-  tx.objectStore("kv").put(copy,"state");
+  tx.objectStore("kv").put({at,state:copy},"state");
   tx.oncomplete=()=>resolve();
   tx.onerror=()=>reject(tx.error);
  });
@@ -71,17 +86,19 @@ function idbWriteState(db,next){
 async function persistAll(){
  let json;
  try{json=JSON.stringify(state)}catch(err){return}
- writeLocal(json);
+ const at=Date.now();
+ writeLocal(json,at);
  requestPersistentStorage();
  try{
   const db=await openIdb();
-  await idbWriteState(db,state);
+  await idbWriteState(db,state,at);
  }catch(err){}
 }
 function save(){persistAll()}
 async function wipeStoredData(){
  try{localStorage.removeItem(STORE_KEY)}catch(err){}
  try{localStorage.removeItem(STORE_BACKUP_KEY)}catch(err){}
+ try{localStorage.removeItem(STORE_AT_KEY)}catch(err){}
  await new Promise(resolve=>{
   if(!globalThis.indexedDB){resolve();return}
   const req=indexedDB.deleteDatabase(IDB_NAME);
@@ -94,8 +111,8 @@ let state=readLocalState(STORE_KEY)||readLocalState(STORE_BACKUP_KEY);
 const storageReady=(async()=>{
  try{
   const db=await openIdb();
-  const snap=await idbGetState(db);
-  if(snap)state=snap;
+  const idb=await idbGetState(db);
+  state=pickNewerState(state,readLocalAt(),idb.state,idb.at);
  }catch(err){}
  if(!state)state=seedDefaults();
  migrateState(state);
