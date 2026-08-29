@@ -172,6 +172,9 @@
   vertical-align:middle;
 }
 @media (max-width: 600px){
+  #workouts .workout-month{
+    padding:15px 10px 11px;
+  }
   #workouts .workout-month .section-head{
     margin-bottom:12px;
     padding:0 4px;
