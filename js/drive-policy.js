@@ -52,6 +52,7 @@
    return{action:"idle",sameWriter,otherWriter};
   }
   if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};
+  if(restoreDeclined&&remoteExists)return{action:"need-confirm",sameWriter,otherWriter};
   return{action:"upload",sameWriter,otherWriter};
  }
 

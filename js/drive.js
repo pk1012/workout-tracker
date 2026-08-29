@@ -13,6 +13,7 @@ const K_REMOTE="wt_drive_remote_device";
 const K_PENDING="wt_drive_pending";
 const K_DECLINED="wt_drive_restore_declined";
 const K_ADOPTED="wt_drive_adopted";
+const K_REAUTH="wt_drive_need_connect";
 
 let driveBusy=false;
 let driveQueued=null;
@@ -36,10 +37,21 @@ function isDriveConnected(){
  const exp=Number(lsGet(K_EXP)||0);
  if(!token)return false;
  if(exp&&Date.now()>exp){
-  clearDriveSession({keepPending:true,keepMeta:true});
+  expireDriveToken();
   return false;
  }
  return true;
+}
+function expireDriveToken(){
+ if(!lsGet(K_TOKEN))return;
+ if(hasCompletedWorkouts(state)||lsGet(K_SAVED)||drivePending())setDrivePending(true);
+ clearDriveSession({keepPending:true,keepMeta:true,keepDeclined:true,keepAdopted:true});
+ notifyDriveReconnect();
+}
+function notifyDriveReconnect(){
+ if(lsGet(K_REAUTH)==="1")return;
+ lsSet(K_REAUTH,"1");
+ if(typeof notify==="function")notify("Connect Google Drive again to save.","error");
 }
 function clearDriveSession(opts={}){
  lsDel(K_TOKEN);lsDel(K_EXP);lsDel(K_EMAIL);
@@ -72,7 +84,8 @@ function renderDriveCard(){
  const host=document.getElementById("driveCard");
  if(!host)return;
  if(!isDriveConnected()){
-  host.innerHTML=`<button class="setting card" type="button" onclick="connectDrive()"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">Google Drive</span><span class="setting-desc">Connect to keep a copy off this phone</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>`;
+  const desc=drivePending()?"Connect again to save to Drive":"Connect to keep a copy off this phone";
+  host.innerHTML=`<button class="setting card" type="button" onclick="connectDrive()"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">Google Drive</span><span class="setting-desc">${esc(desc)}</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>`;
   return;
  }
  const email=lsGet(K_EMAIL)||"Google Drive";
@@ -98,7 +111,7 @@ function consumeOAuthRedirect(){
   const seconds=Number(hash.get("expires_in")||3600);
   lsSet(K_TOKEN,token);
   lsSet(K_EXP,String(Date.now()+Math.max(60,seconds-60)*1000));
-  lsDel(K_DECLINED);
+  lsDel(K_REAUTH);
   restorePrompted=false;
   cleanUrl();
   return true;
@@ -156,6 +169,7 @@ function startDriveOAuth(clientId){
 function disconnectDrive(){
  confirmAction("Stop using Google Drive on this phone? The file on Drive is kept.",()=>{
   clearDriveSession();
+  lsDel(K_REAUTH);
   renderDriveCard();
   notify("Google Drive disconnected.","success");
  },true);
@@ -181,7 +195,7 @@ async function driveApi(url,opts={}){
  if(res.status===401){
   clearDriveSession({keepPending:true,keepMeta:true,keepDeclined:true,keepAdopted:true});
   renderDriveCard();
-  notify("Connect Google Drive again.","error");
+  notifyDriveReconnect();
   const err=new Error("unauthorized");
   err.code="unauthorized";
   throw err;
@@ -284,7 +298,7 @@ async function uploadDriveSnapshot(reason){
   if(mediaRes.status===401){
    clearDriveSession({keepPending:true,keepMeta:true,keepDeclined:true,keepAdopted:true});
    renderDriveCard();
-   notify("Connect Google Drive again.","error");
+   notifyDriveReconnect();
    throw Object.assign(new Error("unauthorized"),{code:"unauthorized"});
   }
   if(!mediaRes.ok)throw new Error("media");
@@ -292,6 +306,8 @@ async function uploadDriveSnapshot(reason){
  lsSet(K_SAVED,savedAt);
  lsSet(K_REMOTE,deviceId);
  lsDel(K_ADOPTED);
+ lsDel(K_DECLINED);
+ lsDel(K_REAUTH);
  setDrivePending(false);
  renderDriveCard();
  if(reason==="sync"||reason==="connect"||reason==="retry")notify("Saved to Google Drive.","success");
@@ -412,10 +428,11 @@ async function runDriveHandshake(reason){
     }
     return;
    }
-   const emptyWarn=!hasCompletedWorkouts(state);
-   const message=emptyWarn
-    ?"This phone has no workouts. Replace the Drive backup with this phone’s data? That can erase the copy on Drive."
-    :"A different device saved the Drive backup. Replace it with this phone’s workouts and library?";
+   const message=driveDeclined()&&!decision.otherWriter
+    ?"You skipped Restore. Replace the Drive backup with this phone’s data? That can erase the copy on Drive."
+    :(!hasCompletedWorkouts(state)
+     ?"This phone has no workouts. Replace the Drive backup with this phone’s data? That can erase the copy on Drive."
+     :"A different device saved the Drive backup. Replace it with this phone’s workouts and library?");
    confirmAction(message,()=>queueDriveSave("overwrite"),true);
    return;
   }
@@ -438,7 +455,14 @@ async function runDriveHandshake(reason){
 }
 
 function queueDriveSave(reason){
- if(!isDriveConnected())return;
+ if(!isDriveConnected()){
+  if(reason==="auto"&&(lsGet(K_FILE)||lsGet(K_SAVED)||drivePending())){
+   setDrivePending(true);
+   notifyDriveReconnect();
+   renderDriveCard();
+  }
+  return;
+ }
  const canQueue=reason==="overwrite"||reason==="sync"||reason==="connect"||reason==="retry"||reason==="auto";
  if(!canQueue)return;
  if(reason==="auto"){
