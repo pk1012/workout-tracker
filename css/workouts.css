@@ -35,7 +35,7 @@
 #workouts .workout-month-weekdays{
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
-  margin:0 0 6px;
+  margin:0 0 8px;
   color:#303540;
   font-size:14px;
   font-weight:400;
