@@ -15,6 +15,7 @@ const K_DECLINED="wt_drive_restore_declined";
 const K_ADOPTED="wt_drive_adopted";
 const K_REAUTH="wt_drive_need_connect";
 const K_RESTORE_NOTE="wt_drive_restore_note";
+const K_DIVERGE="wt_drive_diverge";
 
 let driveBusy=false;
 let driveQueued=null;
@@ -98,6 +99,7 @@ function formatDriveSaved(iso){
 
 function driveStatusLine(){
  if(drivePending())return "Waiting to save…";
+ if(lsGet(K_DIVERGE)==="1")return "Phone and Drive differ. Sync to update.";
  const saved=lsGet(K_SAVED);
  if(saved)return `Last saved ${formatDriveSaved(saved)}`;
  if(!hasCompletedWorkouts(state))return "No workouts to save yet";
@@ -108,7 +110,7 @@ function renderDriveCard(){
  const host=document.getElementById("driveCard");
  if(!host)return;
  if(!isDriveConnected()){
-  const desc=drivePending()?"Connect again to save to Drive":"Connect to keep a copy off this phone";
+  const desc=drivePending()?"Connect again to save to Drive":(lsGet(K_DIVERGE)==="1"?"Phone and Drive differ. Connect to update.":"Connect to keep a copy off this phone");
   host.innerHTML=`<button class="setting card" type="button" onclick="connectDrive()"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">Google Drive</span><span class="setting-desc">${esc(desc)}</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>`;
   return;
  }
@@ -196,6 +198,7 @@ function disconnectDrive(){
  confirmAction("Stop using Google Drive on this phone? The file on Drive is kept.",()=>{
   clearDriveSession();
   lsDel(K_REAUTH);
+  lsDel(K_DIVERGE);
   clearRestoreNotification();
   restorePrompted=false;
   renderDriveCard();
@@ -207,6 +210,7 @@ function resetDriveAfterPhoneWipe(){
  setDrivePending(false);
  lsDel(K_DECLINED);
  lsDel(K_ADOPTED);
+ lsDel(K_DIVERGE);
  clearRestoreNotification();
  restorePrompted=false;
 }
@@ -337,6 +341,7 @@ async function uploadDriveSnapshot(reason){
  lsDel(K_ADOPTED);
  lsDel(K_DECLINED);
  lsDel(K_REAUTH);
+ lsDel(K_DIVERGE);
  clearRestoreNotification();
  setDrivePending(false);
  renderDriveCard();
@@ -526,7 +531,30 @@ function driveAfterWorkoutChange(){
 }
 function driveAfterFileRestore(){
  if(hasCompletedWorkouts(state))clearRestoreNotification();
- queueDriveSave("auto");
+ if(!isDriveConnected()){
+  if(lsGet(K_FILE)||lsGet(K_SAVED)){
+   lsSet(K_DIVERGE,"1");
+   notify("This phone was restored. Connect Google Drive, then Sync to update Drive.");
+   renderDriveCard();
+  }
+  return;
+ }
+ const preview=drivePolicy({
+  hasLocalWorkouts:hasCompletedWorkouts(state),
+  remoteExists:!!(lsGet(K_FILE)||lsGet(K_REMOTE)||lsGet(K_SAVED)),
+  remoteDeviceId:lsGet(K_REMOTE),
+  localDeviceId:getDeviceId(),
+  restoreDeclined:driveDeclined(),
+  adopted:driveAdopted()
+ });
+ if(preview.action==="upload"){
+  lsDel(K_DIVERGE);
+  queueDriveSave("auto");
+  return;
+ }
+ lsSet(K_DIVERGE,"1");
+ notify("This phone was restored. Sync and confirm to update Google Drive.");
+ renderDriveCard();
 }
 
 function openNotifications(){
