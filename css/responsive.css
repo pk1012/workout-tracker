@@ -43,9 +43,9 @@
   .week-picker-link{font-size:12px;margin:4px auto 0;padding:6px}
 
   .workout-card,.rest-card{
-    min-height:100px;
+    min-height:96px;
     height:auto;
-    padding:11px;
+    padding:9px 11px;
     gap:10px;
     border-radius:var(--radius);
   }

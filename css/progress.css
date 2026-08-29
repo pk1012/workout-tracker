@@ -80,7 +80,7 @@
 /* Workout History on Progress — same cards as the old Workouts recent list. */
 #progress .recent-section{margin-bottom:14px}
 #progress .recent-section .section-head{margin-bottom:10px}
-#progress .recent-section .workout-card{margin-bottom:10px;padding-top:10px;padding-bottom:10px;align-items:center}
+#progress .recent-section .workout-card{margin-bottom:10px;padding-top:8px;padding-bottom:8px;align-items:center}
 #progress .recent-section .workout-card .card-arrow{align-self:center;margin-top:0}
 #progress .recent-section .workout-card:last-child{margin-bottom:0}
 #progress .recent-section .workout-card .workout-card-copy>span{margin-top:5px}
@@ -149,5 +149,5 @@
 
   #progress .progress-footnote{margin-top:11px}
 
-  #progress .recent-section .workout-card{min-height:96px}
+  #progress .recent-section .workout-card{min-height:92px}
 }
