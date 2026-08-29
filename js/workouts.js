@@ -1,4 +1,10 @@
-let workoutDraft={date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""};
+function emptyWorkoutDraft(){return {date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""}}
+let workoutDraft=emptyWorkoutDraft();
+function isEditingWorkout(){return !!workoutDraft.editId}
+function cancelWorkoutForm(){
+ if(isEditingWorkout())workoutDraft=emptyWorkoutDraft();
+ closeModal();
+}
 let selectedWeekStart=weekStart(new Date());
 let selectedMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 
@@ -158,12 +164,39 @@ function chooseMonth(k){
  closeModal();renderCalendar();renderHome();
 }
 
+function draftFromWorkout(w){
+ const unit=w.unit||"kg";
+ return {
+  editId:w.id,
+  createdAt:w.createdAt,
+  date:w.date,
+  muscles:[...(w.muscles||[])],
+  unit,
+  startTime:w.startTime||"",
+  endTime:w.endTime||"",
+  exercises:(w.exercises||[]).map(e=>{
+   const entry=normalizedEntry(e,unit);
+   return {exerciseId:entry.exerciseId,sets:(entry.sets||[]).map(s=>({weight:s.weight===""||s.weight==null?"":String(s.weight),reps:s.reps===""||s.reps==null?"":String(s.reps)}))};
+  })
+ };
+}
+function renderWorkoutBasicsSheet(){
+ const ms=sortedMuscles(),chosen=new Set(workoutDraft.muscles||[]);
+ const editing=isEditingWorkout();
+ modal(`<div class="workout-entry-header"><div class="handle"></div><h2 class="workout-form-title">${editing?"Edit Workout":"Start Workout"}</h2><div class="muted workout-form-description">Choose the date, start time and muscle groups.</div></div><div class="workout-entry-scroll"><div class="field workout-date-section"><label class="workout-date-label">Date</label><div class="workout-date-field workout-input-wrap"><svg class="workout-date-icon workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input workout-date-input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-section"><div class="field workout-start-time-section"><label class="workout-start-time-label">Start time</label><div class="workout-start-time-field workout-input-wrap"><svg class="workout-start-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input workout-start-time-input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field workout-end-time-section"><label class="workout-end-time-label">End time</label><div class="workout-end-time-field workout-input-wrap"><svg class="workout-end-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input workout-end-time-input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-groups-section"><label class="workout-muscle-groups-label">Muscle groups</label><div class="grid workout-muscle-groups-grid">${ms.map(m=>{const slug=m.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return `<button class="pick workout-muscle-button workout-muscle-${slug} ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(m.name)}</span></button>`}).join("")}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide workout-next-button" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide workout-cancel-button" onclick="cancelWorkoutForm()">Cancel</button></div>`,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
+}
 function openWorkout(muscleIds=[],dateValue=dateKey(selected),resume=false){
- let ms=sortedMuscles(), chosen=new Set(muscleIds), existing=resume&&state.activeWorkout;
- if(!muscleIds.length&&!resume)workoutDraft={date:dateValue,muscles:[],exercises:[],unit:"kg",startTime:localTimeValue(),endTime:""};
- else workoutDraft={date:existing?.date||dateValue,muscles:existing?.muscles||muscleIds,exercises:existing?.exercises||[],unit:existing?.unit||"kg",startTime:existing?.startTime||localTimeValue(),endTime:existing?.endTime||""};
- modal(`<div class="workout-entry-header"><div class="handle"></div><h2 class="workout-form-title">${resume?"Start Workout":"Start Workout"}</h2><div class="muted workout-form-description">Choose the date, start time and muscle groups.</div></div><div class="workout-entry-scroll"><div class="field workout-date-section"><label class="workout-date-label">Date</label><div class="workout-date-field workout-input-wrap"><svg class="workout-date-icon workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input workout-date-input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-section"><div class="field workout-start-time-section"><label class="workout-start-time-label">Start time</label><div class="workout-start-time-field workout-input-wrap"><svg class="workout-start-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input workout-start-time-input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field workout-end-time-section"><label class="workout-end-time-label">End time</label><div class="workout-end-time-field workout-input-wrap"><svg class="workout-end-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input workout-end-time-input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-groups-section"><label class="workout-muscle-groups-label">Muscle groups</label><div class="grid workout-muscle-groups-grid">${ms.map(m=>{const slug=m.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return `<button class="pick workout-muscle-button workout-muscle-${slug} ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(m.name)}</span></button>`}).join("")}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide workout-next-button" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Cancel</button></div>`,"workout-entry-sheet")
- document.body.classList.add("workout-form-open")
+ const existing=resume&&state.activeWorkout;
+ if(!muscleIds.length&&!resume)workoutDraft={...emptyWorkoutDraft(),date:dateValue,startTime:localTimeValue()};
+ else workoutDraft={...emptyWorkoutDraft(),date:existing?.date||dateValue,muscles:existing?.muscles||muscleIds,exercises:existing?.exercises||[],unit:existing?.unit||"kg",startTime:existing?.startTime||localTimeValue(),endTime:existing?.endTime||""};
+ renderWorkoutBasicsSheet();
+}
+function editWorkout(id){
+ const w=state.workouts.find(x=>x.id===id);
+ if(!w)return;
+ workoutDraft=draftFromWorkout(w);
+ renderWorkoutBasicsSheet();
 }
 function chooseExercises(){
  let ids=[...document.querySelectorAll("[data-muscle].selected")].map(x=>x.dataset.muscle),date=document.getElementById("workDate")?.value,start=document.getElementById("startTime")?.value,end=document.getElementById("endTime")?.value;
@@ -174,7 +207,7 @@ function chooseExercises(){
  const validMuscles=ids.filter(id=>state.muscles.some(m=>m.id===id));
  workoutDraft.date=date;workoutDraft.startTime=start;workoutDraft.endTime=end;workoutDraft.muscles=validMuscles;
  workoutDraft.exercises=(workoutDraft.exercises||[]).filter(e=>validMuscles.some(mid=>state.exercises.some(x=>x.id===e.exerciseId&&x.muscleId===mid)));
- state.activeWorkout={date,startTime:start,endTime:end||"",muscles:validMuscles,unit:workoutDraft.unit,exercises:workoutDraft.exercises};save();
+ if(!isEditingWorkout()){state.activeWorkout={date,startTime:start,endTime:end||"",muscles:validMuscles,unit:workoutDraft.unit,exercises:workoutDraft.exercises};save()}
  renderExerciseSelection();
 }
 function renderExerciseSelection(){
@@ -194,7 +227,7 @@ function renderExerciseSelection(){
   </div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="continueToSetDetails()">Next: Enter Weight &amp; Reps <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button>
-   <button class="outline btn-wide workout-cancel-button" onclick="openWorkout(workoutDraft.muscles,workoutDraft.date,true)">Back</button>
+   <button class="outline btn-wide workout-cancel-button" onclick="renderWorkoutBasicsSheet()">Back</button>
   </div>
  `,"workout-entry-sheet");
 }
@@ -204,7 +237,8 @@ function continueToSetDetails(){
  if(!ids.length){notify("Select at least one exercise.");return}
  const previous=new Map((workoutDraft.exercises||[]).map(e=>[e.exerciseId,e]));
  workoutDraft.exercises=ids.map(id=>previous.get(id)||{exerciseId:id,sets:[{weight:"",reps:""}]});
- state.activeWorkout={...state.activeWorkout,endTime:workoutDraft.endTime||state.activeWorkout?.endTime||"",exercises:workoutDraft.exercises};save();renderSetDetails();
+ if(!isEditingWorkout()){state.activeWorkout={...state.activeWorkout,endTime:workoutDraft.endTime||state.activeWorkout?.endTime||"",exercises:workoutDraft.exercises};save()}
+ renderSetDetails();
 }
 function renderSetDetails(){
  const selectedNames=workoutDraft.exercises.map(e=>state.exercises.find(x=>x.id===e.exerciseId)?.name||"Deleted exercise");
@@ -238,7 +272,7 @@ function renderSetDetails(){
      ${content}
    </div>
    <div class="modal-actions workout-modal-actions">
-     <button class="primary btn-wide workout-next-button" onclick="saveWorkout()">Complete Workout</button>
+     <button class="primary btn-wide workout-next-button" onclick="saveWorkout()">${isEditingWorkout()?"Save Changes":"Complete Workout"}</button>
      <button class="outline btn-wide workout-cancel-button" onclick="renderExerciseSelection()">Back</button>
    </div>
  `,"workout-entry-sheet");
@@ -259,9 +293,21 @@ function saveWorkout(){
  if(endMinutes===startMinutes){notify("Start and end time cannot be the same.");return}
  if(!exercises.length){notify("Select at least one exercise.");return}
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
- let record={id:state.activeWorkout?.id||newId(),date,muscles,startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt:Date.now()};
- let old=record.id&&state.workouts.find(w=>w.id===record.id);if(old)Object.assign(old,record);else state.workouts.push(record);
- delete state.activeWorkout;save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();selected=new Date(date+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);workoutDraft={date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""};closeModal();go("home");
+ const editing=isEditingWorkout();
+ const id=editing?workoutDraft.editId:state.activeWorkout?.id||newId();
+ const createdAt=editing?(Number(workoutDraft.createdAt)||Date.now()):Date.now();
+ const record={id,date,muscles,startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt};
+ const old=state.workouts.find(w=>w.id===id);
+ if(old){record.createdAt=old.createdAt||createdAt;record.updatedAt=Date.now();Object.assign(old,record)}
+ else state.workouts.push(record);
+ if(!editing)delete state.activeWorkout;
+ save();
+ if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();
+ selected=new Date(date+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);
+ workoutDraft=emptyWorkoutDraft();
+ closeModal();
+ if(editing){renderCalendar();renderHome();if(typeof renderNotificationBell==="function")renderNotificationBell()}
+ else go("home");
 }
 function workoutSignature(w){const muscles=[...(w.muscles||[])].sort();const exercises=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg")).sort((a,b)=>a.exerciseId.localeCompare(b.exerciseId));return JSON.stringify({date:w.date,muscles,exercises})}
 function normalizedEntry(entry,fallbackUnit="kg"){if(typeof entry==="string")return {exerciseId:entry,sets:[],unit:fallbackUnit};const e=entry||{exerciseId:"",sets:[]};return {...e,unit:e.unit||fallbackUnit}}
@@ -283,8 +329,9 @@ function viewWorkout(id){
    ${details}
   </div>
   <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="editWorkout('${w.id}')">Edit Workout</button>
    <button class="outline btn-wide workout-cancel-button" onclick="deleteWorkout('${w.id}')">Delete Workout</button>
-   <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
+   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Done</button>
   </div>
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
