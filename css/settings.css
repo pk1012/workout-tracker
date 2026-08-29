@@ -90,6 +90,19 @@
   border-radius:var(--radius);
   font-size:14px;
 }
+#more .drive-card.has-restore{
+  grid-template-areas:"icon main" "restore restore" "actions actions";
+}
+#more .drive-restore{
+  grid-area:restore;
+  height:40px;
+  min-height:40px;
+  width:100%;
+  margin-top:12px;
+  border-radius:var(--radius);
+  font-size:14px;
+}
+#more .drive-card.has-restore .drive-actions{margin-top:9px}
 
 @media (max-width:600px){
   #more .settings{

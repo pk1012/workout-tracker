@@ -1,3 +1,14 @@
 /* Exercise Library actions and Start Workout set-editor heading. */
 .actions{display:flex;gap:14px;font-weight:700}.edit{color:var(--primary)}.delete{color:#d94b5b}
 .set-editor-head{font-size:16px;margin-bottom:10px}
+.notice-item{
+  width:100%;
+  text-align:left;
+  padding:14px 16px;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background:var(--soft);
+}
+.notice-item strong{display:block;font-size:16px;font-weight:720;line-height:1.2}
+.notice-item span{display:block;font-size:13px;color:#737a87;margin-top:4px;line-height:1.3}
+.notice-empty{margin:14px 0 0;font-size:16px;line-height:1.35}

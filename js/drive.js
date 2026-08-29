@@ -14,6 +14,7 @@ const K_PENDING="wt_drive_pending";
 const K_DECLINED="wt_drive_restore_declined";
 const K_ADOPTED="wt_drive_adopted";
 const K_REAUTH="wt_drive_need_connect";
+const K_RESTORE_NOTE="wt_drive_restore_note";
 
 let driveBusy=false;
 let driveQueued=null;
@@ -22,6 +23,29 @@ let restorePrompted=false;
 function lsGet(key){try{return localStorage.getItem(key)||""}catch(err){return ""}}
 function lsSet(key,value){try{localStorage.setItem(key,value)}catch(err){}}
 function lsDel(key){try{localStorage.removeItem(key)}catch(err){}}
+
+function restoreNotePayload(){
+ if(hasCompletedWorkouts(state)){
+  if(lsGet(K_RESTORE_NOTE)){lsDel(K_RESTORE_NOTE);renderNotificationBell()}
+  return null;
+ }
+ try{return JSON.parse(lsGet(K_RESTORE_NOTE)||"null")}catch(err){return null}
+}
+function hasRestoreNotification(){return !!restoreNotePayload()}
+function setRestoreNotification(savedAt){
+ lsSet(K_RESTORE_NOTE,JSON.stringify({savedAt:savedAt||""}));
+ renderNotificationBell();
+}
+function clearRestoreNotification(){
+ if(!lsGet(K_RESTORE_NOTE))return;
+ lsDel(K_RESTORE_NOTE);
+ renderNotificationBell();
+}
+function renderNotificationBell(){
+ const btn=document.querySelector(".notification-head");
+ if(!btn)return;
+ btn.classList.toggle("has-unread",!!(lsGet(K_RESTORE_NOTE)&&!hasCompletedWorkouts(state)));
+}
 
 function driveClientId(){
  return (typeof GOOGLE_DRIVE_CLIENT_ID==="string"&&GOOGLE_DRIVE_CLIENT_ID.trim())||lsGet(K_CLIENT).trim();
@@ -89,7 +113,9 @@ function renderDriveCard(){
   return;
  }
  const email=lsGet(K_EMAIL)||"Google Drive";
- host.innerHTML=`<div class="setting card drive-card"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">${esc(email)}</span><span class="setting-desc">${esc(driveStatusLine())}</span></span><div class="drive-actions"><button class="primary" type="button" onclick="syncDrive()">Sync</button><button class="outline" type="button" onclick="disconnectDrive()">Disconnect</button></div></div>`;
+ const showRestore=!!(lsGet(K_RESTORE_NOTE)&&!hasCompletedWorkouts(state));
+ const restoreBtn=showRestore?`<button class="primary drive-restore" type="button" onclick="openPendingDriveRestore()">Restore</button>`:"";
+ host.innerHTML=`<div class="setting card drive-card${showRestore?" has-restore":""}"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">${esc(email)}</span><span class="setting-desc">${esc(driveStatusLine())}</span></span>${restoreBtn}<div class="drive-actions"><button class="primary" type="button" onclick="syncDrive()">Sync</button><button class="outline" type="button" onclick="disconnectDrive()">Disconnect</button></div></div>`;
 }
 
 function consumeOAuthRedirect(){
@@ -170,6 +196,8 @@ function disconnectDrive(){
  confirmAction("Stop using Google Drive on this phone? The file on Drive is kept.",()=>{
   clearDriveSession();
   lsDel(K_REAUTH);
+  clearRestoreNotification();
+  restorePrompted=false;
   renderDriveCard();
   notify("Google Drive disconnected.","success");
  },true);
@@ -179,6 +207,7 @@ function resetDriveAfterPhoneWipe(){
  setDrivePending(false);
  lsDel(K_DECLINED);
  lsDel(K_ADOPTED);
+ clearRestoreNotification();
  restorePrompted=false;
 }
 
@@ -308,6 +337,7 @@ async function uploadDriveSnapshot(reason){
  lsDel(K_ADOPTED);
  lsDel(K_DECLINED);
  lsDel(K_REAUTH);
+ clearRestoreNotification();
  setDrivePending(false);
  renderDriveCard();
  if(reason==="sync"||reason==="connect"||reason==="retry")notify("Saved to Google Drive.","success");
@@ -346,6 +376,7 @@ function confirmDriveRestore(){
  save();
  lsSet(K_ADOPTED,"1");
  lsDel(K_DECLINED);
+ clearRestoreNotification();
  selected=new Date();selected.setHours(0,0,0,0);month=new Date(selected.getFullYear(),selected.getMonth(),1);
  closeModal();
  go("workouts");
@@ -354,8 +385,10 @@ function confirmDriveRestore(){
 }
 
 function declineDriveRestore(){
+ const at=pendingDriveRestore?.savedAt||lsGet(K_SAVED)||"";
  pendingDriveRestore=null;
  lsSet(K_DECLINED,"1");
+ setRestoreNotification(at);
  closeModal();
  renderDriveCard();
 }
@@ -486,12 +519,62 @@ function syncDrive(){
  queueDriveSave("sync");
 }
 
-function driveAfterWorkoutChange(){queueDriveSave("auto")}
-function driveAfterFileRestore(){queueDriveSave("auto")}
+function driveAfterWorkoutChange(){
+ if(hasCompletedWorkouts(state))clearRestoreNotification();
+ queueDriveSave("auto");
+}
+function driveAfterFileRestore(){
+ if(hasCompletedWorkouts(state))clearRestoreNotification();
+ queueDriveSave("auto");
+}
+
+function openNotifications(){
+ const note=restoreNotePayload();
+ const body=note
+  ?`<button class="notice-item" type="button" onclick="openPendingDriveRestore()"><strong>Restore Drive backup</strong><span>${esc(note.savedAt?`Backup from ${formatDriveSaved(note.savedAt)}`:"Google Drive backup")}</span></button>`
+  :`<p class="muted notice-empty">No notifications</p>`;
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <h2 class="workout-form-title">Notifications</h2>
+  </div>
+  <div class="workout-entry-scroll">${body}</div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" type="button" onclick="closeModal()">Done</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
+}
+
+async function openPendingDriveRestore(){
+ if(!isDriveConnected()){
+  notifyDriveReconnect();
+  closeModal();
+  connectDrive();
+  return;
+ }
+ try{
+  const remote=await loadDriveRemote();
+  if(!remote.exists||!remote.state||!isValidState(remote.state)){
+   clearRestoreNotification();
+   closeModal();
+   notify("Could not restore this Drive backup.","error");
+   renderDriveCard();
+   return;
+  }
+  pendingDriveRestore=remote;
+  restorePrompted=false;
+  showDriveRestoreSheet(remote);
+ }catch(err){
+  if(err.code==="unauthorized")return;
+  notify("Could not restore this Drive backup.","error");
+ }
+}
 
 function initDrive(){
  consumeOAuthRedirect();
  renderDriveCard();
+ renderNotificationBell();
  window.addEventListener("online",()=>{if(drivePending())queueDriveSave("retry")});
  document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState==="visible"&&isDriveConnected()&&drivePending())queueDriveSave("retry");

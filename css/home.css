@@ -21,6 +21,16 @@
   #home .head-pill span{font-size:14px}
   #home .head-pill .icon{width:19px;height:19px}
   #home .head-icon{width:42px}
+  #home .notification-head.has-unread::after{
+    content:"";
+    position:absolute;
+    right:8px;
+    top:8px;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--primary);
+  }
   #home .head-icon i{right:6px;top:6px;width:6px;height:6px}
 
   #home .hero-card{

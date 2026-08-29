@@ -9,6 +9,7 @@ function go(id){
  if(id==="library-management")renderLibrary();
  if(id==="progress")renderProgress();
  if(id==="more")renderDriveCard();
+ if(typeof renderNotificationBell==="function")renderNotificationBell();
 }
 function modal(html,sheetClass=""){document.getElementById("modal").innerHTML=`<div class="sheet ${sheetClass}">${html}</div>`;document.getElementById("modal").classList.add("show");document.body.classList.add("modal-open")}
 function closeModal(){document.getElementById("modal").classList.remove("show");document.body.classList.remove("modal-open","workout-form-open")}
