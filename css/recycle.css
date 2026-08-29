@@ -103,13 +103,20 @@
   padding-bottom:14px;
 }
 #recycle .recycle-card{
-  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 14px 14px 16px;
   border-radius:var(--radius);
   box-shadow:0 4px 18px rgba(20,22,35,.03);
 }
+#recycle .recycle-card-copy{
+  min-width:0;
+  flex:1;
+}
 #recycle .recycle-title{
   display:block;
-  font-size:15px;
+  font-size:16px;
   font-weight:720;
   line-height:1.25;
 }
@@ -133,19 +140,36 @@
   height:13px;
 }
 #recycle .recycle-age{margin-top:4px}
-#recycle .recycle-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-  margin-top:12px;
+#recycle .recycle-card-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:none;
 }
-#recycle .recycle-actions .primary,
-#recycle .recycle-actions .outline{
+#recycle .recycle-icon-btn{
+  width:40px;
   height:40px;
-  min-height:40px;
-  width:100%;
-  border-radius:var(--radius);
-  font-size:14px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  flex:none;
+}
+#recycle .recycle-icon-btn .icon{
+  width:18px;
+  height:18px;
+  stroke-width:1.8;
+}
+#recycle .recycle-icon-btn.restore{
+  background:var(--soft);
+  color:var(--primary);
+}
+#recycle .recycle-icon-btn.delete{
+  background:#1c1d22;
+  color:#fff;
+}
+[data-theme=dark] #recycle .recycle-icon-btn.delete{
+  background:#ececf0;
+  color:#1c1d22;
 }
 #recycle .exercise-screen-panel.exercise-screen-empty{
   min-height:220px;
@@ -212,7 +236,6 @@
   #recycle .exercise-filter-button .icon{width:19px;height:19px}
   #recycle .exercise-chip-scroller{gap:8px;padding:0;margin-bottom:14px}
   #recycle .exercise-chip{min-height:38px;padding:0 14px;font-size:14px}
-  #recycle .recycle-title{font-size:14px}
   #recycle .recycle-actions-bar{left:16px;right:16px}
 }
 @media (max-width: 380px){

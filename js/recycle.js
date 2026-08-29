@@ -77,12 +77,14 @@ function recycleCard(row){
   ?`<span class="recycle-meta recycle-workout-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(row.meta)}</span></span>`
   :(row.meta?`<span class="recycle-meta">${esc(row.meta)}</span>`:"");
  return `<div class="recycle-card card">
-  <strong class="recycle-title">${esc(row.title)}</strong>
-  ${meta}
-  <span class="recycle-age">${esc(binMetaLine(row.item.deletedAt))}</span>
-  <div class="recycle-actions">
-   <button class="primary" type="button" onclick="${restore}">Restore</button>
-   <button class="outline" type="button" onclick="${remove}">Delete forever</button>
+  <div class="recycle-card-copy">
+   <strong class="recycle-title">${esc(row.title)}</strong>
+   ${meta}
+   <span class="recycle-age">${esc(binMetaLine(row.item.deletedAt))}</span>
+  </div>
+  <div class="recycle-card-actions">
+   <button class="recycle-icon-btn restore" type="button" aria-label="Restore" onclick="${restore}"><svg class="icon" aria-hidden="true"><use href="#restore"/></svg></button>
+   <button class="recycle-icon-btn delete" type="button" aria-label="Delete forever" onclick="${remove}"><svg class="icon" aria-hidden="true"><use href="#trash"/></svg></button>
   </div>
  </div>`;
 }
