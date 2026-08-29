@@ -47,7 +47,11 @@ function renderNotificationBell(){
  if(!btn)return;
  btn.classList.toggle("has-unread",!!((lsGet(K_RESTORE_NOTE)&&!hasCompletedWorkouts(state))||drivePending()));
 }
-function setDrivePending(on){if(on)lsSet(K_PENDING,"1");else lsDel(K_PENDING);renderNotificationBell()}
+function refreshDriveUi(){
+ if(typeof renderDriveCard==="function")renderDriveCard();
+ if(typeof renderNotificationBell==="function")renderNotificationBell();
+}
+function setDrivePending(on){if(on)lsSet(K_PENDING,"1");else lsDel(K_PENDING);refreshDriveUi()}
 
 function driveClientId(){
  return (typeof GOOGLE_DRIVE_CLIENT_ID==="string"&&GOOGLE_DRIVE_CLIENT_ID.trim())||lsGet(K_CLIENT).trim();
@@ -70,8 +74,9 @@ function isDriveConnected(){
 }
 function expireDriveToken(){
  if(!lsGet(K_TOKEN))return;
- if(hasCompletedWorkouts(state)||lsGet(K_SAVED)||drivePending())setDrivePending(true);
+ const keepPending=hasCompletedWorkouts(state)||!!lsGet(K_SAVED)||drivePending();
  clearDriveSession({keepPending:true,keepMeta:true,keepDeclined:true,keepAdopted:true});
+ if(keepPending)setDrivePending(true);
  notifyDriveReconnect();
 }
 function notifyDriveReconnect(){
@@ -485,6 +490,7 @@ async function runDriveHandshake(reason){
   if(reason==="sync"||reason==="connect"||reason==="overwrite"||reason==="retry")notify("Could not save to Google Drive.","error");
  }finally{
   driveBusy=false;
+  refreshDriveUi();
   if(driveQueued){
    const next=driveQueued;
    driveQueued=null;
@@ -515,7 +521,8 @@ function queueDriveSave(reason){
    adopted:driveAdopted()
   });
   if(preview.action!=="upload")return;
-  if(!navigator.onLine){setDrivePending(true);renderDriveCard();return}
+  setDrivePending(true);
+  renderDriveCard();
  }
  runDriveHandshake(reason);
 }
