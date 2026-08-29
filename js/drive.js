@@ -163,13 +163,13 @@ function renderDriveCard(){
  if(!host)return;
  if(!isDriveConnected()){
   const desc=drivePending()?"Connect again to save to Drive":(lsGet(K_DIVERGE)==="1"?"Phone and Drive differ. Connect to update.":"Connect to keep a copy off this phone");
-  host.innerHTML=`<button class="setting card" type="button" onclick="connectDrive()"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">Google Drive</span><span class="setting-desc">${esc(desc)}</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>`;
+  host.innerHTML=`<button class="setting card" type="button" onclick="connectDrive()"><span class="setting-icon" data-glyph="cloud"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">Google Drive</span><span class="setting-desc">${esc(desc)}</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>`;
   return;
  }
  const email=lsGet(K_EMAIL)||"Google Drive";
  const showRestore=!!(lsGet(K_RESTORE_NOTE)&&!hasCompletedWorkouts(state));
  const restoreBtn=showRestore?`<button class="primary drive-restore" type="button" onclick="openPendingDriveRestore()">Restore</button>`:"";
- host.innerHTML=`<div class="setting card drive-card${showRestore?" has-restore":""}"><span class="setting-icon"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">${esc(email)}</span><span class="setting-desc">${esc(driveStatusLine())}</span></span>${restoreBtn}<div class="drive-actions"><button class="primary" type="button" onclick="syncDrive()">Sync</button><button class="outline" type="button" onclick="disconnectDrive()">Disconnect</button></div></div>`;
+ host.innerHTML=`<div class="setting card drive-card${showRestore?" has-restore":""}"><span class="setting-icon" data-glyph="cloud"><svg class="icon"><use href="#cloud"/></svg></span><span class="setting-main"><span class="setting-title">${esc(email)}</span><span class="setting-desc">${esc(driveStatusLine())}</span></span>${restoreBtn}<div class="drive-actions"><button class="primary" type="button" onclick="syncDrive()">Sync</button><button class="outline" type="button" onclick="disconnectDrive()">Disconnect</button></div></div>`;
 }
 
 function consumeOAuthRedirect(){
