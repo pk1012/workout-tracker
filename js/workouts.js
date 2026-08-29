@@ -49,6 +49,11 @@ function monthGrid(d){
  const start=weekStart(first);
  return Array.from({length:42},(_,i)=>{const day=new Date(start);day.setDate(start.getDate()+i);return day});
 }
+function monthDates(d){
+ const first=monthStart(d);
+ const last=new Date(first.getFullYear(),first.getMonth()+1,0).getDate();
+ return Array.from({length:last},(_,i)=>{const day=new Date(first);day.setDate(i+1);return day});
+}
 function inSelectedMonth(d){return d.getFullYear()===selectedMonth.getFullYear()&&d.getMonth()===selectedMonth.getMonth()}
 function iAmThisMonth(d){const n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()}
 function weekdayHeads(){return weekDates(weekStart(new Date())).map(d=>d.toLocaleDateString("en-IN",{weekday:"short"}))}
@@ -56,9 +61,13 @@ function weekdayHeads(){return weekDates(weekStart(new Date())).map(d=>d.toLocal
 function renderCalendar(){
  const month=monthStart(selectedMonth);
  const days=monthGrid(month);
+ const inMonth=monthDates(month);
+ const count=inMonth.filter(d=>state.workouts.some(w=>w.date===dateKey(d))).length;
+ const restCount=inMonth.filter(d=>!state.workouts.some(w=>w.date===dateKey(d))).length;
+ const remaining=remainingDays(inMonth);
  const sel=dateKey(selected);
  const heads=weekdayHeads();
- document.getElementById("workoutView").innerHTML=`<section class="workout-week workout-month card"><div class="workout-week-head"><button type="button" aria-label="Previous month" onclick="moveMonth(-1)"><svg class="icon"><use href="#chevron-left"/></svg></button><div><strong>${month.getFullYear()}</strong><span>${month.toLocaleDateString("en-IN",{month:"long"})}</span></div><button type="button" aria-label="Next month" onclick="moveMonth(1)"><svg class="icon"><use href="#chevron-right"/></svg></button></div><div class="workout-month-weekdays">${heads.map(h=>`<span>${h}</span>`).join("")}</div><div class="workout-days workout-month-days">${days.map(d=>{const k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d),out=inSelectedMonth(d)?"":" out-month";return `<button type="button" class="${k===sel?"selected ":""}${today?"is-today":""}${out}" aria-label="${d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}" onclick="selectWorkoutDay('${k}')"><small>${d.getDate()}</small><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><button class="week-picker-link" type="button" onclick="openMonthPicker()">Select Month <svg class="icon"><use href="#chevron-down"/></svg></button></section>${renderSelectedDay(sel)}`;
+ document.getElementById("workoutView").innerHTML=`<section class="workout-week workout-month card"><div class="workout-week-head"><button type="button" aria-label="Previous month" onclick="moveMonth(-1)"><svg class="icon"><use href="#chevron-left"/></svg></button><div><strong>${month.getFullYear()}</strong><span>${month.toLocaleDateString("en-IN",{month:"long"})}</span></div><button type="button" aria-label="Next month" onclick="moveMonth(1)"><svg class="icon"><use href="#chevron-right"/></svg></button></div><div class="workout-month-weekdays">${heads.map(h=>`<span>${h}</span>`).join("")}</div><div class="workout-days workout-month-days">${days.map(d=>{const k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d),out=inSelectedMonth(d)?"":" out-month";return `<button type="button" class="${k===sel?"selected ":""}${today?"is-today":""}${out}" aria-label="${d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}" onclick="selectWorkoutDay('${k}')"><small>${d.getDate()}</small><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><div class="week-stats"><span><svg class="icon" aria-hidden="true"><use href="#calendar-icon"/></svg><b>${count} workout${count===1?"":"s"}</b></span><span><svg class="icon" aria-hidden="true"><use href="#activity"/></svg><b>${restCount} rest days</b></span><span><svg class="icon" aria-hidden="true"><use href="#target"/></svg><b>${remaining} day${remaining===1?"":"s"} remaining</b></span></div><button class="week-picker-link" type="button" onclick="openMonthPicker()">Select Month <svg class="icon"><use href="#chevron-down"/></svg></button></section>${renderSelectedDay(sel)}`;
 }
 function renderSelectedDay(k){
  let d=new Date(k+"T00:00:00"),ws=state.workouts.filter(w=>w.date===k);

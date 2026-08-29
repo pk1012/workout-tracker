@@ -47,6 +47,27 @@
   margin-top:14px;
   margin-bottom:0;
 }
+#workouts .workout-month .week-stats{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:4px;
+  margin:0 2px;
+  padding:12px 0 0;
+  color:#69707c;
+}
+#workouts .workout-month .week-stats span{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  flex:1;
+  min-width:0;
+  padding:0 2px;
+}
+#workouts .workout-month .week-stats b{
+  white-space:nowrap;
+}
 #workouts .week-picker-link{
   margin-top:14px;
   padding-top:0;
