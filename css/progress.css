@@ -100,7 +100,7 @@
   flex-wrap:nowrap;
   align-items:center;
   justify-content:flex-start;
-  gap:14px;
+  gap:16px;
   width:auto;
   max-width:100%;
 }
@@ -115,6 +115,13 @@
   font-weight:650;
   white-space:nowrap;
   flex:none;
+}
+#progress .recent-section .workout-card .workout-metrics small{
+  display:inline;
+  margin:0;
+  font-size:inherit;
+  font-weight:500;
+  color:#737a87;
 }
 #progress .recent-section .workout-card .workout-metrics b .inline-icon{
   flex:none;

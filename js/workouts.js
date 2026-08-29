@@ -56,8 +56,8 @@ function renderSelectedDay(k){
 function workoutCardDate(w){
  if(!w.date||!isValidDateString(w.date))return "";
  const d=new Date(w.date+"T00:00:00");
- const weekday=d.toLocaleDateString("en-IN",{weekday:"short"});
- const month=d.toLocaleDateString("en-IN",{month:"short"});
+ const weekday=d.toLocaleDateString("en-IN",{weekday:"long"});
+ const month=d.toLocaleDateString("en-IN",{month:"long"});
  return `${weekday}, ${d.getDate()} ${month} ${d.getFullYear()}`;
 }
 function workoutCard(w){
@@ -65,7 +65,7 @@ function workoutCard(w){
  const ex=w.exercises?.length||0;
  const sets=(w.exercises||[]).reduce((n,e)=>n+(e.sets?.length||0),0);
  const date=workoutCardDate(w);
- return `<button class="workout-card card" onclick="viewWorkout('${w.id}')"><div class="workout-avatar"><svg class="icon"><use href="#dumbbell"/></svg></div><div class="workout-card-copy"><strong>${esc(w.muscles.map(muscle).join(" + "))}</strong>${date?`<span class="workout-card-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(date)}</span></span>`:""}<div class="workout-metrics"><b><svg class="inline-icon"><use href="#dumbbell"/></svg><span>${ex}</span></b><b><svg class="inline-icon"><use href="#layers"/></svg><span>${sets}</span></b><b><svg class="inline-icon"><use href="#clock"/></svg><span>${durationLabel(dur)}</span></b></div></div><span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span></button>`;
+ return `<button class="workout-card card" onclick="viewWorkout('${w.id}')"><div class="workout-avatar"><svg class="icon"><use href="#dumbbell"/></svg></div><div class="workout-card-copy"><strong>${esc(w.muscles.map(muscle).join(" + "))}</strong>${date?`<span class="workout-card-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(date)}</span></span>`:""}<div class="workout-metrics"><b><svg class="inline-icon"><use href="#dumbbell"/></svg><span>${ex}</span><small>Exercises</small></b><b><svg class="inline-icon"><use href="#layers"/></svg><span>${sets}</span><small>Sets</small></b><b><svg class="inline-icon"><use href="#clock"/></svg><span>${durationLabel(dur)}</span></b></div></div><span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span></button>`;
 }
 function renderRecentWorkouts(){ /* Progress page. */ let ws=[...state.workouts].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,5);return `<section class="recent-section"><div class="section-head"><h2>Workout History</h2></div>${ws.length?ws.map(workoutCard).join(""):`<div class="empty card">No workouts logged yet.</div>`}</section>`}
 function moveWeek(n){selectedWeekStart=new Date(selectedWeekStart);selectedWeekStart.setDate(selectedWeekStart.getDate()+n*7);selected=new Date(selectedWeekStart);renderCalendar();renderHome()}

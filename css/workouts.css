@@ -60,7 +60,7 @@
   flex-wrap:nowrap;
   align-items:center;
   justify-content:flex-start;
-  gap:14px;
+  gap:16px;
   width:auto;
   max-width:100%;
 }
@@ -75,6 +75,14 @@
   font-weight:650;
   white-space:nowrap;
   flex:none;
+}
+#workouts .workout-metrics small{
+  display:inline;
+  grid-column:auto;
+  margin:0;
+  font-size:inherit;
+  font-weight:500;
+  color:#737a87;
 }
 #workouts .workout-metrics b .inline-icon{
   grid-row:auto;
