@@ -72,21 +72,21 @@
   gap:20px;
 }
 #workouts .workout-month .week-stats{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  column-gap:12px;
+  display:flex;
   align-items:center;
-  margin:0 2px;
+  justify-content:space-between;
+  gap:8px;
+  margin:0;
   padding:16px 0 14px;
   color:#69707c;
 }
 #workouts .workout-month .week-stats span{
   display:flex;
   align-items:center;
-  justify-content:center;
   gap:4px;
   min-width:0;
   padding:0;
+  flex:0 1 auto;
 }
 #workouts .workout-month .week-stats span+span{
   border-left:0;
@@ -203,7 +203,6 @@
   }
   #workouts .workout-month .week-stats{
     padding:14px 0 12px;
-    column-gap:8px;
   }
   #workouts .workout-month-days i{
     width:26px;

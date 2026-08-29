@@ -128,20 +128,20 @@
   #home .week-day i{width:31px;height:31px;font-size:14px}
   #home .week-day i .icon{width:17px;height:17px}
   #home .week-stats{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    column-gap:8px;
+    display:flex;
     align-items:center;
+    justify-content:space-between;
+    gap:8px;
     font-size:10px;
     padding:9px 0;
   }
   #home .week-stats span{
     display:flex;
     align-items:center;
-    justify-content:center;
     gap:4px;
     min-width:0;
     padding:0;
+    flex:0 1 auto;
   }
   #home .week-stats span+span{border-left:0}
   #home .week-stats b{

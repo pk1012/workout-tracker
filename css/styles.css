@@ -336,20 +336,20 @@ body{padding-bottom:0}
 .weekly-card .week-days{gap:4px}
 .weekly-card .legend{margin:13px 2px 12px;gap:20px}
 .weekly-card .week-stats{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  column-gap:12px;
+  display:flex;
   align-items:center;
+  justify-content:space-between;
+  gap:8px;
   margin-top:0;
   padding:13px 0 14px;
 }
 .weekly-card .week-stats span{
   display:flex;
   align-items:center;
-  justify-content:center;
   gap:4px;
   padding:0;
   min-width:0;
+  flex:0 1 auto;
 }
 .weekly-card .week-stats span+span{border-left:0}
 .weekly-card .week-stats b{margin-left:0}
