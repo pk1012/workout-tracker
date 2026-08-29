@@ -57,7 +57,7 @@
   .workout-card-copy strong{font-size:14px}
   .workout-card-copy>span{font-size:10.5px;margin-top:4px}
   .workout-metrics{margin-top:5px;justify-content:flex-start;gap:16px;width:auto}
-  .workout-metrics b{font-size:10.5px;padding-right:0;margin-right:0;border-right:0}
+  .workout-metrics b{font-size:13px;padding-right:0;margin-right:0;border-right:0}
   .card-arrow{font-size:0;display:grid;place-items:center}
   .card-arrow .icon{width:18px;height:18px}
 
@@ -248,6 +248,8 @@ select.input,
 .progress>.muted,
 .quick-grid b,
 .workout-card-copy>span,
+.workout-metrics b,
+.workout-metrics small,
 #more .setting-desc,
 .empty,
 .toast,
@@ -287,8 +289,6 @@ select.input,
 .progress-note,
 .stat span,
 .stat small,
-.workout-metrics b,
-.workout-metrics small,
 .workout-days button>small{font-size:11px !important}
 
 @media(max-width:600px){
