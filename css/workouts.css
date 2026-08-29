@@ -45,7 +45,7 @@
   white-space:nowrap;
 }
 #workouts .workout-month-days{
-  gap:2px 0;
+  gap:4px 0;
 }
 #workouts .workout-month-days button{
   gap:6px;
