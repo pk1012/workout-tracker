@@ -27,24 +27,42 @@
 #workouts .rest-card{
   margin-bottom:10px;
 }
+#workouts .workout-card:not(.rest-card){
+  align-items:flex-start;
+}
+#workouts .workout-card:not(.rest-card) .card-arrow{
+  align-self:center;
+  margin-top:2px;
+}
 #workouts .day-section .workout-card:last-child,
 #workouts .day-section .rest-card:last-child{
   margin-bottom:0;
 }
 
-/* Workout cards: 5px between title, counts, and time. */
+/* Workout cards: title, date, metrics, then time. */
 #workouts .workout-card:not(.rest-card) .workout-card-copy>span{
   margin-top:5px;
 }
-#workouts .workout-card:not(.rest-card) .workout-card-copy>span + span{
-  margin-top:5px;
+#workouts .workout-card-date,
+#workouts .workout-card-time{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+#workouts .workout-card-date .inline-icon,
+#workouts .workout-card-time .inline-icon{
+  flex:none;
+  width:12px;
+  height:12px;
 }
 #workouts .workout-metrics{
   margin-top:5px;
   display:flex;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   align-items:center;
-  gap:5px 16px;
+  justify-content:space-between;
+  gap:8px;
+  width:100%;
 }
 #workouts .workout-metrics b{
   display:flex;
@@ -54,15 +72,12 @@
   margin-right:0;
   border-right:0;
   grid-template-columns:none;
+  font-weight:650;
+  white-space:nowrap;
 }
 #workouts .workout-metrics b .inline-icon{
   grid-row:auto;
   flex:none;
   width:12px;
   height:12px;
-}
-#workouts .workout-metrics small{
-  display:inline;
-  grid-column:auto;
-  margin-top:0;
 }

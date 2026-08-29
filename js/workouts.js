@@ -53,7 +53,21 @@ function renderSelectedDay(k){
  if(!ws.length)return `<section class="day-section"><div class="selected-date">${d.toLocaleDateString("en-IN",{weekday:"long",month:"short",day:"numeric"})}</div><div class="workout-card rest-card card"><div class="workout-avatar rest-avatar"><svg class="icon"><use href="#moon"/></svg></div><div class="workout-card-copy"><strong>Rest Day</strong><span>Recovery day — let your muscles recover and come back stronger.</span></div></div></section>`;
  return `<section class="day-section"><div class="selected-date">${d.toLocaleDateString("en-IN",{weekday:"long",month:"short",day:"numeric"})}</div>${ws.map(w=>workoutCard(w)).join("")}</section>`
 }
-function workoutCard(w){let dur=durationMinutes(w),ex=w.exercises?.length||0,sets=(w.exercises||[]).reduce((n,e)=>n+(e.sets?.length||0),0),time=`${formatTime(w.startTime)}${w.endTime?` – ${formatTime(w.endTime)}`:""}`;return `<button class="workout-card card" onclick="viewWorkout('${w.id}')"><div class="workout-avatar"><svg class="icon"><use href="#dumbbell"/></svg></div><div class="workout-card-copy"><strong>${esc(w.muscles.map(muscle).join(" + "))}</strong><span>${ex} Exercises • ${sets} Sets</span><span><svg class="inline-icon"><use href="#clock"/></svg> ${time} • ${durationLabel(dur)}</span></div><span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span></button>`}
+function workoutCardDate(w){
+ if(!w.date||!isValidDateString(w.date))return "";
+ const d=new Date(w.date+"T00:00:00");
+ const weekday=d.toLocaleDateString("en-IN",{weekday:"short"});
+ const month=d.toLocaleDateString("en-IN",{month:"short"});
+ return `${weekday}, ${d.getDate()} ${month} ${d.getFullYear()}`;
+}
+function workoutCard(w){
+ const dur=durationMinutes(w);
+ const ex=w.exercises?.length||0;
+ const sets=(w.exercises||[]).reduce((n,e)=>n+(e.sets?.length||0),0);
+ const time=`${formatTime(w.startTime)}${w.endTime?` – ${formatTime(w.endTime)}`:""}`;
+ const date=workoutCardDate(w);
+ return `<button class="workout-card card" onclick="viewWorkout('${w.id}')"><div class="workout-avatar"><svg class="icon"><use href="#dumbbell"/></svg></div><div class="workout-card-copy"><strong>${esc(w.muscles.map(muscle).join(" + "))}</strong>${date?`<span class="workout-card-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg> ${esc(date)}</span>`:""}<div class="workout-metrics"><b><svg class="inline-icon"><use href="#dumbbell"/></svg> ${ex}</b><b><svg class="inline-icon"><use href="#layers"/></svg> ${sets}</b><b><svg class="inline-icon"><use href="#clock"/></svg> ${durationLabel(dur)}</b></div><span class="workout-card-time">${time} • ${durationLabel(dur)}</span></div><span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span></button>`;
+}
 function renderRecentWorkouts(){ /* Progress page. */ let ws=[...state.workouts].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,5);return `<section class="recent-section"><div class="section-head"><h2>Workout History</h2></div>${ws.length?ws.map(workoutCard).join(""):`<div class="empty card">No workouts logged yet.</div>`}</section>`}
 function moveWeek(n){selectedWeekStart=new Date(selectedWeekStart);selectedWeekStart.setDate(selectedWeekStart.getDate()+n*7);selected=new Date(selectedWeekStart);renderCalendar();renderHome()}
 function selectWorkoutDay(k){selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);renderCalendar();renderHome()}

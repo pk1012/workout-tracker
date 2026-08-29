@@ -56,9 +56,8 @@
   .workout-avatar .icon{width:27px;height:27px}
   .workout-card-copy strong{font-size:14px}
   .workout-card-copy>span{font-size:10.5px;margin-top:4px}
-  .workout-metrics{margin-top:7px}
-  .workout-metrics b{font-size:10.5px;padding-right:8px;margin-right:8px}
-  .workout-metrics small{font-size:8px}
+  .workout-metrics{margin-top:5px;justify-content:space-between;gap:8px}
+  .workout-metrics b{font-size:10.5px;padding-right:0;margin-right:0;border-right:0}
   .card-arrow{font-size:0;display:grid;place-items:center}
   .card-arrow .icon{width:18px;height:18px}
 

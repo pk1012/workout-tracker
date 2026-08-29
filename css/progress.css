@@ -80,10 +80,46 @@
 /* Workout History on Progress — same cards as the old Workouts recent list. */
 #progress .recent-section{margin-bottom:14px}
 #progress .recent-section .section-head{margin-bottom:10px}
-#progress .recent-section .workout-card{margin-bottom:10px;padding-top:10px;padding-bottom:10px}
+#progress .recent-section .workout-card{margin-bottom:10px;padding-top:10px;padding-bottom:10px;align-items:flex-start}
+#progress .recent-section .workout-card .card-arrow{align-self:center;margin-top:2px}
 #progress .recent-section .workout-card:last-child{margin-bottom:0}
 #progress .recent-section .workout-card .workout-card-copy>span{margin-top:5px}
-#progress .recent-section .workout-card .workout-card-copy>span + span{margin-top:5px}
+#progress .recent-section .workout-card .workout-card-date,
+#progress .recent-section .workout-card .workout-card-time{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+#progress .recent-section .workout-card .workout-card-date .inline-icon{
+  flex:none;
+  width:12px;
+  height:12px;
+}
+#progress .recent-section .workout-card .workout-metrics{
+  margin-top:5px;
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  width:100%;
+}
+#progress .recent-section .workout-card .workout-metrics b{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding-right:0;
+  margin-right:0;
+  border-right:0;
+  grid-template-columns:none;
+  font-weight:650;
+  white-space:nowrap;
+}
+#progress .recent-section .workout-card .workout-metrics b .inline-icon{
+  flex:none;
+  width:12px;
+  height:12px;
+}
 
 @media(max-width:600px){
   #progress #progressView{gap:14px}
