@@ -164,12 +164,11 @@
   color:var(--primary);
 }
 #recycle .recycle-icon-btn.delete{
-  background:#1c1d22;
-  color:#fff;
+  background:var(--soft);
+  color:var(--primary);
 }
-[data-theme=dark] #recycle .recycle-icon-btn.delete{
-  background:#ececf0;
-  color:#1c1d22;
+#recycle .recycle-icon-btn.delete .icon{
+  stroke-width:2;
 }
 #recycle .exercise-screen-panel.exercise-screen-empty{
   min-height:220px;
