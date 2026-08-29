@@ -143,7 +143,7 @@
   }
 }
 
-/* Group title left; Edit / Delete on the right, stacked above row actions. */
+/* Group title left; dash actions on the right, stacked above row actions. */
 #library-management .row{
   display:flex;
   align-items:center;
@@ -153,11 +153,18 @@
 #library-management .section-title{margin-bottom:0;min-width:0}
 #library-management .actions{
   display:grid;
-  grid-template-columns:2.75em 3.6em;
+  grid-template-columns:1.1em 1.1em;
   column-gap:14px;
   align-items:center;
   justify-items:end;
   flex:none;
+}
+#library-management .actions .edit,
+#library-management .actions .delete{
+  min-width:1.1em;
+  padding:0;
+  line-height:1;
+  font-weight:700;
 }
 
 /* Same 12px stack as View Workout cards: top, title→line, line→row, row→line, bottom. */

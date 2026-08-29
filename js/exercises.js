@@ -236,7 +236,7 @@ function renderLibrary(){
  if(!target)return;
  target.innerHTML=sortedMuscles().map(m=>{
   const ex=sortedExercisesForMuscle(m.id);
-  return `<div class="section card pad library-group"><div class="row"><div class="section-title">${esc(m.name)}</div><div class="actions"><button class="edit" onclick="openMuscle('${m.id}')">Edit</button><button class="delete" onclick="deleteMuscle('${m.id}')">Delete</button></div></div>${ex.length?ex.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span><span class="actions"><button class="edit" onclick="openExercise('${e.id}')">Edit</button><button class="delete" onclick="deleteExercise('${e.id}')">Delete</button></span></div>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`;
+  return `<div class="section card pad library-group"><div class="row"><div class="section-title">${esc(m.name)}</div><div class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openMuscle('${m.id}')">-</button><button class="delete" type="button" aria-label="Delete" onclick="deleteMuscle('${m.id}')">-</button></div></div>${ex.length?ex.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span><span class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openExercise('${e.id}')">-</button><button class="delete" type="button" aria-label="Delete" onclick="deleteExercise('${e.id}')">-</button></span></div>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`;
  }).join("");
 }
 
