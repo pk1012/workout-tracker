@@ -45,6 +45,7 @@ function rangeLabel(start){
  return `${part(start)} – ${part(end)}`;
 }
 function pad2(n){return String(n).padStart(2,"0")}
+function weekNumberChip(d){return `#${pad2(weekNumber(d))}`}
 function monthNumberChip(month){return `#${pad2(monthStart(month).getMonth()+1)}`}
 function monthRangeLabel(month){
  const start=monthStart(month);
@@ -115,7 +116,7 @@ function openWeekPicker(){
    </div>
   </div>
   <div class="workout-entry-scroll">
-   <div class="week-list">${items.map(d=>`<button onclick="chooseWeek('${dateKey(d)}')" class="${dateKey(d)===dateKey(selectedWeekStart)?"chosen":""}"><b>#${weekNumber(d)}</b><span>${rangeLabel(d)}</span>${iAmThisWeek(d)?'<em>This Week <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
+   <div class="week-list">${items.map(d=>`<button onclick="chooseWeek('${dateKey(d)}')" class="${dateKey(d)===dateKey(selectedWeekStart)?"chosen":""}"><b>${weekNumberChip(d)}</b><span>${rangeLabel(d)}</span>${iAmThisWeek(d)?'<em>This Week <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
   </div>
   <div class="modal-actions workout-modal-actions">
    <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Close</button>
