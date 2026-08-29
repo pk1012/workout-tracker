@@ -16,6 +16,7 @@ const K_ADOPTED="wt_drive_adopted";
 const K_REAUTH="wt_drive_need_connect";
 const K_RESTORE_NOTE="wt_drive_restore_note";
 const K_DIVERGE="wt_drive_diverge";
+const K_HASH="wt_drive_sync_hash";
 
 let driveBusy=false;
 let driveQueued=null;
@@ -92,7 +93,7 @@ function notifyDriveReconnect(){
 }
 function clearDriveSession(opts={}){
  lsDel(K_TOKEN);lsDel(K_EXP);lsDel(K_EMAIL);
- if(!opts.keepMeta){lsDel(K_FILE);lsDel(K_FOLDER);lsDel(K_SAVED);lsDel(K_REMOTE)}
+ if(!opts.keepMeta){lsDel(K_FILE);lsDel(K_FOLDER);lsDel(K_SAVED);lsDel(K_REMOTE);lsDel(K_HASH)}
  if(!opts.keepPending)lsDel(K_PENDING);
  if(!opts.keepDeclined)lsDel(K_DECLINED);
  if(!opts.keepAdopted)lsDel(K_ADOPTED);
@@ -100,6 +101,23 @@ function clearDriveSession(opts={}){
 function drivePending(){return lsGet(K_PENDING)==="1"}
 function driveDeclined(){return lsGet(K_DECLINED)==="1"}
 function driveAdopted(){return lsGet(K_ADOPTED)==="1"}
+function driveStateHash(){
+ try{
+  const snap=driveSnapshot(state,{version:"",savedAt:"",deviceId:""});
+  const text=JSON.stringify(snap.state);
+  let h=2166136261;
+  for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
+  return (h>>>0).toString(16);
+ }catch(err){return ""}
+}
+function markDriveSynced(){const h=driveStateHash();if(h)lsSet(K_HASH,h)}
+function isDriveDirty(){
+ const cur=driveStateHash();
+ const prev=lsGet(K_HASH);
+ if(!cur)return true;
+ if(!prev)return true;
+ return cur!==prev;
+}
 
 function formatDriveSaved(iso){
  if(!iso)return "";
@@ -223,6 +241,7 @@ function resetDriveAfterPhoneWipe(){
  lsDel(K_DECLINED);
  lsDel(K_ADOPTED);
  setDriveDiverge(false);
+ lsDel(K_HASH);
  clearRestoreNotification();
  restorePrompted=false;
 }
@@ -355,6 +374,7 @@ async function uploadDriveSnapshot(reason){
  lsDel(K_REAUTH);
  setDriveDiverge(false);
  clearRestoreNotification();
+ markDriveSynced();
  setDrivePending(false);
  renderDriveCard();
  if(reason==="sync"||reason==="connect"||reason==="retry")notify("Saved to Google Drive.","success");
@@ -417,12 +437,18 @@ async function afterDriveConnected(){
  renderDriveCard();
  await runDriveHandshake("connect");
 }
+async function bootDrive(){
+ if(!isDriveConnected())return;
+ try{await fetchUserEmail()}catch(err){if(err.code==="unauthorized")return; }
+ renderDriveCard();
+ await runDriveHandshake("boot");
+}
 
 async function runDriveHandshake(reason){
  if(!isDriveConnected())return;
  if(driveBusy){driveQueued=reason;return}
  if(!navigator.onLine){
-  const wait=reason==="auto"||reason==="empty"||reason==="retry"||reason==="overwrite"||reason==="sync"||(reason==="connect"&&(hasCompletedWorkouts(state)||driveAdopted()));
+  const wait=reason==="auto"||reason==="empty"||reason==="retry"||reason==="overwrite"||reason==="sync"||(reason==="connect"&&(hasCompletedWorkouts(state)||driveAdopted()))||(reason==="boot"&&(drivePending()||isDriveDirty()));
   if(wait)setDrivePending(true);
   renderDriveCard();
   return;
@@ -457,9 +483,10 @@ async function runDriveHandshake(reason){
    setDriveDiverge(true);
   }
   if(decision.action==="upload"){
-   if(reason==="auto"||reason==="empty"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"){
+   const allowUpload=reason==="auto"||reason==="empty"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"||(reason==="boot"&&(drivePending()||isDriveDirty()||!remote.exists));
+   if(allowUpload){
     if(!navigator.onLine){setDrivePending(true);renderDriveCard();return}
-    const notifyReason=reason==="retry"||(drivePending()&&(reason==="auto"||reason==="empty"))?"retry":reason;
+    const notifyReason=reason==="retry"||(drivePending()&&(reason==="auto"||reason==="empty"||reason==="boot"))?"retry":reason;
     try{
      await uploadDriveSnapshot(notifyReason);
     }catch(err){
@@ -496,6 +523,7 @@ async function runDriveHandshake(reason){
  }catch(err){
   if(err.code==="unauthorized")return;
   if(reason==="auto"||reason==="empty"||reason==="retry"||reason==="overwrite")setDrivePending(true);
+  else if(reason==="boot"&&(drivePending()||isDriveDirty()))setDrivePending(true);
   else if(reason==="connect"&&hasCompletedWorkouts(state))setDrivePending(true);
   else if(reason==="sync")setDrivePending(true);
   renderDriveCard();
@@ -642,12 +670,14 @@ async function openPendingDriveRestore(){
 }
 
 function initDrive(){
- consumeOAuthRedirect();
+ const justConnected=consumeOAuthRedirect();
  renderDriveCard();
  renderNotificationBell();
  window.addEventListener("online",()=>{if(drivePending())queueDriveSave("retry")});
  document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState==="visible"&&isDriveConnected()&&drivePending())queueDriveSave("retry");
  });
- if(isDriveConnected())afterDriveConnected();
+ if(!isDriveConnected())return;
+ if(justConnected)afterDriveConnected();
+ else bootDrive();
 }
