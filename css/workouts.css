@@ -39,18 +39,16 @@
   margin-bottom:0;
 }
 
-/* Workout cards: title, date, metrics, then time. */
+/* Workout cards: title, date, then metrics. */
 #workouts .workout-card:not(.rest-card) .workout-card-copy>span{
   margin-top:5px;
 }
-#workouts .workout-card-date,
-#workouts .workout-card-time{
+#workouts .workout-card-date{
   display:flex;
   align-items:center;
   gap:6px;
 }
-#workouts .workout-card-date .inline-icon,
-#workouts .workout-card-time .inline-icon{
+#workouts .workout-card-date .inline-icon{
   flex:none;
   width:12px;
   height:12px;

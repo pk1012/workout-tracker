@@ -84,8 +84,7 @@
 #progress .recent-section .workout-card .card-arrow{align-self:center;margin-top:2px}
 #progress .recent-section .workout-card:last-child{margin-bottom:0}
 #progress .recent-section .workout-card .workout-card-copy>span{margin-top:5px}
-#progress .recent-section .workout-card .workout-card-date,
-#progress .recent-section .workout-card .workout-card-time{
+#progress .recent-section .workout-card .workout-card-date{
   display:flex;
   align-items:center;
   gap:6px;
