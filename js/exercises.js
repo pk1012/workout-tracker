@@ -504,8 +504,8 @@ function deleteMuscle(id){
  confirmHistoryUse(
   `Delete “${m.name}”?`,
   used,
-  `${m.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
-  `It will leave your library. ${used.length===1?"This workout":"These workouts"} will still show ${m.name}. ${n?`Its ${n} exercise(s) will also move to Recycle Bin and will still show their names in history. `:""}Items stay for 30 days.`,
+  `This muscle group has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
+  `${used.length===1?"This workout":"These workouts"} will still show “${m.name}”. It will be deleted from your library.`,
   proceed
  );
 }
