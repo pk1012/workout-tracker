@@ -61,6 +61,8 @@
   if(!s.workouts.every(w=>w&&typeof w.id==="string"))return false;
   const workoutIds=new Set(s.workouts.map(w=>w.id));
   if(workoutIds.size!==s.workouts.length)return false;
+  const workoutDates=new Set(s.workouts.map(w=>w.date));
+  if(workoutDates.size!==s.workouts.length)return false;
   return s.workouts.every(w=>{
    if(!w||typeof w.id!=="string"||!isValidDateString(w.date)||!Array.isArray(w.muscles)||!Array.isArray(w.exercises))return false;
    if(!w.muscles.every(id=>typeof id==="string"&&id))return false;

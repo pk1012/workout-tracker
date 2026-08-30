@@ -28,6 +28,15 @@ const dup={
 };
 assert.strictEqual(isValidState(dup),false);
 
+const sameDay={
+ ...good,
+ workouts:[
+  {...good.workouts[0],id:"w1",date:"2026-08-01"},
+  {...good.workouts[0],id:"w2",date:"2026-08-01"}
+ ]
+};
+assert.strictEqual(isValidState(sameDay),false);
+
 const chest="m-chest",tri="m-tri",bench="e-bench";
 const afterMove={
  muscles:[{id:chest,name:"Chest"},{id:tri,name:"Triceps"}],
