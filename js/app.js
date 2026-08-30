@@ -12,6 +12,16 @@ function go(id){
  if(id==="more")renderDriveCard();
  if(typeof renderNotificationBell==="function")renderNotificationBell();
 }
+function refreshAppViews(){
+ if(typeof renderHome==="function")renderHome();
+ if(typeof renderCalendar==="function")renderCalendar();
+ if(typeof renderProgress==="function")renderProgress();
+ if(typeof renderExercises==="function")renderExercises();
+ if(typeof renderLibrary==="function")renderLibrary();
+ if(typeof renderRecycle==="function")renderRecycle();
+ if(typeof renderDriveCard==="function")renderDriveCard();
+ if(typeof renderNotificationBell==="function")renderNotificationBell();
+}
 function modal(html,sheetClass="",opts={}){
  const host=document.getElementById("modal");
  host.innerHTML=`<div class="sheet ${sheetClass}">${html}</div>`;

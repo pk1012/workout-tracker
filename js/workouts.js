@@ -370,8 +370,8 @@ function saveWorkout(){
  selected=new Date(date+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);
  workoutDraft=emptyWorkoutDraft();
  closeModal();
- if(editing){renderCalendar();renderHome();if(typeof renderNotificationBell==="function")renderNotificationBell()}
- else go("home");
+ if(editing){refreshAppViews()}
+ else {refreshAppViews();go("home")}
 }
 function normalizedEntry(entry,fallbackUnit="kg"){if(typeof entry==="string")return {exerciseId:entry,sets:[],unit:fallbackUnit};const e=entry||{exerciseId:"",sets:[]};return {...e,unit:e.unit||fallbackUnit}}
 function formatSet(set,unit){return `${Number(set.weight)} ${unit||"kg"} · ${Number(set.reps)} reps`}
@@ -399,4 +399,4 @@ function viewWorkout(id){
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
 }
-function deleteWorkout(id){confirmAction("Delete this workout? It will be deleted from your history.",()=>{moveWorkoutToBin(id);save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();closeModal();renderCalendar();renderHome()},true)}
+function deleteWorkout(id){confirmAction("Delete this workout? It will be deleted from your history.",()=>{moveWorkoutToBin(id);save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();closeModal();refreshAppViews()},true)}

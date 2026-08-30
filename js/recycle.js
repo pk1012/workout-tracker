@@ -191,7 +191,7 @@ function restoreBinWorkout(id){
   save();
   driveAfterBinChange();
   closeModal();
-  renderRecycle();
+  refreshAppViews();
   notify("Workout restored.","success");
  },true);
 }
