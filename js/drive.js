@@ -771,13 +771,13 @@ function openNotifications(){
  if(note){
   items.push(`<button class="notice-item" type="button" onclick="openPendingDriveRestore()"><strong>Restore Drive backup</strong><span>${esc(note.savedAt?`Backup from ${formatDriveSaved(note.savedAt)}`:"Google Drive backup")}</span></button>`);
  }
- const body=items.length?`<div class="notice-list">${items.join("")}</div>`:`<p class="muted notice-empty">No notifications</p>`;
+ const body=items.length?`<div class="notice-list">${items.join("")}</div>`:`<div class="card notice-empty-panel"><svg class="icon" aria-hidden="true"><use href="#bell"/></svg><strong>No notifications</strong><span>Save and Drive alerts show up here.</span></div>`;
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
    <h2 class="workout-form-title">Notifications</h2>
   </div>
-  <div class="workout-entry-scroll">${body}</div>
+  <div class="workout-entry-scroll${items.length?"":" notice-empty-scroll"}">${body}</div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" type="button" onclick="closeModal()">Done</button>
   </div>
