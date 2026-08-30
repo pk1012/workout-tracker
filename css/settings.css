@@ -10,6 +10,18 @@
 #more .setting-title,
 #more .setting-desc{display:block}
 #more .theme-setting .setting-main{min-width:120px}
+#more .theme-setting .segment{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  width:110px;
+  flex:none;
+}
+#more .theme-setting .segment button{
+  min-width:0;
+  padding-left:0;
+  padding-right:0;
+  text-align:center;
+}
 #more .setting-icon[data-glyph=unit] .icon{transform:scale(1.012)}
 
 #more .settings{
