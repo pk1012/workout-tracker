@@ -25,8 +25,7 @@ function binMetaLine(deletedAt){
 }
 
 function binWorkoutTitle(w){
- if(Array.isArray(w.muscleNames)&&w.muscleNames.length)return w.muscleNames.join(" + ");
- return (w.muscles||[]).map(id=>muscle(id)).join(" + ")||"Workout";
+ return workoutMuscleLabel(w);
 }
 function binWorkoutWhen(w){
  if(typeof workoutCardDate==="function")return workoutCardDate(w);
@@ -296,7 +295,7 @@ function moveWorkoutToBin(id){
  if(!w)return;
  const copy=JSON.parse(JSON.stringify(w));
  copy.deletedAt=Date.now();
- copy.muscleNames=(w.muscles||[]).map(mid=>muscle(mid));
+ copy.muscleNames=workoutMuscleNames(w);
  state.bin.workouts.unshift(copy);
  state.workouts=state.workouts.filter(x=>x.id!==id);
 }

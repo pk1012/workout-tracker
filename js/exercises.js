@@ -293,10 +293,49 @@ function saveMuscle(id){
  let name=document.getElementById("muscleName")?.value.trim();
  if(!name){notify("Enter a name.");return}
  if(state.muscles.some(m=>m.name.toLowerCase()===name.toLowerCase()&&m.id!==id)){notify("That muscle group already exists.");return}
- if(id){let m=state.muscles.find(x=>x.id===id);if(!m){notify("Muscle group not found.");return}m.name=name}else state.muscles.push({id:newId(),name});
+ if(id){
+  let m=state.muscles.find(x=>x.id===id);if(!m){notify("Muscle group not found.");return}m.name=name;
+  (state.workouts||[]).forEach(w=>{
+   const ids=w.muscles||[];
+   if(!ids.includes(id))return;
+   w.muscleNames=workoutMuscleNames(w);
+   ids.forEach((mid,i)=>{if(mid===id)w.muscleNames[i]=name});
+  });
+ }else state.muscles.push({id:newId(),name});
  save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();closeModal();renderLibrary();renderExercises();
 }
 function deleteMuscle(id){
  let m=state.muscles.find(x=>x.id===id),n=state.exercises.filter(e=>e.muscleId===id).length;if(!m)return;
- confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also move to Recycle Bin.`:""} Items stay for 30 days.`,()=>{moveMuscleToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();},true)
+ const used=(state.workouts||[]).filter(w=>(w.muscles||[]).includes(id)).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
+ const proceed=()=>{moveMuscleToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();};
+ if(!used.length){
+  confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also move to Recycle Bin.`:""} Items stay for 30 days.`,proceed,true);
+  return;
+ }
+ const cap=8;
+ const shown=used.slice(0,cap);
+ const extra=used.length-shown.length;
+ const when=w=>{
+  if(!w.date||!isValidDateString(w.date))return "Unknown date";
+  return new Date(w.date+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+ };
+ const lines=shown.map(w=>`• ${when(w)} — ${workoutMuscleLabel(w)}`);
+ if(extra)lines.push(`• and ${extra} more`);
+ const head=`${m.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
+ const tail=`It will leave your library. ${used.length===1?"This workout":"These workouts"} will still show ${m.name}. ${n?`Its ${n} exercise(s) will also move to Recycle Bin. `:""}Items stay for 30 days.`;
+ pendingConfirm=proceed;
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div>
+   <h2 class="workout-form-title confirm-title">Delete “${esc(m.name)}”?</h2>
+   <p class="muted workout-form-description confirm-copy">${esc(head)}<br>${lines.map(esc).join("<br>")}<br><br>${esc(tail)}</p>
+  </div>
+  <div class="workout-entry-scroll"></div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="const fn=pendingConfirm;pendingConfirm=null;closeModal();fn&&fn()">Continue</button>
+   <button class="outline btn-wide workout-cancel-button" onclick="pendingConfirm=null;closeModal()">Cancel</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
 }

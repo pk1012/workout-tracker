@@ -1,4 +1,4 @@
-const VERSION="1.7.218",BUILD="2026.08.30";
+const VERSION="1.7.219",BUILD="2026.08.30";
 const defaults={Abs:["Cable Crunch","Hanging Leg Raise","Plank"],Back:["Lat Pulldown","Seated Cable Row","Single Arm Dumbbell Row","T-Bar Row"],Biceps:["Behind-the-Back Cable Curl","Cable Curl","Hammer Curl","Incline Dumbbell Curl"],Calves:["Calf Raise","Seated Calf Raise"],Cardio:["Cycling","Running","Walking"],Chest:["Flat Bench Press","Inclined Dumbbell Press","Pec Deck Fly","Wide Chest Press Machine"],Legs:["Leg Extension","Leg Press","Romanian Deadlift","Squat"],Shoulders:["Dumbbell Lateral Raise","Face Pull","Overhead Press","Rear Delt Fly"],Triceps:["Cable Pushdown","Overhead Cable Extension","Skull Crusher"]};
 const STORE_KEY="wt_state";
 const STORE_BACKUP_KEY="wt_state_backup";
@@ -40,9 +40,14 @@ function seedDefaults(){
  return next;
 }
 function migrateState(s){
- s.workouts=(s.workouts||[]).map(w=>({...w,startTime:w.startTime||"",endTime:w.endTime||""}));
+ ensureBin(s);
+ s.workouts=(s.workouts||[]).map(w=>{
+  const next={...w,startTime:w.startTime||"",endTime:w.endTime||""};
+  next.muscleNames=workoutMuscleNames(next,s);
+  return next;
+ });
  if(s.activeWorkout&&!s.activeWorkout.date)delete s.activeWorkout;
- return ensureBin(s);
+ return s;
 }
 function readLocalAt(){
  try{return Number(localStorage.getItem(STORE_AT_KEY)||0)||0}catch(err){return 0}
@@ -158,4 +163,32 @@ function dateKey(d){
   const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
   return `${y}-${m}-${day}`;
 }
-function muscle(id){return state.muscles.find(x=>x.id===id)?.name||"Unknown"}
+function muscleNameFromState(s,id){
+ const live=(s?.muscles||[]).find(x=>x.id===id)?.name;
+ if(live)return live;
+ const bin=(s?.bin&&Array.isArray(s.bin.muscles)?s.bin.muscles:[]).find(x=>x.id===id)?.name;
+ return bin||"";
+}
+function muscle(id){return muscleNameFromState(state,id)||"Unknown"}
+function workoutMuscleNames(w,s=state){
+ const ids=Array.isArray(w?.muscles)?w.muscles:[];
+ const stored=Array.isArray(w?.muscleNames)?w.muscleNames:[];
+ return ids.map((id,i)=>{
+  const kept=typeof stored[i]==="string"?stored[i].trim():"";
+  if(kept&&kept!=="Unknown")return kept;
+  return muscleNameFromState(s,id)||kept||"Unknown";
+ });
+}
+function muscleNamesForIds(ids,previous,s=state){
+ return (ids||[]).map(id=>{
+  const live=muscleNameFromState(s,id);
+  if(live)return live;
+  const i=(previous?.muscles||[]).indexOf(id);
+  const kept=i>=0&&typeof previous?.muscleNames?.[i]==="string"?previous.muscleNames[i].trim():"";
+  return (kept&&kept!=="Unknown")?kept:"Unknown";
+ });
+}
+function workoutMuscleLabel(w){
+ const names=workoutMuscleNames(w).filter(Boolean);
+ return names.length?names.join(" + "):"Workout";
+}
