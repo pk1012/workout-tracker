@@ -440,8 +440,8 @@ function deleteExercise(id){
  confirmHistoryUse(
   `Delete “${e.name}”?`,
   used,
-  `${e.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
-  `It will leave your library. ${used.length===1?"This workout":"These workouts"} will still show ${e.name}. It stays in Recycle Bin for 30 days.`,
+  `This exercise has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
+  `${used.length===1?"This workout":"These workouts"} will still show “${e.name}”. It will be deleted from your library.`,
   proceed
  );
 }
