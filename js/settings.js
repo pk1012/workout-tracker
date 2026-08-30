@@ -73,6 +73,9 @@ function isValidState(s){
  if(!s.exercises.every(e=>e&&typeof e.id==="string"&&typeof e.name==="string"&&e.name.trim()&&typeof e.muscleId==="string"&&muscleIds.has(e.muscleId)))return false;
  const exerciseIds=new Set(s.exercises.map(e=>e.id));
  if(exerciseIds.size!==s.exercises.length)return false;
+ if(!s.workouts.every(w=>w&&typeof w.id==="string"))return false;
+ const workoutIds=new Set(s.workouts.map(w=>w.id));
+ if(workoutIds.size!==s.workouts.length)return false;
  return s.workouts.every(w=>{
   if(!w||typeof w.id!=="string"||!isValidDateString(w.date)||!Array.isArray(w.muscles)||!Array.isArray(w.exercises))return false;
   if(!w.muscles.every(id=>typeof id==="string"&&id))return false;
