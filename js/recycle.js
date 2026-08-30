@@ -181,12 +181,12 @@ function restoreBinWorkout(id){
  const item=state.bin.workouts.find(w=>w.id===id);
  if(!item)return;
  if(state.workouts.some(w=>w.id===id)){notify("That workout is already in your history.");return}
- if(item.date&&state.workouts.some(w=>w.date===item.date)){notify("Only one workout per day. Open the existing one to edit.");return}
+ if(item.date&&state.workouts.some(w=>w.date===item.date)){notify("A workout already exists for this day. Select another day.");return}
  confirmAction("Restore this workout to your history?",()=>{
   const next=JSON.parse(JSON.stringify(item));
   delete next.deletedAt;
   delete next.muscleNames;
-  if(next.date&&state.workouts.some(w=>w.date===next.date&&w.id!==next.id)){notify("Only one workout per day. Open the existing one to edit.");return}
+  if(next.date&&state.workouts.some(w=>w.date===next.date&&w.id!==next.id)){notify("A workout already exists for this day. Select another day.");return}
   state.workouts.push(next);
   state.bin.workouts=state.bin.workouts.filter(w=>w.id!==id);
   save();
