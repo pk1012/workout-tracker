@@ -39,6 +39,17 @@
   if(gone.length)return gone[0];
   return muscles[0]||known||"";
  }
+ function findWorkoutOnDate(workouts,date,exceptId){
+  return (workouts||[]).find(w=>w.date===date&&w.id!==exceptId)||null;
+ }
+ function stampWorkoutExerciseMuscleIds(w,s){
+  const exercises=(w?.exercises||[]).map(raw=>{
+   const muscleId=historicalWorkoutExerciseMuscleId(raw,w,s);
+   if(typeof raw==="string")return {exerciseId:raw,muscleId};
+   return muscleId?{...raw,muscleId}:raw;
+  });
+  return {...w,exercises};
+ }
  function isValidState(s){
   if(!s||!Array.isArray(s.muscles)||!Array.isArray(s.exercises)||!Array.isArray(s.workouts))return false;
   if(!s.muscles.every(m=>m&&typeof m.id==="string"&&typeof m.name==="string"&&m.name.trim()))return false;
@@ -67,7 +78,7 @@
    });
   });
  }
- const api={isValidDateString,uniqueRestoredName,catalogExerciseMuscleId,historicalWorkoutExerciseMuscleId,isValidState};
+ const api={isValidDateString,uniqueRestoredName,catalogExerciseMuscleId,historicalWorkoutExerciseMuscleId,findWorkoutOnDate,stampWorkoutExerciseMuscleIds,isValidState};
  if(typeof module==="object"&&module.exports)module.exports=api;
  else Object.assign(root,api);
 })(typeof globalThis!=="undefined"?globalThis:this);

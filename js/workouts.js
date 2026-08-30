@@ -213,7 +213,7 @@ function renderWorkoutBasicsSheet(){
 }
 function todayDateKey(){const d=new Date();d.setHours(0,0,0,0);return dateKey(d)}
 function workoutOnDate(date,exceptId){
- return (state.workouts||[]).find(w=>w.date===date&&w.id!==exceptId)||null;
+ return findWorkoutOnDate(state.workouts,date,exceptId);
 }
 function dateTakenMessage(){return "A workout already exists for this day."}
 function openWorkout(){
