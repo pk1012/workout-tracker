@@ -342,9 +342,26 @@ function renderSetDetails(){
 
 function setRow(exIndex,setIndex,set){const remove=workoutDraft.exercises[exIndex].sets.length>1?`<button class="remove-set" aria-label="Remove set" onclick="removeSet(${exIndex},${setIndex})"><svg class="icon"><use href="#close"/></svg></button>`:`<span class="remove-placeholder"></span>`;return `<div class="set-row"><span class="set-number">${setIndex+1}</span><label class="set-field"><span>Weight</span><input class="input compact" type="number" min="0" step="0.1" value="${esc(set.weight??"")}" oninput="updateSet(${exIndex},${setIndex},'weight',this.value)"></label><label class="set-field"><span>Reps</span><input class="input compact" type="number" min="1" step="1" value="${esc(set.reps??"")}" oninput="updateSet(${exIndex},${setIndex},'reps',this.value)"></label>${remove}</div>`}
 function updateSet(i,j,k,v){if(workoutDraft.exercises[i]?.sets[j])workoutDraft.exercises[i].sets[j][k]=v}
-function addSet(i){workoutDraft.exercises[i].sets.push({weight:"",reps:""});renderSetDetails()}
-function removeSet(i,j){if(workoutDraft.exercises[i].sets.length>1)workoutDraft.exercises[i].sets.splice(j,1);renderSetDetails()}
-function setWorkoutUnit(unit){if(unit!==workoutDraft.unit){let f=workoutDraft.unit==="kg"?2.2046226218:0.45359237;workoutDraft.exercises.forEach(e=>e.sets.forEach(s=>{if(s.weight!=="")s.weight=String(Math.round(Number(s.weight)*f*100)/100)}));workoutDraft.unit=unit}renderSetDetails()}
+function renderSetsForExercise(i){
+ const entry=workoutDraft.exercises[i];
+ const host=document.getElementById(`sets-${i}`);
+ if(!entry||!host){renderSetDetails();return}
+ host.innerHTML=entry.sets.map((set,j)=>setRow(i,j,set)).join("");
+}
+function addSet(i){workoutDraft.exercises[i].sets.push({weight:"",reps:""});renderSetsForExercise(i)}
+function removeSet(i,j){if(workoutDraft.exercises[i].sets.length>1)workoutDraft.exercises[i].sets.splice(j,1);renderSetsForExercise(i)}
+function setWorkoutUnit(unit){
+ if(unit!==workoutDraft.unit){
+  let f=workoutDraft.unit==="kg"?2.2046226218:0.45359237;
+  workoutDraft.exercises.forEach(e=>e.sets.forEach(s=>{if(s.weight!=="")s.weight=String(Math.round(Number(s.weight)*f*100)/100)}));
+  workoutDraft.unit=unit;
+ }
+ const scroll=document.querySelector(".modal.show .workout-entry-scroll");
+ const top=scroll?scroll.scrollTop:0;
+ renderSetDetails();
+ const next=document.querySelector(".modal.show .workout-entry-scroll");
+ if(next)next.scrollTop=top;
+}
 
 function saveWorkout(){
  const date=workoutDraft.date,muscles=[...new Set(workoutDraft.muscles)].filter(keepDraftMuscle);
