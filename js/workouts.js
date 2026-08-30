@@ -6,23 +6,10 @@ function cancelWorkoutForm(){
  closeModal();
 }
 function exerciseMuscleId(id){
- const live=state.exercises.find(x=>x.id===id);
- if(live)return live.muscleId;
- const bin=(state.bin&&Array.isArray(state.bin.exercises)?state.bin.exercises:[]).find(x=>x.id===id);
- if(bin?.muscleId)return bin.muscleId;
- for(const g of state.bin&&Array.isArray(state.bin.muscles)?state.bin.muscles:[]){
-  if((g.exercises||[]).some(x=>x.id===id))return g.id;
- }
- return "";
+ return catalogExerciseMuscleId(id);
 }
 function inferWorkoutExerciseMuscleId(entry,w){
- const stored=typeof entry?.muscleId==="string"?entry.muscleId:"";
- if(stored&&(w.muscles||[]).includes(stored))return stored;
- const known=exerciseMuscleId(entry.exerciseId);
- if(known)return known;
- const gone=(w.muscles||[]).filter(id=>!isLiveMuscle(id));
- if(gone.length)return gone[0];
- return (w.muscles||[])[0]||"";
+ return historicalWorkoutExerciseMuscleId(entry,w);
 }
 function keepDraftMuscle(id){
  return isLiveMuscle(id)||(workoutDraft.goneMuscles||[]).includes(id);
@@ -212,7 +199,7 @@ function draftFromWorkout(w){
   endTime:w.endTime||"",
   exercises,
   goneMuscles:muscles.filter(id=>!isLiveMuscle(id)),
-  goneExercises:exercises.filter(e=>!isLiveExercise(e.exerciseId))
+  goneExercises:exercises.filter(e=>!isLiveExercise(e.exerciseId)||exerciseMuscleId(e.exerciseId)!==e.muscleId)
  };
 }
 function renderWorkoutBasicsSheet(){
@@ -259,12 +246,16 @@ function chooseExercises(){
  renderExerciseSelection();
 }
 function renderExerciseSelection(){
+ const historical=[...(workoutDraft.exercises||[]),...(workoutDraft.goneExercises||[])];
  const exerciseContent=workoutDraft.muscles.map(id=>{
-   const live=sortedExercisesForMuscle(id);
+   const live=sortedExercisesForMuscle(id).filter(e=>{
+    const hist=historical.find(x=>x.exerciseId===e.id);
+    return !hist||hist.muscleId===id;
+   });
    const liveIds=new Set(live.map(e=>e.id));
    const ghosts=[];
    const seen=new Set();
-   for(const e of workoutDraft.goneExercises||[]){
+   for(const e of historical){
     if(e.muscleId!==id||liveIds.has(e.exerciseId)||seen.has(e.exerciseId))continue;
     seen.add(e.exerciseId);
     ghosts.push(e);
@@ -296,10 +287,10 @@ function continueToSetDetails(){
  const gone=new Map((workoutDraft.goneExercises||[]).map(e=>[e.exerciseId,e]));
  workoutDraft.exercises=ids.map(id=>{
   if(previous.has(id))return previous.get(id);
-  const live=state.exercises.find(e=>e.id===id);
-  if(live)return {exerciseId:id,name:live.name,muscleId:live.muscleId,sets:[{weight:"",reps:""}]};
   const ghost=gone.get(id);
   if(ghost)return {exerciseId:id,name:ghost.name||"Deleted exercise",muscleId:ghost.muscleId,sets:ghost.sets?.length?ghost.sets.map(s=>({...s})):[{weight:"",reps:""}]};
+  const live=state.exercises.find(e=>e.id===id);
+  if(live)return {exerciseId:id,name:live.name,muscleId:live.muscleId,sets:[{weight:"",reps:""}]};
   return null;
  }).filter(Boolean);
  if(!workoutDraft.exercises.length){notify("Select at least one exercise.");return}
@@ -372,7 +363,10 @@ function saveWorkout(){
 function commitWorkoutSave(id,date,muscles,exercises,old,editing){
  const unit=preferredUnit();
  const createdAt=editing?(Number(workoutDraft.createdAt)||Date.now()):Date.now();
- const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,{muscles:workoutDraft.muscles,muscleNames:workoutDraft.muscleNames}),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,name:nameForWorkoutExercise(e,old),sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit})),createdAt};
+ const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,{muscles:workoutDraft.muscles,muscleNames:workoutDraft.muscleNames}),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit,exercises:exercises.map(e=>{
+  const muscleId=historicalWorkoutExerciseMuscleId(e,{muscles});
+  return {exerciseId:e.exerciseId,name:nameForWorkoutExercise(e,old),muscleId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit};
+ }),createdAt};
  if(old){record.createdAt=old.createdAt||createdAt;record.updatedAt=Date.now();Object.assign(old,record)}
  else state.workouts.push(record);
  delete state.activeWorkout;
