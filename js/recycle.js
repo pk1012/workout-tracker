@@ -206,17 +206,32 @@ function dropBinWorkout(id){
  },true);
 }
 
+function uniqueRestoredName(base, existing){
+ const name=(base||"").trim()||"Restored";
+ const used=new Set((existing||[]).map(x=>String(x||"").trim().toLowerCase()).filter(Boolean));
+ const first=`${name} (Restored)`;
+ if(!used.has(first.toLowerCase()))return first;
+ let n=2;
+ while(used.has(`${name} (Restored ${n})`.toLowerCase()))n++;
+ return `${name} (Restored ${n})`;
+}
+
 function restoreBinMuscle(id){
  ensureBin(state);
  const item=state.bin.muscles.find(m=>m.id===id);
  if(!item)return;
- if(state.muscles.some(m=>m.id!==id&&m.name.toLowerCase()===(item.name||"").toLowerCase())){
-  notify("A muscle group with that name already exists.");
-  return;
- }
- confirmAction("Restore this muscle group and its exercises?",()=>{
-  if(!state.muscles.some(m=>m.id===id))state.muscles.push({id:item.id,name:item.name});
-  (item.exercises||[]).forEach(e=>{
+ const original=(item.name||"").trim()||"Muscle group";
+ const clash=state.muscles.some(m=>m.id!==id&&m.name.toLowerCase()===original.toLowerCase());
+ const name=clash?uniqueRestoredName(original,state.muscles.map(m=>m.name)):original;
+ const message=clash
+  ?`A muscle group named ${original} already exists. Restore this one as ${name}? Your current ${original} stays as it is.`
+  :"Restore this muscle group and its exercises?";
+ confirmAction(message,()=>{
+  ensureBin(state);
+  const current=state.bin.muscles.find(m=>m.id===id);
+  if(!current)return;
+  if(!state.muscles.some(m=>m.id===id))state.muscles.push({id:current.id,name});
+  (current.exercises||[]).forEach(e=>{
    if(!state.exercises.some(x=>x.id===e.id))state.exercises.push({id:e.id,name:e.name,muscleId:e.muscleId||id});
   });
   state.bin.muscles=state.bin.muscles.filter(m=>m.id!==id);
@@ -249,12 +264,20 @@ function restoreBinExercise(id){
   return;
  }
  if(state.exercises.some(e=>e.id===id)){notify("That exercise is already in your library.");return}
- if(state.exercises.some(e=>e.muscleId===item.muscleId&&e.name.toLowerCase()===(item.name||"").toLowerCase())){
-  notify("That exercise already exists in this muscle group.");
-  return;
- }
- confirmAction("Restore this exercise to your library?",()=>{
-  state.exercises.push({id:item.id,name:item.name,muscleId:item.muscleId});
+ const original=(item.name||"").trim()||"Exercise";
+ const inGroup=state.exercises.filter(e=>e.muscleId===item.muscleId);
+ const clash=inGroup.some(e=>e.name.toLowerCase()===original.toLowerCase());
+ const name=clash?uniqueRestoredName(original,inGroup.map(e=>e.name)):original;
+ const message=clash
+  ?`An exercise named ${original} already exists in this muscle group. Restore this one as ${name}? Your current ${original} stays as it is.`
+  :"Restore this exercise to your library?";
+ confirmAction(message,()=>{
+  ensureBin(state);
+  const current=state.bin.exercises.find(e=>e.id===id);
+  if(!current)return;
+  if(!state.muscles.some(m=>m.id===current.muscleId)){notify("Restore the muscle group first.");return}
+  if(state.exercises.some(e=>e.id===id)){notify("That exercise is already in your library.");return}
+  state.exercises.push({id:current.id,name,muscleId:current.muscleId});
   state.bin.exercises=state.bin.exercises.filter(e=>e.id!==id);
   save();
   driveAfterBinChange();
