@@ -1,5 +1,9 @@
 /* Home page only — all selectors are scoped to #home. */
 
+#home .head-icon{
+  color:var(--primary);
+}
+
 @media (max-width: 600px){
   #home .home-head{
     min-height:82px;
