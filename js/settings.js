@@ -65,35 +65,6 @@ function restoreFromFile(file){
  reader.readAsText(file);
 }
 
-function isValidState(s){
- if(!s||!Array.isArray(s.muscles)||!Array.isArray(s.exercises)||!Array.isArray(s.workouts))return false;
- if(!s.muscles.every(m=>m&&typeof m.id==="string"&&typeof m.name==="string"&&m.name.trim()))return false;
- const muscleIds=new Set(s.muscles.map(m=>m.id));
- if(muscleIds.size!==s.muscles.length)return false;
- if(!s.exercises.every(e=>e&&typeof e.id==="string"&&typeof e.name==="string"&&e.name.trim()&&typeof e.muscleId==="string"&&muscleIds.has(e.muscleId)))return false;
- const exerciseIds=new Set(s.exercises.map(e=>e.id));
- if(exerciseIds.size!==s.exercises.length)return false;
- if(!s.workouts.every(w=>w&&typeof w.id==="string"))return false;
- const workoutIds=new Set(s.workouts.map(w=>w.id));
- if(workoutIds.size!==s.workouts.length)return false;
- return s.workouts.every(w=>{
-  if(!w||typeof w.id!=="string"||!isValidDateString(w.date)||!Array.isArray(w.muscles)||!Array.isArray(w.exercises))return false;
-  if(!w.muscles.every(id=>typeof id==="string"&&id))return false;
-  const workoutUnit=w.unit==="lb"?"lb":"kg";
-  return w.exercises.every(raw=>{
-   const e=typeof raw==="string"?{exerciseId:raw,sets:[],unit:workoutUnit}:raw;
-   if(!e||typeof e.exerciseId!=="string"||!Array.isArray(e.sets))return false;
-   const unit=e.unit||workoutUnit;
-   if(unit!=="kg"&&unit!=="lb")return false;
-   return e.sets.every(set=>{
-    if(!set||set.weight===""||set.reps==="")return false;
-    const weight=Number(set.weight),reps=Number(set.reps);
-    return Number.isFinite(weight)&&weight>=0&&Number.isInteger(reps)&&reps>=1;
-   });
-  });
- });
-}
-
 function applyRestore(restored,parsed){state=migrateState(JSON.parse(JSON.stringify(restored)));save();if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);if(parsed?.unit==="kg"||parsed?.unit==="lb")setPreferredUnit(parsed.unit);selected=new Date();selected.setHours(0,0,0,0);if(typeof monthStart==="function")selectedMonth=monthStart(selected);closeModal();go("workouts");notify("Backup restored successfully.","success");if(typeof driveAfterFileRestore==="function")driveAfterFileRestore()}
 function clearData(){confirmAction("Delete all data on this phone? Google Drive will not be changed.",()=>{wipeStoredData().then(()=>{resetDriveAfterPhoneWipe();location.reload()})},true)}
 
