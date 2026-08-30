@@ -90,9 +90,25 @@ if("serviceWorker" in navigator){
   if(document.visibilityState==="visible")checkUpdate();
  });
  let reloading=false;
- navigator.serviceWorker.addEventListener("controllerchange",()=>{
+ let waitingForSheet=false;
+ const reloadApp=()=>{
   if(reloading)return;
   reloading=true;
   location.reload();
+ };
+ navigator.serviceWorker.addEventListener("controllerchange",()=>{
+  if(reloading)return;
+  if(!document.body.classList.contains("workout-form-open")){
+   reloadApp();
+   return;
+  }
+  if(waitingForSheet)return;
+  waitingForSheet=true;
+  const watch=new MutationObserver(()=>{
+   if(document.body.classList.contains("workout-form-open"))return;
+   watch.disconnect();
+   reloadApp();
+  });
+  watch.observe(document.body,{attributes:true,attributeFilter:["class"]});
  });
 }
