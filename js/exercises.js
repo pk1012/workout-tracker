@@ -381,11 +381,16 @@ function saveExercise(id){
  if(state.exercises.some(e=>e.name.toLowerCase()===name.toLowerCase()&&e.muscleId===mid&&e.id!==id)){notify("That exercise already exists in this muscle group.");return}
  const apply=()=>{
   if(id){
-   let e=state.exercises.find(x=>x.id===id);if(!e){notify("Exercise not found.");return}e.name=name;e.muscleId=mid;
+   let e=state.exercises.find(x=>x.id===id);if(!e){notify("Exercise not found.");return}
+   const fromId=e.muscleId;
+   e.name=name;e.muscleId=mid;
    (state.workouts||[]).forEach(w=>{
-    (w.exercises||[]).forEach(raw=>{
-     if(typeof raw==="string"||exerciseIdOf(raw)!==id)return;
-     raw.name=name;
+    w.exercises=(w.exercises||[]).map(raw=>{
+     if(exerciseIdOf(raw)!==id)return raw;
+     const next=typeof raw==="string"?{exerciseId:raw,sets:[],name}:raw;
+     next.name=name;
+     if(!next.muscleId)next.muscleId=fromId;
+     return next;
     });
    });
   }else state.exercises.push({id:newId(),name,muscleId:mid});
