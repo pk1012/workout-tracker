@@ -159,7 +159,7 @@ function draftFromWorkout(w){
   endTime:w.endTime||"",
   exercises:(w.exercises||[]).map(e=>{
    const entry=normalizedEntry(e,unit);
-   return {exerciseId:entry.exerciseId,sets:(entry.sets||[]).map(s=>({weight:s.weight===""||s.weight==null?"":String(s.weight),reps:s.reps===""||s.reps==null?"":String(s.reps)}))};
+   return {exerciseId:entry.exerciseId,name:workoutExerciseName(e),sets:(entry.sets||[]).map(s=>({weight:s.weight===""||s.weight==null?"":String(s.weight),reps:s.reps===""||s.reps==null?"":String(s.reps)}))};
   })
  };
 }
@@ -222,11 +222,11 @@ function continueToSetDetails(){
  const ids=[...document.querySelectorAll("[data-exercise].selected")].map(x=>x.dataset.exercise).filter(id=>state.exercises.some(e=>e.id===id));
  if(!ids.length){notify("Select at least one exercise.");return}
  const previous=new Map((workoutDraft.exercises||[]).map(e=>[e.exerciseId,e]));
- workoutDraft.exercises=ids.map(id=>previous.get(id)||{exerciseId:id,sets:[{weight:"",reps:""}]});
+ workoutDraft.exercises=ids.map(id=>previous.get(id)||{exerciseId:id,name:exerciseNameFromState(state,id),sets:[{weight:"",reps:""}]});
  renderSetDetails();
 }
 function renderSetDetails(){
- const selectedNames=workoutDraft.exercises.map(e=>state.exercises.find(x=>x.id===e.exerciseId)?.name||"Deleted exercise");
+ const selectedNames=workoutDraft.exercises.map(e=>e.name||state.exercises.find(x=>x.id===e.exerciseId)?.name||"Deleted exercise");
  const content=`
    <div class="field unit-field">
      <label>Weight unit</label>
@@ -270,7 +270,11 @@ function removeSet(i,j){if(workoutDraft.exercises[i].sets.length>1)workoutDraft.
 function setWorkoutUnit(unit){if(unit!==workoutDraft.unit){let f=workoutDraft.unit==="kg"?2.2046226218:0.45359237;workoutDraft.exercises.forEach(e=>e.sets.forEach(s=>{if(s.weight!=="")s.weight=String(Math.round(Number(s.weight)*f*100)/100)}));workoutDraft.unit=unit}renderSetDetails()}
 
 function saveWorkout(){
- const date=workoutDraft.date,muscles=[...new Set(workoutDraft.muscles)].filter(id=>state.muscles.some(m=>m.id===id)),exercises=workoutDraft.exercises.filter(e=>state.exercises.some(x=>x.id===e.exerciseId));
+ const date=workoutDraft.date,muscles=[...new Set(workoutDraft.muscles)].filter(id=>state.muscles.some(m=>m.id===id));
+ const editing=isEditingWorkout();
+ const id=editing?workoutDraft.editId:newId();
+ const old=state.workouts.find(w=>w.id===id);
+ const exercises=workoutDraft.exercises.filter(e=>state.exercises.some(x=>x.id===e.exerciseId)||(old&&(old.exercises||[]).some(x=>exerciseIdOf(x)===e.exerciseId)));
  if(!muscles.length||!isValidDateString(date)||!workoutDraft.startTime){notify("Complete the workout date, start time and muscle groups.");return}
  if(workoutOnDate(date,workoutDraft.editId)){notify(dateTakenMessage());return}
  if(!workoutDraft.endTime){notify("Enter the end time to complete the workout.");return}
@@ -279,11 +283,8 @@ function saveWorkout(){
  if(endMinutes===startMinutes){notify("Start and end time cannot be the same.");return}
  if(!exercises.length){notify("Select at least one exercise.");return}
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
- const editing=isEditingWorkout();
- const id=editing?workoutDraft.editId:newId();
- const old=state.workouts.find(w=>w.id===id);
  const createdAt=editing?(Number(workoutDraft.createdAt)||Date.now()):Date.now();
- const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,old),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt};
+ const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,old),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,name:nameForWorkoutExercise(e,old),sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt};
  if(old){record.createdAt=old.createdAt||createdAt;record.updatedAt=Date.now();Object.assign(old,record)}
  else state.workouts.push(record);
  delete state.activeWorkout;
@@ -300,9 +301,9 @@ function formatSet(set,unit){return `${Number(set.weight)} ${unit||"kg"} · ${Nu
 function viewWorkout(id){
  let w=state.workouts.find(x=>x.id===id);if(!w)return;
  let entries=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg"));
- const details=entries.map(e=>{
-  let ex=state.exercises.find(x=>x.id===e.exerciseId);
-  return `<div class="workout-detail card"><strong>${esc(ex?.name||"Deleted exercise")}</strong>${(e.sets||[]).map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${esc(formatSet(s,e.unit))}</span></div>`).join("")}</div>`;
+ const details=entries.map((e,i)=>{
+  const name=workoutExerciseName((w.exercises||[])[i]||e);
+  return `<div class="workout-detail card"><strong>${esc(name)}</strong>${(e.sets||[]).map((s,j)=>`<div class="detail-set"><span>Set ${j+1}</span><span>${esc(formatSet(s,e.unit))}</span></div>`).join("")}</div>`;
  }).join("");
  modal(`
   <div class="workout-entry-header">

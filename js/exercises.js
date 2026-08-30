@@ -263,14 +263,53 @@ function saveExercise(id){
  if(!name){notify("Enter an exercise name.");return}
  if(!mid||!state.muscles.some(m=>m.id===mid)){notify("Choose a valid muscle group.");return}
  if(state.exercises.some(e=>e.name.toLowerCase()===name.toLowerCase()&&e.muscleId===mid&&e.id!==id)){notify("That exercise already exists in this muscle group.");return}
- if(id){let e=state.exercises.find(x=>x.id===id);if(!e){notify("Exercise not found.");return}e.name=name;e.muscleId=mid}else state.exercises.push({id:newId(),name,muscleId:mid});
+ if(id){
+  let e=state.exercises.find(x=>x.id===id);if(!e){notify("Exercise not found.");return}e.name=name;e.muscleId=mid;
+  (state.workouts||[]).forEach(w=>{
+   (w.exercises||[]).forEach(raw=>{
+    if(typeof raw==="string"||exerciseIdOf(raw)!==id)return;
+    raw.name=name;
+   });
+  });
+ }else state.exercises.push({id:newId(),name,muscleId:mid});
  save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();closeModal();
  if(document.getElementById("library-management")?.classList.contains("active"))renderLibrary();
  if(document.getElementById("exercises")?.classList.contains("active"))renderExercises();
 }
 function deleteExercise(id){
  let e=state.exercises.find(x=>x.id===id);if(!e)return;
- confirmAction(`Delete “${e.name}”? It will stay in Recycle Bin for 30 days. Workout history is kept.`,()=>{moveExerciseToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();},true)
+ const used=(state.workouts||[]).filter(w=>(w.exercises||[]).some(raw=>exerciseIdOf(raw)===id)).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
+ const proceed=()=>{moveExerciseToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();};
+ if(!used.length){
+  confirmAction(`Delete “${e.name}”? It will stay in Recycle Bin for 30 days. Workout history is kept.`,proceed,true);
+  return;
+ }
+ const cap=8;
+ const shown=used.slice(0,cap);
+ const extra=used.length-shown.length;
+ const when=w=>{
+  if(!w.date||!isValidDateString(w.date))return "Unknown date";
+  return new Date(w.date+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+ };
+ const lines=shown.map(w=>`• ${when(w)} — ${workoutMuscleLabel(w)}`);
+ if(extra)lines.push(`• and ${extra} more`);
+ const head=`${e.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
+ const tail=`It will leave your library. ${used.length===1?"This workout":"These workouts"} will still show ${e.name}. It stays in Recycle Bin for 30 days.`;
+ pendingConfirm=proceed;
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div>
+   <h2 class="workout-form-title confirm-title">Delete “${esc(e.name)}”?</h2>
+   <p class="muted workout-form-description confirm-copy">${esc(head)}<br>${lines.map(esc).join("<br>")}<br><br>${esc(tail)}</p>
+  </div>
+  <div class="workout-entry-scroll"></div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="const fn=pendingConfirm;pendingConfirm=null;closeModal();fn&&fn()">Continue</button>
+   <button class="outline btn-wide workout-cancel-button" onclick="pendingConfirm=null;closeModal()">Cancel</button>
+  </div>
+ `,"workout-entry-sheet");
+ document.body.classList.add("workout-form-open");
 }
 function openMuscle(id=""){
  let m=id?state.muscles.find(x=>x.id===id):null;
@@ -322,7 +361,7 @@ function deleteMuscle(id){
  const lines=shown.map(w=>`• ${when(w)} — ${workoutMuscleLabel(w)}`);
  if(extra)lines.push(`• and ${extra} more`);
  const head=`${m.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
- const tail=`It will leave your library. ${used.length===1?"This workout":"These workouts"} will still show ${m.name}. ${n?`Its ${n} exercise(s) will also move to Recycle Bin. `:""}Items stay for 30 days.`;
+ const tail=`It will leave your library. ${used.length===1?"This workout":"These workouts"} will still show ${m.name}. ${n?`Its ${n} exercise(s) will also move to Recycle Bin and will still show their names in history. `:""}Items stay for 30 days.`;
  pendingConfirm=proceed;
  modal(`
   <div class="workout-entry-header">

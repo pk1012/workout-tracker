@@ -1,4 +1,4 @@
-const VERSION="1.7.219",BUILD="2026.08.30";
+const VERSION="1.7.220",BUILD="2026.08.30";
 const defaults={Abs:["Cable Crunch","Hanging Leg Raise","Plank"],Back:["Lat Pulldown","Seated Cable Row","Single Arm Dumbbell Row","T-Bar Row"],Biceps:["Behind-the-Back Cable Curl","Cable Curl","Hammer Curl","Incline Dumbbell Curl"],Calves:["Calf Raise","Seated Calf Raise"],Cardio:["Cycling","Running","Walking"],Chest:["Flat Bench Press","Inclined Dumbbell Press","Pec Deck Fly","Wide Chest Press Machine"],Legs:["Leg Extension","Leg Press","Romanian Deadlift","Squat"],Shoulders:["Dumbbell Lateral Raise","Face Pull","Overhead Press","Rear Delt Fly"],Triceps:["Cable Pushdown","Overhead Cable Extension","Skull Crusher"]};
 const STORE_KEY="wt_state";
 const STORE_BACKUP_KEY="wt_state_backup";
@@ -44,6 +44,7 @@ function migrateState(s){
  s.workouts=(s.workouts||[]).map(w=>{
   const next={...w,startTime:w.startTime||"",endTime:w.endTime||""};
   next.muscleNames=workoutMuscleNames(next,s);
+  next.exercises=(next.exercises||[]).map(raw=>withWorkoutExerciseName(raw,s));
   return next;
  });
  if(s.activeWorkout&&!s.activeWorkout.date)delete s.activeWorkout;
@@ -191,4 +192,41 @@ function muscleNamesForIds(ids,previous,s=state){
 function workoutMuscleLabel(w){
  const names=workoutMuscleNames(w).filter(Boolean);
  return names.length?names.join(" + "):"Workout";
+}
+function exerciseIdOf(raw){return typeof raw==="string"?raw:(raw&&raw.exerciseId)||""}
+function keptExerciseName(raw){
+ if(!raw||typeof raw==="string")return "";
+ const n=typeof raw.name==="string"?raw.name.trim():"";
+ return (n&&n!=="Deleted exercise")?n:"";
+}
+function exerciseNameFromState(s,id){
+ if(!id)return "";
+ const live=(s?.exercises||[]).find(x=>x.id===id)?.name;
+ if(live)return live;
+ const binEx=(s?.bin&&Array.isArray(s.bin.exercises)?s.bin.exercises:[]).find(x=>x.id===id)?.name;
+ if(binEx)return binEx;
+ const groups=s?.bin&&Array.isArray(s.bin.muscles)?s.bin.muscles:[];
+ for(const g of groups){
+  const hit=(g.exercises||[]).find(x=>x.id===id);
+  if(hit?.name)return hit.name;
+ }
+ return "";
+}
+function workoutExerciseName(raw,s=state){
+ return keptExerciseName(raw)||exerciseNameFromState(s,exerciseIdOf(raw))||"Deleted exercise";
+}
+function withWorkoutExerciseName(raw,s=state){
+ const id=exerciseIdOf(raw);
+ const name=keptExerciseName(raw)||exerciseNameFromState(s,id)||"";
+ if(typeof raw==="string")return {exerciseId:raw,sets:[],name};
+ return {...raw,exerciseId:id,name};
+}
+function nameForWorkoutExercise(raw,previous,s=state){
+ const id=exerciseIdOf(raw);
+ const live=exerciseNameFromState(s,id);
+ if(live)return live;
+ const kept=keptExerciseName(raw);
+ if(kept)return kept;
+ const prev=(previous?.exercises||[]).find(x=>exerciseIdOf(x)===id);
+ return keptExerciseName(prev)||"Deleted exercise";
 }
