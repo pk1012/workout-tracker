@@ -190,7 +190,7 @@ function todayDateKey(){const d=new Date();d.setHours(0,0,0,0);return dateKey(d)
 function workoutOnDate(date,exceptId){
  return (state.workouts||[]).find(w=>w.date===date&&w.id!==exceptId)||null;
 }
-function dateTakenMessage(){return "A workout already exists for this day. Select another day."}
+function dateTakenMessage(){return "A workout already exists for this day."}
 function openWorkout(muscleIds=[],_dateValue,resume=false){
  const existing=resume&&state.activeWorkout;
  if(!muscleIds.length&&!resume)workoutDraft={...emptyWorkoutDraft(),date:todayDateKey(),startTime:localTimeValue()};
