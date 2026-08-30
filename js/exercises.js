@@ -413,7 +413,8 @@ function saveExercise(id){
   tail=`${those} will show “${name}” and will still be ${from}. New workouts will list it under ${to}. Cancel keeps “${current.name}” in ${from}.`;
  }else if(groupChanged){
   title=`Move “${current.name}”?`;
-  tail=`${those} will still show ${from} and “${current.name}”. New workouts will list it under ${to}. Cancel keeps it in ${from}.`;
+  head=`This exercise has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
+  tail=`${those} will still show ${from}. New workouts will list it under ${to}.`;
  }else{
   head=`This exercise has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
   tail=`${those} will show “${name}” instead of “${current.name}”.`;
