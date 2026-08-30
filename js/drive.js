@@ -373,6 +373,29 @@ async function listDriveBackupFiles(folderId){
  return driveFind(`name='${DRIVE_FILE_NAME}' and trashed=false${inFolder}`);
 }
 
+async function listDriveFolders(){
+ return driveFind(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+}
+
+async function parentFolderOfFile(fileId){
+ const live=await driveFileMeta(fileId);
+ if(!live||live.unverified)return "";
+ return (live.parents&&live.parents[0])||"";
+}
+
+async function folderOfNewestBackup(folders){
+ let best=null,id="";
+ for(const folder of folders||[]){
+  const read=await pickNewestValidBackup(await listDriveBackupFiles(folder.id));
+  if(!read)continue;
+  if(!best){best=read;id=folder.id;continue}
+  const at=Date.parse(driveBackupSavedAt(read.file,read.parsed))||0;
+  const bt=Date.parse(driveBackupSavedAt(best.file,best.parsed))||0;
+  if(at>bt){best=read;id=folder.id}
+ }
+ return id;
+}
+
 async function ensureDriveFolder(){
  const cached=lsGet(K_FOLDER);
  if(cached){
@@ -380,14 +403,16 @@ async function ensureDriveFolder(){
   if(live)return cached;
   lsDel(K_FOLDER);
  }
- const found=await driveFind(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+ const fromFile=await parentFolderOfFile(lsGet(K_FILE));
+ if(fromFile){lsSet(K_FOLDER,fromFile);return fromFile}
+ const found=await listDriveFolders();
  if(found.length===1){lsSet(K_FOLDER,found[0].id);return found[0].id}
  if(found.length>1){
-  for(const folder of found){
-   const files=await listDriveBackupFiles(folder.id);
-   const best=await pickNewestValidBackup(files);
-   if(best){lsSet(K_FOLDER,folder.id);return folder.id}
-  }
+  const withBackup=await folderOfNewestBackup(found);
+  if(withBackup){lsSet(K_FOLDER,withBackup);return withBackup}
+  const anywhere=await pickNewestValidBackup(await listDriveBackupFiles(""));
+  const parent=anywhere?.file?.parents&&anywhere.file.parents[0];
+  if(parent){lsSet(K_FOLDER,parent);return parent}
   lsSet(K_FOLDER,found[0].id);
   return found[0].id;
  }
@@ -421,9 +446,8 @@ async function loadDriveRemote(){
   if(!live){lsDel(K_FOLDER);folderId=""}
  }
  if(!folderId){
-  const folders=await driveFind(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const folders=await listDriveFolders();
   if(folders.length===1){folderId=folders[0].id;lsSet(K_FOLDER,folderId)}
-  else if(folders.length>1)folderId="";
  }
  let files=folderId?await listDriveBackupFiles(folderId):[];
  if(!files.length)files=await listDriveBackupFiles("");
