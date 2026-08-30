@@ -410,7 +410,8 @@ function saveExercise(id){
  let tail=`${those} will show “${name}”. Cancel keeps “${current.name}”.`;
  if(nameChanged&&groupChanged){
   title=`Change “${current.name}”?`;
-  tail=`${those} will show “${name}” and will still be ${from}. New workouts will list it under ${to}. Cancel keeps “${current.name}” in ${from}.`;
+  head=`This exercise has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
+  tail=`${those} will show “${name}” instead of “${current.name}”, still under ${from}. New workouts will use ${to}.`;
  }else if(groupChanged){
   title=`Move “${current.name}”?`;
   head=`This exercise has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
