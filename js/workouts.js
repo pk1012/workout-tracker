@@ -1,9 +1,51 @@
-function emptyWorkoutDraft(){return {date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:""}}
+function emptyWorkoutDraft(){return {date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:"",goneMuscles:[],goneExercises:[],muscleNames:[]}}
 let workoutDraft=emptyWorkoutDraft();
 function isEditingWorkout(){return !!workoutDraft.editId}
 function cancelWorkoutForm(){
  if(isEditingWorkout())workoutDraft=emptyWorkoutDraft();
  closeModal();
+}
+function exerciseMuscleId(id){
+ const live=state.exercises.find(x=>x.id===id);
+ if(live)return live.muscleId;
+ const bin=(state.bin&&Array.isArray(state.bin.exercises)?state.bin.exercises:[]).find(x=>x.id===id);
+ if(bin?.muscleId)return bin.muscleId;
+ for(const g of state.bin&&Array.isArray(state.bin.muscles)?state.bin.muscles:[]){
+  if((g.exercises||[]).some(x=>x.id===id))return g.id;
+ }
+ return "";
+}
+function inferWorkoutExerciseMuscleId(entry,w){
+ const stored=typeof entry?.muscleId==="string"?entry.muscleId:"";
+ if(stored&&(w.muscles||[]).includes(stored))return stored;
+ const known=exerciseMuscleId(entry.exerciseId);
+ if(known)return known;
+ const gone=(w.muscles||[]).filter(id=>!isLiveMuscle(id));
+ if(gone.length)return gone[0];
+ return (w.muscles||[])[0]||"";
+}
+function keepDraftMuscle(id){
+ return isLiveMuscle(id)||(workoutDraft.goneMuscles||[]).includes(id);
+}
+function draftMuscleLabel(id){
+ const live=state.muscles.find(m=>m.id===id)?.name;
+ if(live)return live;
+ const ids=workoutDraft.muscles||[];
+ const names=workoutDraft.muscleNames||[];
+ const i=ids.indexOf(id);
+ if(i>=0&&names[i])return names[i];
+ return muscleNameFromState(state,id)||"Unknown";
+}
+function isLiveMuscle(id){return state.muscles.some(m=>m.id===id)}
+function isLiveExercise(id){return state.exercises.some(e=>e.id===id)}
+function musclePickButton(id,name,gone){
+ const slug=String(name).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+ const chosen=(workoutDraft.muscles||[]).includes(id);
+ return `<button type="button" class="pick workout-muscle-button workout-muscle-${slug}${chosen?" selected":""}${gone?" library-gone":""}" data-muscle="${id}" onclick="this.classList.toggle('selected')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(name)}</span></button>`;
+}
+function exercisePickButton(id,name,gone){
+ const on=(workoutDraft.exercises||[]).some(x=>x.exerciseId===id);
+ return `<button type="button" class="exercise-row exercise-pick pick${on?" selected":""}${gone?" library-gone":""}" data-exercise="${id}" onclick="this.classList.toggle('selected')"><span>${esc(name)}</span><span class="pick-plus"><svg class="icon" aria-hidden="true"><use href="#plus"/></svg></span></button>`;
 }
 let selectedWeekStart=weekStart(new Date());
 let selectedMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
@@ -149,24 +191,34 @@ function chooseMonth(k){
 
 function draftFromWorkout(w){
  const unit=w.unit||"kg";
+ const names=workoutMuscleNames(w);
+ const muscles=[...(w.muscles||[])];
+ const exercises=(w.exercises||[]).map(e=>{
+  const entry=normalizedEntry(e,unit);
+  const muscleId=inferWorkoutExerciseMuscleId({...entry,muscleId:entry.muscleId},w);
+  return {exerciseId:entry.exerciseId,name:workoutExerciseName(e),muscleId,sets:(entry.sets||[]).map(s=>({weight:s.weight===""||s.weight==null?"":String(s.weight),reps:s.reps===""||s.reps==null?"":String(s.reps)}))};
+ });
  return {
   editId:w.id,
   createdAt:w.createdAt,
   date:w.date,
-  muscles:[...(w.muscles||[])],
+  muscles,
+  muscleNames:names,
   unit,
   startTime:w.startTime||"",
   endTime:w.endTime||"",
-  exercises:(w.exercises||[]).map(e=>{
-   const entry=normalizedEntry(e,unit);
-   return {exerciseId:entry.exerciseId,name:workoutExerciseName(e),sets:(entry.sets||[]).map(s=>({weight:s.weight===""||s.weight==null?"":String(s.weight),reps:s.reps===""||s.reps==null?"":String(s.reps)}))};
-  })
+  exercises,
+  goneMuscles:muscles.filter(id=>!isLiveMuscle(id)),
+  goneExercises:exercises.filter(e=>!isLiveExercise(e.exerciseId))
  };
 }
 function renderWorkoutBasicsSheet(){
- const ms=sortedMuscles(),chosen=new Set(workoutDraft.muscles||[]);
+ const ms=sortedMuscles();
+ const liveIds=new Set(ms.map(m=>m.id));
+ const gone=(workoutDraft.goneMuscles||[]).filter(id=>!liveIds.has(id));
  const editing=isEditingWorkout();
- modal(`<div class="workout-entry-header"><div class="handle"></div><h2 class="workout-form-title">${editing?"Edit Workout":"Start Workout"}</h2><div class="muted workout-form-description">Choose the date, start time and muscle groups.</div></div><div class="workout-entry-scroll"><div class="field workout-date-section"><label class="workout-date-label">Date</label><div class="workout-date-field workout-input-wrap"><svg class="workout-date-icon workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input workout-date-input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-section"><div class="field workout-start-time-section"><label class="workout-start-time-label">Start time</label><div class="workout-start-time-field workout-input-wrap"><svg class="workout-start-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input workout-start-time-input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field workout-end-time-section"><label class="workout-end-time-label">End time</label><div class="workout-end-time-field workout-input-wrap"><svg class="workout-end-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input workout-end-time-input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-groups-section"><label class="workout-muscle-groups-label">Muscle groups</label><div class="grid workout-muscle-groups-grid">${ms.map(m=>{const slug=m.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return `<button class="pick workout-muscle-button workout-muscle-${slug} ${chosen.has(m.id)?"selected":""}" data-muscle="${m.id}" onclick="this.classList.toggle('selected')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(m.name)}</span></button>`}).join("")}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide workout-next-button" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide workout-cancel-button" onclick="cancelWorkoutForm()">Cancel</button></div>`,"workout-entry-sheet");
+ const picks=[...ms.map(m=>musclePickButton(m.id,m.name,false)),...gone.map(id=>musclePickButton(id,draftMuscleLabel(id),true))].join("");
+ modal(`<div class="workout-entry-header"><div class="handle"></div><h2 class="workout-form-title">${editing?"Edit Workout":"Start Workout"}</h2><div class="muted workout-form-description">Choose the date, start time and muscle groups.</div></div><div class="workout-entry-scroll"><div class="field workout-date-section"><label class="workout-date-label">Date</label><div class="workout-date-field workout-input-wrap"><svg class="workout-date-icon workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input workout-date-input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-section"><div class="field workout-start-time-section"><label class="workout-start-time-label">Start time</label><div class="workout-start-time-field workout-input-wrap"><svg class="workout-start-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input workout-start-time-input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field workout-end-time-section"><label class="workout-end-time-label">End time</label><div class="workout-end-time-field workout-input-wrap"><svg class="workout-end-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input workout-end-time-input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-groups-section"><label class="workout-muscle-groups-label">Muscle groups</label><div class="grid workout-muscle-groups-grid">${picks}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide workout-next-button" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide workout-cancel-button" onclick="cancelWorkoutForm()">Cancel</button></div>`,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
 }
 function todayDateKey(){const d=new Date();d.setHours(0,0,0,0);return dateKey(d)}
@@ -191,15 +243,31 @@ function chooseExercises(){
  if(workoutOnDate(date,workoutDraft.editId)){notify(dateTakenMessage());return}
  if(!start){notify("Enter a start time.");return}
  if(end && end===start){notify("End time must be different from start time.");return}
- const validMuscles=ids.filter(id=>state.muscles.some(m=>m.id===id));
- workoutDraft.date=date;workoutDraft.startTime=start;workoutDraft.endTime=end;workoutDraft.muscles=validMuscles;
- workoutDraft.exercises=(workoutDraft.exercises||[]).filter(e=>validMuscles.some(mid=>state.exercises.some(x=>x.id===e.exerciseId&&x.muscleId===mid)));
+ const prevIds=workoutDraft.muscles||[];
+ const prevNames=workoutDraft.muscleNames||[];
+ const validMuscles=ids.filter(keepDraftMuscle);
+ const nextNames=validMuscles.map(id=>{
+  const i=prevIds.indexOf(id);
+  if(i>=0&&prevNames[i])return prevNames[i];
+  return muscleNameFromState(state,id)||"Unknown";
+ });
+ workoutDraft.date=date;workoutDraft.startTime=start;workoutDraft.endTime=end;workoutDraft.muscles=validMuscles;workoutDraft.muscleNames=nextNames;
+ workoutDraft.exercises=(workoutDraft.exercises||[]).filter(e=>validMuscles.includes(e.muscleId));
  renderExerciseSelection();
 }
 function renderExerciseSelection(){
  const exerciseContent=workoutDraft.muscles.map(id=>{
-   let ex=sortedExercisesForMuscle(id);
-   return `<div class="field"><div class="section-title">${esc(muscle(id))}</div>${ex.length?ex.map(e=>`<button class="exercise-row exercise-pick pick ${workoutDraft.exercises.some(x=>x.exerciseId===e.id)?"selected":""}" data-exercise="${e.id}" onclick="this.classList.toggle('selected')"><span>${esc(e.name)}</span><span class="pick-plus"><svg class="icon" aria-hidden="true"><use href="#plus"/></svg></span></button>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`;
+   const live=sortedExercisesForMuscle(id);
+   const liveIds=new Set(live.map(e=>e.id));
+   const ghosts=[];
+   const seen=new Set();
+   for(const e of workoutDraft.goneExercises||[]){
+    if(e.muscleId!==id||liveIds.has(e.exerciseId)||seen.has(e.exerciseId))continue;
+    seen.add(e.exerciseId);
+    ghosts.push(e);
+   }
+   const rows=[...live.map(e=>exercisePickButton(e.id,e.name,false)),...ghosts.map(e=>exercisePickButton(e.exerciseId,e.name||"Deleted exercise",true))].join("");
+   return `<div class="field"><div class="section-title">${esc(draftMuscleLabel(id))}</div>${rows||`<div class="empty">No exercises in this group.</div>`}</div>`;
  }).join("");
 
  modal(`
@@ -219,10 +287,19 @@ function renderExerciseSelection(){
 }
 
 function continueToSetDetails(){
- const ids=[...document.querySelectorAll("[data-exercise].selected")].map(x=>x.dataset.exercise).filter(id=>state.exercises.some(e=>e.id===id));
+ const ids=[...document.querySelectorAll("[data-exercise].selected")].map(x=>x.dataset.exercise);
  if(!ids.length){notify("Select at least one exercise.");return}
  const previous=new Map((workoutDraft.exercises||[]).map(e=>[e.exerciseId,e]));
- workoutDraft.exercises=ids.map(id=>previous.get(id)||{exerciseId:id,name:exerciseNameFromState(state,id),sets:[{weight:"",reps:""}]});
+ const gone=new Map((workoutDraft.goneExercises||[]).map(e=>[e.exerciseId,e]));
+ workoutDraft.exercises=ids.map(id=>{
+  if(previous.has(id))return previous.get(id);
+  const live=state.exercises.find(e=>e.id===id);
+  if(live)return {exerciseId:id,name:live.name,muscleId:live.muscleId,sets:[{weight:"",reps:""}]};
+  const ghost=gone.get(id);
+  if(ghost)return {exerciseId:id,name:ghost.name||"Deleted exercise",muscleId:ghost.muscleId,sets:ghost.sets?.length?ghost.sets.map(s=>({...s})):[{weight:"",reps:""}]};
+  return null;
+ }).filter(Boolean);
+ if(!workoutDraft.exercises.length){notify("Select at least one exercise.");return}
  renderSetDetails();
 }
 function renderSetDetails(){
@@ -270,11 +347,11 @@ function removeSet(i,j){if(workoutDraft.exercises[i].sets.length>1)workoutDraft.
 function setWorkoutUnit(unit){if(unit!==workoutDraft.unit){let f=workoutDraft.unit==="kg"?2.2046226218:0.45359237;workoutDraft.exercises.forEach(e=>e.sets.forEach(s=>{if(s.weight!=="")s.weight=String(Math.round(Number(s.weight)*f*100)/100)}));workoutDraft.unit=unit}renderSetDetails()}
 
 function saveWorkout(){
- const date=workoutDraft.date,muscles=[...new Set(workoutDraft.muscles)].filter(id=>state.muscles.some(m=>m.id===id));
+ const date=workoutDraft.date,muscles=[...new Set(workoutDraft.muscles)].filter(keepDraftMuscle);
  const editing=isEditingWorkout();
  const id=editing?workoutDraft.editId:newId();
  const old=state.workouts.find(w=>w.id===id);
- const exercises=workoutDraft.exercises.filter(e=>state.exercises.some(x=>x.id===e.exerciseId)||(old&&(old.exercises||[]).some(x=>exerciseIdOf(x)===e.exerciseId)));
+ const exercises=workoutDraft.exercises.filter(e=>e.exerciseId&&(isLiveExercise(e.exerciseId)||(workoutDraft.goneExercises||[]).some(g=>g.exerciseId===e.exerciseId)||(old&&(old.exercises||[]).some(x=>exerciseIdOf(x)===e.exerciseId))));
  if(!muscles.length||!isValidDateString(date)||!workoutDraft.startTime){notify("Complete the workout date, start time and muscle groups.");return}
  if(workoutOnDate(date,workoutDraft.editId)){notify(dateTakenMessage());return}
  if(!workoutDraft.endTime){notify("Enter the end time to complete the workout.");return}
@@ -284,7 +361,7 @@ function saveWorkout(){
  if(!exercises.length){notify("Select at least one exercise.");return}
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
  const createdAt=editing?(Number(workoutDraft.createdAt)||Date.now()):Date.now();
- const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,old),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,name:nameForWorkoutExercise(e,old),sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt};
+ const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,{muscles:workoutDraft.muscles,muscleNames:workoutDraft.muscleNames}),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,name:nameForWorkoutExercise(e,old),sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt};
  if(old){record.createdAt=old.createdAt||createdAt;record.updatedAt=Date.now();Object.assign(old,record)}
  else state.workouts.push(record);
  delete state.activeWorkout;
