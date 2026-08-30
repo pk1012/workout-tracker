@@ -302,7 +302,8 @@ async function driveFind(query){
   q:query,
   spaces:"drive",
   fields:"files(id,name,modifiedTime,appProperties,parents)",
-  pageSize:"10"
+  pageSize:"50",
+  orderBy:"modifiedTime desc"
  });
  const res=await driveApi(`https://www.googleapis.com/drive/v3/files?${params}`);
  if(!res.ok)return [];
@@ -310,19 +311,86 @@ async function driveFind(query){
  return data.files||[];
 }
 
+async function driveFileMeta(id){
+ if(!id)return null;
+ const check=await driveApi(`https://www.googleapis.com/drive/v3/files/${id}?fields=id,trashed,name,modifiedTime,appProperties,parents`);
+ if(check.status===404)return null;
+ if(!check.ok)return {id,unverified:true};
+ const info=await check.json();
+ if(info.trashed)return null;
+ return info;
+}
+
+function driveBackupSavedAt(file,parsed){
+ return parsed?.savedAt||file?.appProperties?.savedAt||file?.modifiedTime||"";
+}
+
+async function readDriveBackup(file){
+ const res=await driveApi(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`);
+ if(res.status===404)return null;
+ if(!res.ok)throw new Error("download");
+ let payload;
+ try{payload=await res.json()}catch(err){return {file,parsed:null,unreadable:true}}
+ const parsed=parseDriveBackup(payload);
+ return {file,parsed,unreadable:!parsed};
+}
+
+function rememberDriveBackup(read){
+ if(!read?.file?.id)return;
+ lsSet(K_FILE,read.file.id);
+ if(read.file.parents&&read.file.parents[0])lsSet(K_FOLDER,read.file.parents[0]);
+ const deviceId=read.parsed?.deviceId||read.file.appProperties?.deviceId||"";
+ const savedAt=driveBackupSavedAt(read.file,read.parsed);
+ if(deviceId)lsSet(K_REMOTE,deviceId);
+ if(savedAt&&!drivePending())lsSet(K_SAVED,savedAt);
+}
+
+function driveRemoteFromRead(read){
+ if(!read?.file?.id)return {exists:false,deviceId:"",savedAt:"",state:null,fileId:""};
+ const deviceId=read.parsed?.deviceId||read.file.appProperties?.deviceId||"";
+ const savedAt=driveBackupSavedAt(read.file,read.parsed);
+ return {exists:true,deviceId,savedAt,state:read.parsed?read.parsed.state:null,fileId:read.file.id,unreadable:!read.parsed};
+}
+
+async function pickNewestValidBackup(files){
+ const valid=[];
+ for(const file of files||[]){
+  const read=await readDriveBackup(file);
+  if(!read)continue;
+  if(read.parsed)valid.push(read);
+ }
+ if(!valid.length)return null;
+ valid.sort((a,b)=>{
+  const at=Date.parse(driveBackupSavedAt(a.file,a.parsed))||0;
+  const bt=Date.parse(driveBackupSavedAt(b.file,b.parsed))||0;
+  return bt-at;
+ });
+ return valid[0];
+}
+
+async function listDriveBackupFiles(folderId){
+ const inFolder=folderId?` and '${folderId}' in parents`:"";
+ return driveFind(`name='${DRIVE_FILE_NAME}' and trashed=false${inFolder}`);
+}
+
 async function ensureDriveFolder(){
  const cached=lsGet(K_FOLDER);
  if(cached){
-  const check=await driveApi(`https://www.googleapis.com/drive/v3/files/${cached}?fields=id,trashed`);
-  if(check.status!==404){
-   if(!check.ok)return cached;
-   const info=await check.json();
-   if(!info.trashed)return cached;
-  }
+  const live=await driveFileMeta(cached);
+  if(live)return cached;
   lsDel(K_FOLDER);
  }
  const found=await driveFind(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
- if(found[0]){lsSet(K_FOLDER,found[0].id);return found[0].id}
+ if(found.length===1){lsSet(K_FOLDER,found[0].id);return found[0].id}
+ if(found.length>1){
+  for(const folder of found){
+   const files=await listDriveBackupFiles(folder.id);
+   const best=await pickNewestValidBackup(files);
+   if(best){lsSet(K_FOLDER,folder.id);return folder.id}
+  }
+  lsSet(K_FOLDER,found[0].id);
+  return found[0].id;
+ }
  const res=await driveApi("https://www.googleapis.com/drive/v3/files",{
   method:"POST",
   body:JSON.stringify({name:DRIVE_FOLDER_NAME,mimeType:"application/vnd.google-apps.folder"})
@@ -334,28 +402,39 @@ async function ensureDriveFolder(){
 }
 
 async function loadDriveRemote(){
- const files=await driveFind(`name='${DRIVE_FILE_NAME}' and trashed=false`);
+ const cachedId=lsGet(K_FILE);
+ if(cachedId){
+  const live=await driveFileMeta(cachedId);
+  if(live?.unverified){
+   const read=await readDriveBackup({id:cachedId,appProperties:{}});
+   if(read){rememberDriveBackup(read);return driveRemoteFromRead(read)}
+   lsDel(K_FILE);
+  }else if(live){
+   const read=await readDriveBackup(live);
+   if(!read){lsDel(K_FILE)}
+   else {rememberDriveBackup(read);return driveRemoteFromRead(read)}
+  }else lsDel(K_FILE);
+ }
+ let folderId=lsGet(K_FOLDER);
+ if(folderId){
+  const live=await driveFileMeta(folderId);
+  if(!live){lsDel(K_FOLDER);folderId=""}
+ }
+ if(!folderId){
+  const folders=await driveFind(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  if(folders.length===1){folderId=folders[0].id;lsSet(K_FOLDER,folderId)}
+  else if(folders.length>1)folderId="";
+ }
+ let files=folderId?await listDriveBackupFiles(folderId):[];
+ if(!files.length)files=await listDriveBackupFiles("");
  if(!files.length){
   lsDel(K_FILE);
-  return{exists:false,deviceId:"",savedAt:"",state:null,fileId:""};
+  return {exists:false,deviceId:"",savedAt:"",state:null,fileId:""};
  }
- const file=files[0];
- lsSet(K_FILE,file.id);
- if(file.parents&&file.parents[0])lsSet(K_FOLDER,file.parents[0]);
- const res=await driveApi(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`);
- if(res.status===404){
-  lsDel(K_FILE);
-  return{exists:false,deviceId:"",savedAt:"",state:null,fileId:""};
- }
- if(!res.ok)throw new Error("download");
- let payload;
- try{payload=await res.json()}catch(err){return{exists:true,deviceId:"",savedAt:"",state:null,fileId:file.id,unreadable:true}}
- const parsed=parseDriveBackup(payload);
- const deviceId=parsed?.deviceId||file.appProperties?.deviceId||"";
- const savedAt=parsed?.savedAt||file.appProperties?.savedAt||file.modifiedTime||"";
- if(deviceId)lsSet(K_REMOTE,deviceId);
- if(savedAt&&!drivePending())lsSet(K_SAVED,savedAt);
- return{exists:true,deviceId,savedAt,state:parsed?parsed.state:null,fileId:file.id,unreadable:!parsed};
+ const best=await pickNewestValidBackup(files);
+ if(!best)return {exists:true,deviceId:"",savedAt:"",state:null,fileId:"",unreadable:true};
+ rememberDriveBackup(best);
+ return driveRemoteFromRead(best);
 }
 
 async function uploadDriveSnapshot(reason,retried){
@@ -366,13 +445,17 @@ async function uploadDriveSnapshot(reason,retried){
  const folderId=await ensureDriveFolder();
  let fileId=lsGet(K_FILE);
  if(fileId){
-  const check=await driveApi(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,trashed`);
-  if(check.status===404||(check.ok&&(await check.json()).trashed))fileId="";
+  const live=await driveFileMeta(fileId);
+  if(!live)fileId="";
  }
  const meta={
   name:DRIVE_FILE_NAME,
   appProperties:{deviceId,savedAt}
  };
+ if(!fileId){
+  const existing=await pickNewestValidBackup(await listDriveBackupFiles(folderId));
+  if(existing){fileId=existing.file.id;lsSet(K_FILE,fileId)}
+ }
  if(!fileId){
   const createdRes=await driveApi("https://www.googleapis.com/drive/v3/files?fields=id",{
    method:"POST",
