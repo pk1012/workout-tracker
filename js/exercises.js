@@ -330,7 +330,7 @@ function confirmHistoryUse(title,used,head,tail,proceed,onCancel){
    <div class="handle"></div>
    <div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div>
    <h2 class="workout-form-title confirm-title">${esc(title)}</h2>
-   <p class="muted workout-form-description confirm-copy">${esc(head)}<br>${lines.map(esc).join("<br>")}<br><br>${esc(tail)}</p>
+   <p class="muted workout-form-description confirm-copy">${esc(head)}<br><br>${lines.map(esc).join("<br>")}<br><br>${esc(tail)}</p>
   </div>
   <div class="workout-entry-scroll"></div>
   <div class="modal-actions workout-modal-actions">
@@ -406,6 +406,7 @@ function saveExercise(id){
  const from=muscle(current.muscleId);
  const to=muscle(mid);
  let title=`Rename “${current.name}”?`;
+ let head=`${current.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
  let tail=`${those} will show “${name}”. Cancel keeps “${current.name}”.`;
  if(nameChanged&&groupChanged){
   title=`Change “${current.name}”?`;
@@ -413,11 +414,14 @@ function saveExercise(id){
  }else if(groupChanged){
   title=`Move “${current.name}”?`;
   tail=`${those} will still show ${from} and “${current.name}”. New workouts will list it under ${to}. Cancel keeps it in ${from}.`;
+ }else{
+  head=`This exercise has been used in ${used.length} existing workout${used.length===1?"":"s"}:`;
+  tail=`${those} will show “${name}” instead of “${current.name}”.`;
  }
  confirmHistoryUse(
   title,
   used,
-  `${current.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
+  head,
   tail,
   apply,
   ()=>openExercise(id,mid,name)
