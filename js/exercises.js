@@ -315,14 +315,28 @@ function saveExercise(id){
  };
  if(!id){apply();return}
  const current=state.exercises.find(x=>x.id===id);if(!current){notify("Exercise not found.");return}
- if(current.name===name){apply();return}
+ const nameChanged=current.name!==name;
+ const groupChanged=current.muscleId!==mid;
+ if(!nameChanged&&!groupChanged){apply();return}
  const used=workoutsUsingExercise(id);
  if(!used.length){apply();return}
+ const those=used.length===1?"This workout":"These workouts";
+ const from=muscle(current.muscleId);
+ const to=muscle(mid);
+ let title=`Rename “${current.name}”?`;
+ let tail=`${those} will show “${name}”. Cancel keeps “${current.name}”.`;
+ if(nameChanged&&groupChanged){
+  title=`Change “${current.name}”?`;
+  tail=`${those} will show “${name}” and will still be ${from}. New workouts will list it under ${to}. Cancel keeps “${current.name}” in ${from}.`;
+ }else if(groupChanged){
+  title=`Move “${current.name}”?`;
+  tail=`${those} will still show ${from} and “${current.name}”. New workouts will list it under ${to}. Cancel keeps it in ${from}.`;
+ }
  confirmHistoryUse(
-  `Rename “${current.name}”?`,
+  title,
   used,
   `${current.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
-  `${used.length===1?"This workout":"These workouts"} will show “${name}”. Cancel keeps “${current.name}”.`,
+  tail,
   apply
  );
 }
