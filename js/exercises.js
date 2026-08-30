@@ -434,7 +434,7 @@ function deleteExercise(id){
  const used=workoutsUsingExercise(id);
  const proceed=()=>{moveExerciseToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();};
  if(!used.length){
-  confirmAction(`Delete “${e.name}”? It will stay in Recycle Bin for 30 days. Workout history is kept.`,proceed,true);
+  confirmAction(`Delete “${e.name}”? It will be deleted from your library.`,proceed,true);
   return;
  }
  confirmHistoryUse(
