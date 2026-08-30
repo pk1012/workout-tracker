@@ -313,7 +313,7 @@ function workoutsUsingMuscle(id){
 function workoutsUsingExercise(id){
  return workoutsNewestFirst((state.workouts||[]).filter(w=>(w.exercises||[]).some(raw=>exerciseIdOf(raw)===id)));
 }
-function confirmHistoryUse(title,used,head,tail,proceed){
+function confirmHistoryUse(title,used,head,tail,proceed,onCancel){
  const cap=8;
  const shown=used.slice(0,cap);
  const extra=used.length-shown.length;
@@ -324,6 +324,7 @@ function confirmHistoryUse(title,used,head,tail,proceed){
  const lines=shown.map(w=>`• ${when(w)} — ${workoutMuscleLabel(w)}`);
  if(extra)lines.push(`• and ${extra} more`);
  pendingConfirm=proceed;
+ pendingHistoryBack=typeof onCancel==="function"?onCancel:null;
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
@@ -333,23 +334,40 @@ function confirmHistoryUse(title,used,head,tail,proceed){
   </div>
   <div class="workout-entry-scroll"></div>
   <div class="modal-actions workout-modal-actions">
-   <button class="primary btn-wide workout-next-button" onclick="const fn=pendingConfirm;pendingConfirm=null;closeModal();fn&&fn()">Continue</button>
-   <button class="outline btn-wide workout-cancel-button" onclick="pendingConfirm=null;closeModal()">Cancel</button>
+   <button class="primary btn-wide workout-next-button" onclick="continueHistoryUse()">Continue</button>
+   <button class="outline btn-wide workout-cancel-button" onclick="cancelHistoryUse()">Cancel</button>
   </div>
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
 }
+let pendingHistoryBack=null;
+function continueHistoryUse(){
+ const fn=pendingConfirm;
+ pendingConfirm=null;
+ pendingHistoryBack=null;
+ closeModal();
+ fn&&fn();
+}
+function cancelHistoryUse(){
+ pendingConfirm=null;
+ const back=pendingHistoryBack;
+ pendingHistoryBack=null;
+ if(back)back();
+ else closeModal();
+}
 
-function openExercise(id="",muscleId=""){
+function openExercise(id="",muscleId="",draftName){
  let e=id?state.exercises.find(x=>x.id===id):null,ms=sortedMuscles();
+ const name=draftName!=null?draftName:(e?e.name:"");
+ const group=muscleId||(e&&e.muscleId)||"";
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
    <h2 class="workout-form-title">${e?"Edit Exercise":"Add Exercise"}</h2>
   </div>
   <div class="workout-entry-scroll">
-   <div class="field"><label>Exercise name</label><input id="exerciseName" class="input" value="${e?esc(e.name):""}" placeholder="Exercise name"></div>
-   <div class="field"><label>Muscle group</label><select id="exerciseMuscle" class="input">${ms.map(m=>`<option value="${m.id}" ${((e&&e.muscleId)||muscleId)===m.id?"selected":""}>${esc(m.name)}</option>`).join("")}</select></div>
+   <div class="field"><label>Exercise name</label><input id="exerciseName" class="input" value="${esc(name)}" placeholder="Exercise name"></div>
+   <div class="field"><label>Muscle group</label><select id="exerciseMuscle" class="input">${ms.map(m=>`<option value="${m.id}" ${group===m.id?"selected":""}>${esc(m.name)}</option>`).join("")}</select></div>
   </div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="saveExercise('${id}')">Save Exercise</button>
@@ -401,7 +419,8 @@ function saveExercise(id){
   used,
   `${current.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
   tail,
-  apply
+  apply,
+  ()=>openExercise(id,mid,name)
  );
 }
 function deleteExercise(id){
@@ -420,15 +439,16 @@ function deleteExercise(id){
   proceed
  );
 }
-function openMuscle(id=""){
+function openMuscle(id="",draftName){
  let m=id?state.muscles.find(x=>x.id===id):null;
+ const name=draftName!=null?draftName:(m?m.name:"");
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
    <h2 class="workout-form-title">${m?"Edit Muscle Group":"Add Muscle Group"}</h2>
   </div>
   <div class="workout-entry-scroll">
-   <div class="field"><label>Name</label><input id="muscleName" class="input" value="${m?esc(m.name):""}" placeholder="e.g. Forearms"></div>
+   <div class="field"><label>Name</label><input id="muscleName" class="input" value="${esc(name)}" placeholder="e.g. Forearms"></div>
   </div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="saveMuscle('${id}')">Save Muscle Group</button>
@@ -463,7 +483,8 @@ function saveMuscle(id){
   used,
   `${current.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
   `${used.length===1?"This workout":"These workouts"} will show “${name}”. Cancel keeps “${current.name}”.`,
-  apply
+  apply,
+  ()=>openMuscle(id,name)
  );
 }
 function deleteMuscle(id){
