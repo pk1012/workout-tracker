@@ -206,16 +206,6 @@ function dropBinWorkout(id){
  },true);
 }
 
-function uniqueRestoredName(base, existing){
- const name=(base||"").trim()||"Restored";
- const used=new Set((existing||[]).map(x=>String(x||"").trim().toLowerCase()).filter(Boolean));
- const first=`${name} (Restored)`;
- if(!used.has(first.toLowerCase()))return first;
- let n=2;
- while(used.has(`${name} (Restored ${n})`.toLowerCase()))n++;
- return `${name} (Restored ${n})`;
-}
-
 function restoreBinMuscle(id){
  ensureBin(state);
  const item=state.bin.muscles.find(m=>m.id===id);
