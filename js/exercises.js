@@ -15,7 +15,93 @@ function sortedExercisesForMuscle(muscleId){
 let exerciseScreenState={search:"",filter:"All",historyFilter:"all"};
 
 function exerciseMuscleName(exercise){
- return state.muscles.find(m=>m.id===exercise.muscleId)?.name||"";
+ const live=state.muscles.find(m=>m.id===exercise.muscleId)?.name;
+ if(live)return live;
+ if(exercise.muscleName)return exercise.muscleName;
+ return muscleNameFromState(state,exercise.muscleId)||"";
+}
+function heaviestSet(sets){
+ const valid=(sets||[]).filter(s=>Number.isFinite(Number(s?.weight))&&Number.isFinite(Number(s?.reps)));
+ if(!valid.length)return null;
+ return valid.reduce((best,s)=>Number(s.weight)>Number(best.weight)?s:best);
+}
+function formatExerciseLoad(weight,unit){
+ const n=Number(weight);
+ if(n===0)return "Bodyweight";
+ const text=Number.isInteger(n)?String(n):String(Math.round(n*10)/10);
+ return `${text} ${unit||"kg"}`;
+}
+function goneExerciseMuscleId(id){
+ const known=typeof exerciseMuscleId==="function"?exerciseMuscleId(id):"";
+ if(known)return known;
+ for(const w of state.workouts||[]){
+  if(!(w.exercises||[]).some(raw=>exerciseIdOf(raw)===id))continue;
+  const gone=(w.muscles||[]).filter(mid=>!(state.muscles||[]).some(m=>m.id===mid));
+  if(gone.length)return gone[0];
+  return (w.muscles||[])[0]||"";
+ }
+ return "";
+}
+function goneExerciseMuscleName(id,muscleId){
+ const fromState=muscleNameFromState(state,muscleId);
+ if(fromState)return fromState;
+ for(const w of state.workouts||[]){
+  if(!(w.exercises||[]).some(raw=>exerciseIdOf(raw)===id))continue;
+  const i=(w.muscles||[]).indexOf(muscleId);
+  const kept=i>=0&&typeof w.muscleNames?.[i]==="string"?w.muscleNames[i].trim():"";
+  if(kept&&kept!=="Unknown")return kept;
+ }
+ return "";
+}
+function exerciseScreenCatalog(){
+ const live=(state.exercises||[]).map(e=>({id:e.id,name:e.name,muscleId:e.muscleId,muscleName:"",gone:false}));
+ const seen=new Set(live.map(e=>e.id));
+ const gone=[];
+ for(const w of state.workouts||[]){
+  for(const raw of w.exercises||[]){
+   const id=exerciseIdOf(raw);
+   if(!id||seen.has(id))continue;
+   seen.add(id);
+   const muscleId=goneExerciseMuscleId(id);
+   gone.push({id,name:workoutExerciseName(raw),muscleId,muscleName:goneExerciseMuscleName(id,muscleId),gone:true});
+  }
+ }
+ return live.concat(gone);
+}
+function exerciseSessionHistory(exerciseId){
+ const history=[];
+ for(const workout of state.workouts||[]){
+  for(const raw of workout.exercises||[]){
+   const entry=normalizedEntry(raw,workout.unit||"kg");
+   if(entry.exerciseId!==exerciseId)continue;
+   history.push({workout,entry,heavy:heaviestSet(entry.sets)});
+  }
+ }
+ history.sort((a,b)=>{
+  const d=(b.workout.date||"").localeCompare(a.workout.date||"");
+  return d||(Number(b.workout.createdAt)||0)-(Number(a.workout.createdAt)||0);
+ });
+ return history;
+}
+function exerciseProgressLadder(sessionsNewestFirst){
+ const steps=[...sessionsNewestFirst].reverse().map(s=>{
+  if(!s.heavy)return null;
+  const n=Number(s.heavy.weight);
+  const unit=s.entry.unit||s.workout.unit||"kg";
+  return {n,unit,body:n===0};
+ }).filter(Boolean);
+ if(!steps.length)return "";
+ const units=new Set(steps.filter(s=>!s.body).map(s=>s.unit));
+ const same=units.size<=1;
+ const shared=[...units][0]||"kg";
+ const parts=steps.map(s=>{
+  if(s.body)return "Bodyweight";
+  const text=Number.isInteger(s.n)?String(s.n):String(Math.round(s.n*10)/10);
+  return same?text:`${text} ${s.unit}`;
+ });
+ const joined=parts.join(" → ");
+ if(same&&steps.some(s=>!s.body))return `${joined} ${shared}`;
+ return joined;
 }
 
 function exerciseCategoryMatches(exercise,filter){
@@ -27,35 +113,19 @@ function exerciseCategoryMatches(exercise,filter){
 }
 
 function exerciseHistory(exerciseId){
- let latest=null;
- for(const workout of state.workouts||[]){
-  for(const raw of workout.exercises||[]){
-   const entry=normalizedEntry(raw,workout.unit||"kg");
-   if(entry.exerciseId!==exerciseId)continue;
-   const sets=Array.isArray(entry.sets)?entry.sets:[];
-   const validSets=sets.filter(s=>Number.isFinite(Number(s?.weight))&&Number.isFinite(Number(s?.reps)));
-   if(!validSets.length)continue;
-   const candidate={
-    date:workout.date||"",
-    createdAt:Number(workout.createdAt)||0,
-    unit:entry.unit||workout.unit||"kg",
-    set:validSets[validSets.length-1]
-   };
-   if(!latest || candidate.date>latest.date || (candidate.date===latest.date&&candidate.createdAt>latest.createdAt)){
-    latest=candidate;
-   }
-  }
- }
- return latest;
+ const latest=exerciseSessionHistory(exerciseId).find(s=>s.heavy);
+ if(!latest)return null;
+ return {
+  date:latest.workout.date||"",
+  createdAt:Number(latest.workout.createdAt)||0,
+  unit:latest.entry.unit||latest.workout.unit||"kg",
+  set:latest.heavy
+ };
 }
 
 function exerciseDisplayWeight(history){
  if(!history)return "No history";
- const weight=Number(history.set.weight);
- if(weight===0)return "Bodyweight";
- const unit=history.unit||"kg";
- const text=Number.isInteger(weight)?String(weight):String(Math.round(weight*10)/10);
- return `${text} ${unit}`;
+ return formatExerciseLoad(history.set.weight,history.unit||"kg");
 }
 
 function exerciseDisplayDate(history){
@@ -65,16 +135,18 @@ function exerciseDisplayDate(history){
 
 function exerciseScreenItems(){
  const search=exerciseScreenState.search.trim().toLowerCase();
- return state.exercises
+ return exerciseScreenCatalog()
   .filter(e=>exerciseCategoryMatches(e,exerciseScreenState.filter))
   .filter(e=>!search||e.name.toLowerCase().includes(search)||exerciseMuscleName(e).toLowerCase().includes(search))
-  .filter(e=>{
-   const history=exerciseHistory(e.id);
+  .map(e=>{
+   const latest=exerciseHistory(e.id);
+   return {exercise:e,history:latest};
+  })
+  .filter(({history})=>{
    if(exerciseScreenState.historyFilter==="logged")return !!history;
    if(exerciseScreenState.historyFilter==="never")return !history;
    return true;
   })
-  .map(e=>({exercise:e,history:exerciseHistory(e.id)}))
   .sort((a,b)=>{
    const ad=a.history?.date||"";
    const bd=b.history?.date||"";
@@ -96,7 +168,7 @@ function renderExerciseScreenRows(items){
   return `<div class="exercise-screen-panel card exercise-screen-empty"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No exercises found</strong><span>Try another search or filter.</span></div>`;
  }
  return `<div class="exercise-screen-panel card">${items.map(({exercise,history})=>`
-  <button type="button" class="exercise-screen-row" onclick="openExerciseHistory('${esc(exercise.id)}')">
+  <button type="button" class="exercise-screen-row${exercise.gone?" library-gone":""}" onclick="openExerciseHistory('${esc(exercise.id)}')">
    <span class="exercise-screen-name">${esc(exercise.name)}</span>
    <span class="exercise-screen-side">
     <span class="exercise-screen-chart" aria-hidden="true"><svg class="icon"><use href="#chart"/></svg></span>
@@ -191,24 +263,15 @@ function applyExerciseHistoryFilter(){
 }
 
 function openExerciseHistory(id){
- const exercise=state.exercises.find(e=>e.id===id);
+ const exercise=exerciseScreenCatalog().find(e=>e.id===id)||state.exercises.find(e=>e.id===id);
  if(!exercise)return;
- const history=[];
- for(const workout of state.workouts||[]){
-  for(const raw of workout.exercises||[]){
-   const entry=normalizedEntry(raw,workout.unit||"kg");
-   if(entry.exerciseId!==id)continue;
-   history.push({workout,entry});
-  }
- }
- history.sort((a,b)=>{
-  const d=(b.workout.date||"").localeCompare(a.workout.date||"");
-  return d||(Number(b.workout.createdAt)||0)-(Number(a.workout.createdAt)||0);
- });
+ const history=exerciseSessionHistory(id);
  const latest=history[0]?.entry;
  const unit=latest?.unit||history[0]?.workout?.unit||"kg";
  const hasHistory=history.length>0;
- const body=hasHistory?history.slice(0,8).map(({workout,entry})=>{
+ const ladder=exerciseProgressLadder(history);
+ const group=exerciseMuscleName(exercise)||"Unknown";
+ const body=hasHistory?history.map(({workout,entry})=>{
   const dateLabel=new Date(`${workout.date}T00:00:00`).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
   const sets=entry.sets||[];
   const rows=sets.length
@@ -220,7 +283,8 @@ function openExerciseHistory(id){
   <div class="workout-entry-header">
    <div class="handle"></div>
    <h2 class="workout-form-title">${esc(exercise.name)}</h2>
-   <div class="muted workout-form-description">${esc(exerciseMuscleName(exercise))} · Exercise history</div>
+   <div class="muted workout-form-description">${esc(group)} · Exercise history</div>
+   ${ladder?`<div class="exercise-progress-ladder">${esc(ladder)}</div>`:""}
   </div>
   <div class="workout-entry-scroll${hasHistory?"":" exercise-history-empty-scroll"}">${body}</div>
   <div class="modal-actions workout-modal-actions">

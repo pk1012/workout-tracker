@@ -138,6 +138,10 @@
   border-top:0;
 }
 
+#exercises .exercise-screen-row.library-gone{
+  opacity:.4;
+}
+
 #exercises .exercise-screen-name{
   min-width:0;
   overflow:hidden;
@@ -239,6 +243,14 @@
   color:var(--muted);
   font-size:13px;
   line-height:1.4;
+}
+
+.exercise-progress-ladder{
+  margin:8px 0 0;
+  font-size:14px;
+  line-height:1.4;
+  font-weight:650;
+  color:var(--text);
 }
 
 /* Filter sheet — reuse week-picker list inside workout-entry-sheet. */
