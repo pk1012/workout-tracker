@@ -12,14 +12,15 @@
 }
 .notice-item strong{display:block;font-size:16px;font-weight:720;line-height:1.2}
 .notice-item span{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.3}
-.modal:has(.workout-entry-sheet) .workout-entry-scroll.notice-empty-scroll{
+.modal:has(.workout-entry-sheet) .workout-entry-scroll.notice-empty-scroll,
+.modal:has(.workout-entry-sheet) .workout-entry-scroll.exercise-history-empty-scroll{
   display:flex;
   flex-direction:column;
   padding-top:14px;
 }
-.notice-empty-panel{
+.empty-panel{
   flex:1;
-  min-height:0;
+  min-height:220px;
   margin:0;
   display:flex;
   flex-direction:column;
@@ -30,18 +31,18 @@
   color:var(--muted);
   text-align:center;
 }
-.notice-empty-panel .icon{
+.empty-panel .icon{
   width:28px;
   height:28px;
   color:var(--primary);
   margin-bottom:3px;
 }
-.notice-empty-panel strong{
+.empty-panel strong{
   color:var(--text);
   font-size:16px;
   font-weight:720;
 }
-.notice-empty-panel span{
+.empty-panel span{
   max-width:280px;
   font-size:13px;
   line-height:1.4;

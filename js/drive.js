@@ -771,7 +771,7 @@ function openNotifications(){
  if(note){
   items.push(`<button class="notice-item" type="button" onclick="openPendingDriveRestore()"><strong>Restore Drive backup</strong><span>${esc(note.savedAt?`Backup from ${formatDriveSaved(note.savedAt)}`:"Google Drive backup")}</span></button>`);
  }
- const body=items.length?`<div class="notice-list">${items.join("")}</div>`:`<div class="card notice-empty-panel"><svg class="icon" aria-hidden="true"><use href="#bell"/></svg><strong>No notifications</strong><span>Save and Drive alerts show up here.</span></div>`;
+ const body=items.length?`<div class="notice-list">${items.join("")}</div>`:`<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#bell"/></svg><strong>No notifications</strong><span>Save and Drive alerts show up here.</span></div>`;
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
