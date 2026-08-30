@@ -174,10 +174,8 @@ function workoutOnDate(date,exceptId){
  return (state.workouts||[]).find(w=>w.date===date&&w.id!==exceptId)||null;
 }
 function dateTakenMessage(){return "A workout already exists for this day."}
-function openWorkout(muscleIds=[],_dateValue,resume=false){
- const existing=resume&&state.activeWorkout;
- if(!muscleIds.length&&!resume)workoutDraft={...emptyWorkoutDraft(),date:todayDateKey(),startTime:localTimeValue()};
- else workoutDraft={...emptyWorkoutDraft(),date:existing?.date||todayDateKey(),muscles:existing?.muscles||muscleIds,exercises:existing?.exercises||[],unit:existing?.unit||"kg",startTime:existing?.startTime||localTimeValue(),endTime:existing?.endTime||""};
+function openWorkout(){
+ workoutDraft={...emptyWorkoutDraft(),date:todayDateKey(),startTime:localTimeValue()};
  renderWorkoutBasicsSheet();
 }
 function editWorkout(id){
@@ -196,7 +194,6 @@ function chooseExercises(){
  const validMuscles=ids.filter(id=>state.muscles.some(m=>m.id===id));
  workoutDraft.date=date;workoutDraft.startTime=start;workoutDraft.endTime=end;workoutDraft.muscles=validMuscles;
  workoutDraft.exercises=(workoutDraft.exercises||[]).filter(e=>validMuscles.some(mid=>state.exercises.some(x=>x.id===e.exerciseId&&x.muscleId===mid)));
- if(!isEditingWorkout()){state.activeWorkout={date,startTime:start,endTime:end||"",muscles:validMuscles,unit:workoutDraft.unit,exercises:workoutDraft.exercises};save()}
  renderExerciseSelection();
 }
 function renderExerciseSelection(){
@@ -226,7 +223,6 @@ function continueToSetDetails(){
  if(!ids.length){notify("Select at least one exercise.");return}
  const previous=new Map((workoutDraft.exercises||[]).map(e=>[e.exerciseId,e]));
  workoutDraft.exercises=ids.map(id=>previous.get(id)||{exerciseId:id,sets:[{weight:"",reps:""}]});
- if(!isEditingWorkout()){state.activeWorkout={...state.activeWorkout,endTime:workoutDraft.endTime||state.activeWorkout?.endTime||"",exercises:workoutDraft.exercises};save()}
  renderSetDetails();
 }
 function renderSetDetails(){
@@ -284,13 +280,13 @@ function saveWorkout(){
  if(!exercises.length){notify("Select at least one exercise.");return}
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
  const editing=isEditingWorkout();
- const id=editing?workoutDraft.editId:state.activeWorkout?.id||newId();
+ const id=editing?workoutDraft.editId:newId();
  const createdAt=editing?(Number(workoutDraft.createdAt)||Date.now()):Date.now();
  const record={id,date,muscles,startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt};
  const old=state.workouts.find(w=>w.id===id);
  if(old){record.createdAt=old.createdAt||createdAt;record.updatedAt=Date.now();Object.assign(old,record)}
  else state.workouts.push(record);
- if(!editing)delete state.activeWorkout;
+ delete state.activeWorkout;
  save();
  if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();
  selected=new Date(date+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);
