@@ -61,7 +61,7 @@ function isValidState(s){
  if(exerciseIds.size!==s.exercises.length)return false;
  return s.workouts.every(w=>{
   if(!w||typeof w.id!=="string"||!isValidDateString(w.date)||!Array.isArray(w.muscles)||!Array.isArray(w.exercises))return false;
-  if(!w.muscles.every(id=>typeof id==="string"&&muscleIds.has(id)))return false;
+  if(!w.muscles.every(id=>typeof id==="string"&&id))return false;
   const workoutUnit=w.unit==="lb"?"lb":"kg";
   return w.exercises.every(raw=>{
    const e=typeof raw==="string"?{exerciseId:raw,sets:[],unit:workoutUnit}:raw;
