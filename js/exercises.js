@@ -487,8 +487,8 @@ function saveMuscle(id){
  confirmHistoryUse(
   `Rename “${current.name}”?`,
   used,
-  `${current.name} has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
-  `${used.length===1?"This workout":"These workouts"} will show “${name}”. Cancel keeps “${current.name}”.`,
+  `This muscle group has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
+  `${used.length===1?"This workout":"These workouts"} will show “${name}” instead of “${current.name}”.`,
   apply,
   ()=>openMuscle(id,name)
  );
