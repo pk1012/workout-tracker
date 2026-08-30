@@ -46,15 +46,15 @@
 <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180.png">
 <link rel="apple-touch-icon" sizes="512x512" href="assets/icons/icon-512.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="css/styles.css?v=1.7.236">
-<link rel="stylesheet" href="css/components.css?v=1.7.236">
-<link rel="stylesheet" href="css/responsive.css?v=1.7.236">
-<link rel="stylesheet" href="css/home.css?v=1.7.236">
-<link rel="stylesheet" href="css/workouts.css?v=1.7.236">
-<link rel="stylesheet" href="css/progress.css?v=1.7.236">
-<link rel="stylesheet" href="css/exercises.css?v=1.7.236">
-<link rel="stylesheet" href="css/settings.css?v=1.7.236">
-<link rel="stylesheet" href="css/recycle.css?v=1.7.236">
+<link rel="stylesheet" href="css/styles.css?v=1.7.237">
+<link rel="stylesheet" href="css/components.css?v=1.7.237">
+<link rel="stylesheet" href="css/responsive.css?v=1.7.237">
+<link rel="stylesheet" href="css/home.css?v=1.7.237">
+<link rel="stylesheet" href="css/workouts.css?v=1.7.237">
+<link rel="stylesheet" href="css/progress.css?v=1.7.237">
+<link rel="stylesheet" href="css/exercises.css?v=1.7.237">
+<link rel="stylesheet" href="css/settings.css?v=1.7.237">
+<link rel="stylesheet" href="css/recycle.css?v=1.7.237">
 </head>
 <body>
 <div class="app">
@@ -103,6 +103,7 @@
 <div class="settings">
 <button class="setting card" onclick="go('library-management')"><span class="setting-icon" data-glyph="book"><svg class="icon"><use href="#book"/></svg></span><span class="setting-main"><span class="setting-title">Exercise Library</span><span class="setting-desc">Manage muscle groups and exercises</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>
 <div class="setting card theme-setting"><span class="setting-icon" data-glyph="theme"><svg class="icon"><use href="#theme"/></svg></span><span class="setting-main"><span class="setting-title">Theme</span><span class="setting-desc">Choose light or dark</span></span><span class="segment"><button id="lightBtn" onclick="theme('light')">Light</button><button id="darkBtn" onclick="theme('dark')">Dark</button></span></div>
+<div class="setting card theme-setting"><span class="setting-icon" data-glyph="unit"><svg class="icon"><use href="#dumbbell"/></svg></span><span class="setting-main"><span class="setting-title">Weight unit</span><span class="setting-desc">Choose kg or lb</span></span><span class="segment"><button id="kgBtn" onclick="setPreferredUnit('kg')">kg</button><button id="lbBtn" onclick="setPreferredUnit('lb')">lb</button></span></div>
 <div id="driveCard"></div>
 <button class="setting card" onclick="restoreBackup()"><span class="setting-icon" data-glyph="upload"><svg class="icon"><use href="#upload"/></svg></span><span class="setting-main"><span class="setting-title">Backup & Restore</span><span class="setting-desc">Export or restore your workout data</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>
 <button class="setting card" onclick="clearData()"><span class="setting-icon" data-glyph="trash"><svg class="icon"><use href="#trash"/></svg></span><span class="setting-main"><span class="setting-title">Clear All Data</span><span class="setting-desc">Delete all saved data</span></span><span class="chevron"><svg class="icon" aria-hidden="true"><use href="#chevron-right"/></svg></span></button>
@@ -150,16 +151,16 @@
 <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
 </svg>
 <div id="modal" class="modal" onclick="if(event.target===this)tryDismissModal()"></div>
-<script src="js/data.js?v=1.7.236"></script>
-<script src="js/workouts.js?v=1.7.236"></script>
-<script src="js/home.js?v=1.7.236"></script>
-<script src="js/exercises.js?v=1.7.236"></script>
-<script src="js/progress.js?v=1.7.236"></script>
-<script src="js/settings.js?v=1.7.236"></script>
-<script src="js/recycle.js?v=1.7.236"></script>
-<script src="js/drive-config.js?v=1.7.236"></script>
-<script src="js/drive-policy.js?v=1.7.236"></script>
-<script src="js/drive.js?v=1.7.236"></script>
-<script src="js/app.js?v=1.7.236"></script>
+<script src="js/data.js?v=1.7.237"></script>
+<script src="js/workouts.js?v=1.7.237"></script>
+<script src="js/home.js?v=1.7.237"></script>
+<script src="js/exercises.js?v=1.7.237"></script>
+<script src="js/progress.js?v=1.7.237"></script>
+<script src="js/settings.js?v=1.7.237"></script>
+<script src="js/recycle.js?v=1.7.237"></script>
+<script src="js/drive-config.js?v=1.7.237"></script>
+<script src="js/drive-policy.js?v=1.7.237"></script>
+<script src="js/drive.js?v=1.7.237"></script>
+<script src="js/app.js?v=1.7.237"></script>
 </body>
 </html>

@@ -41,8 +41,10 @@ function closeModal(){
 }
 function notify(message,type="info"){let host=document.getElementById("toastHost");if(!host){host=document.createElement("div");host.id="toastHost";document.body.appendChild(host)}const toast=document.createElement("div");toast.className=`toast ${type}`;toast.innerHTML=`<svg class="icon"><use href="#${type==="success"?"check":type==="error"?"close":"info"}"/></svg><span>${esc(message)}</span>`;host.appendChild(toast);requestAnimationFrame(()=>toast.classList.add("show"));setTimeout(()=>{toast.classList.remove("show");setTimeout(()=>toast.remove(),220)},2800)}
 let pendingConfirm=null;
-function confirmAction(message,onConfirm,asSheet){
+let pendingConfirmBack=null;
+function confirmAction(message,onConfirm,asSheet,onCancel){
  pendingConfirm=onConfirm;
+ pendingConfirmBack=typeof onCancel==="function"?onCancel:null;
  if(asSheet){
   modal(`
    <div class="workout-entry-header">
@@ -53,17 +55,32 @@ function confirmAction(message,onConfirm,asSheet){
    </div>
    <div class="workout-entry-scroll"></div>
    <div class="modal-actions workout-modal-actions">
-    <button class="primary btn-wide workout-next-button" onclick="const fn=pendingConfirm;pendingConfirm=null;closeModal();fn&&fn()">Continue</button>
-    <button class="outline btn-wide workout-cancel-button" onclick="pendingConfirm=null;closeModal()">Cancel</button>
+    <button class="primary btn-wide workout-next-button" onclick="continueConfirmAction()">Continue</button>
+    <button class="outline btn-wide workout-cancel-button" onclick="cancelConfirmAction()">Cancel</button>
    </div>
   `,"workout-entry-sheet");
   document.body.classList.add("workout-form-open");
   return;
  }
  document.body.classList.remove("workout-form-open");
- modal(`<div class="handle"></div><div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div><h2 class="confirm-title">Are you sure?</h2><p class="muted confirm-copy">${esc(message)}</p><div class="modal-actions"><button class="primary btn-wide" onclick="const fn=pendingConfirm;pendingConfirm=null;closeModal();fn&&fn()">Continue</button><button class="outline btn-wide" onclick="pendingConfirm=null;closeModal()">Cancel</button></div>`);
+ modal(`<div class="handle"></div><div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div><h2 class="confirm-title">Are you sure?</h2><p class="muted confirm-copy">${esc(message)}</p><div class="modal-actions"><button class="primary btn-wide" onclick="continueConfirmAction()">Continue</button><button class="outline btn-wide" onclick="cancelConfirmAction()">Cancel</button></div>`);
+}
+function continueConfirmAction(){
+ const fn=pendingConfirm;
+ pendingConfirm=null;
+ pendingConfirmBack=null;
+ closeModal();
+ fn&&fn();
+}
+function cancelConfirmAction(){
+ pendingConfirm=null;
+ const back=pendingConfirmBack;
+ pendingConfirmBack=null;
+ if(back)back();
+ else closeModal();
 }
 let savedTheme=localStorage.getItem("wt_theme")||"light";theme(savedTheme);
+if(typeof applyUnitButtons==="function")applyUnitButtons();
 storageReady.then(()=>{renderHome();renderCalendar();initDrive()});
 function appBasePath(){
  if(location.hostname.endsWith("github.io")){

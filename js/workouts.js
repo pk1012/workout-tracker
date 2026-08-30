@@ -1,4 +1,4 @@
-function emptyWorkoutDraft(){return {date:"",muscles:[],exercises:[],unit:"kg",startTime:"",endTime:"",goneMuscles:[],goneExercises:[],muscleNames:[]}}
+function emptyWorkoutDraft(){return {date:"",muscles:[],exercises:[],unit:preferredUnit(),storedUnit:"",startTime:"",endTime:"",goneMuscles:[],goneExercises:[],muscleNames:[]}}
 let workoutDraft=emptyWorkoutDraft();
 function isEditingWorkout(){return !!workoutDraft.editId}
 function cancelWorkoutForm(){
@@ -190,13 +190,15 @@ function chooseMonth(k){
 }
 
 function draftFromWorkout(w){
- const unit=w.unit||"kg";
+ const stored=w.unit==="lb"?"lb":"kg";
+ const unit=preferredUnit();
  const names=workoutMuscleNames(w);
  const muscles=[...(w.muscles||[])];
  const exercises=(w.exercises||[]).map(e=>{
-  const entry=normalizedEntry(e,unit);
+  const entry=normalizedEntry(e,stored);
+  const from=entry.unit==="lb"?"lb":stored;
   const muscleId=inferWorkoutExerciseMuscleId({...entry,muscleId:entry.muscleId},w);
-  return {exerciseId:entry.exerciseId,name:workoutExerciseName(e),muscleId,sets:(entry.sets||[]).map(s=>({weight:s.weight===""||s.weight==null?"":String(s.weight),reps:s.reps===""||s.reps==null?"":String(s.reps)}))};
+  return {exerciseId:entry.exerciseId,name:workoutExerciseName(e),muscleId,sets:(entry.sets||[]).map(s=>({weight:s.weight===""||s.weight==null?"":String(convertWeight(s.weight,from,unit)),reps:s.reps===""||s.reps==null?"":String(s.reps)}))};
  });
  return {
   editId:w.id,
@@ -205,6 +207,7 @@ function draftFromWorkout(w){
   muscles,
   muscleNames:names,
   unit,
+  storedUnit:stored,
   startTime:w.startTime||"",
   endTime:w.endTime||"",
   exercises,
@@ -304,15 +307,7 @@ function continueToSetDetails(){
 }
 function renderSetDetails(){
  const selectedNames=workoutDraft.exercises.map(e=>e.name||state.exercises.find(x=>x.id===e.exerciseId)?.name||"Deleted exercise");
- const content=`
-   <div class="field unit-field">
-     <label>Weight unit</label>
-     <div class="segment">
-       <button class="unit-btn ${workoutDraft.unit==='kg'?'active':''}" onclick="setWorkoutUnit('kg')">kg</button>
-       <button class="unit-btn ${workoutDraft.unit==='lb'?'active':''}" onclick="setWorkoutUnit('lb')">lb</button>
-     </div>
-   </div>
-   ${workoutDraft.exercises.map((entry,i)=>{
+ const content=workoutDraft.exercises.map((entry,i)=>{
      const name=selectedNames[i];
      return `<div class="set-editor card pad">
        <div class="set-editor-head"><strong>${esc(name)}</strong></div>
@@ -321,8 +316,7 @@ function renderSetDetails(){
          <svg class="icon"><use href="#plus"></use></svg> Add Set
        </button>
      </div>`;
-   }).join("")}
- `;
+   }).join("");
 
  modal(`
    <div class="workout-entry-header">
@@ -350,18 +344,6 @@ function renderSetsForExercise(i){
 }
 function addSet(i){workoutDraft.exercises[i].sets.push({weight:"",reps:""});renderSetsForExercise(i)}
 function removeSet(i,j){if(workoutDraft.exercises[i].sets.length>1)workoutDraft.exercises[i].sets.splice(j,1);renderSetsForExercise(i)}
-function setWorkoutUnit(unit){
- if(unit!==workoutDraft.unit){
-  let f=workoutDraft.unit==="kg"?2.2046226218:0.45359237;
-  workoutDraft.exercises.forEach(e=>e.sets.forEach(s=>{if(s.weight!=="")s.weight=String(Math.round(Number(s.weight)*f*100)/100)}));
-  workoutDraft.unit=unit;
- }
- const scroll=document.querySelector(".modal.show .workout-entry-scroll");
- const top=scroll?scroll.scrollTop:0;
- renderSetDetails();
- const next=document.querySelector(".modal.show .workout-entry-scroll");
- if(next)next.scrollTop=top;
-}
 
 function saveWorkout(){
  const date=workoutDraft.date,muscles=[...new Set(workoutDraft.muscles)].filter(keepDraftMuscle);
@@ -377,8 +359,20 @@ function saveWorkout(){
  if(endMinutes===startMinutes){notify("Start and end time cannot be the same.");return}
  if(!exercises.length){notify("Select at least one exercise.");return}
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
+ const want=preferredUnit();
+ workoutDraft.unit=want;
+ const logged=workoutDraft.storedUnit||old?.unit||want;
+ const from=logged==="lb"?"lb":"kg";
+ if(editing&&from!==want){
+  confirmAction(`This workout was logged in ${from}. The weights are converted to ${want}. Do you want to save it in ${want}?`,()=>commitWorkoutSave(id,date,muscles,exercises,old,editing),true,()=>{renderSetDetails();document.body.classList.add("workout-form-open")});
+  return;
+ }
+ commitWorkoutSave(id,date,muscles,exercises,old,editing);
+}
+function commitWorkoutSave(id,date,muscles,exercises,old,editing){
+ const unit=preferredUnit();
  const createdAt=editing?(Number(workoutDraft.createdAt)||Date.now()):Date.now();
- const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,{muscles:workoutDraft.muscles,muscleNames:workoutDraft.muscleNames}),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit:workoutDraft.unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,name:nameForWorkoutExercise(e,old),sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit:workoutDraft.unit})),createdAt};
+ const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,{muscles:workoutDraft.muscles,muscleNames:workoutDraft.muscleNames}),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit,exercises:exercises.map(e=>({exerciseId:e.exerciseId,name:nameForWorkoutExercise(e,old),sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit})),createdAt};
  if(old){record.createdAt=old.createdAt||createdAt;record.updatedAt=Date.now();Object.assign(old,record)}
  else state.workouts.push(record);
  delete state.activeWorkout;
@@ -391,7 +385,15 @@ function saveWorkout(){
  else {refreshAppViews();go("home")}
 }
 function normalizedEntry(entry,fallbackUnit="kg"){if(typeof entry==="string")return {exerciseId:entry,sets:[],unit:fallbackUnit};const e=entry||{exerciseId:"",sets:[]};return {...e,unit:e.unit||fallbackUnit}}
-function formatSet(set,unit){return `${Number(set.weight)} ${unit||"kg"} · ${Number(set.reps)} reps`}
+function formatSet(set,unit){
+ const from=unit==="lb"?"lb":"kg";
+ const to=preferredUnit();
+ const w=Number(set.weight);
+ if(w===0)return `Bodyweight · ${Number(set.reps)} reps`;
+ const shown=convertWeight(w,from,to);
+ const text=Number.isInteger(shown)?String(shown):String(shown);
+ return `${text} ${to} · ${Number(set.reps)} reps`;
+}
 function viewWorkout(id){
  let w=state.workouts.find(x=>x.id===id);if(!w)return;
  let entries=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg"));

@@ -25,11 +25,11 @@ function heaviestSet(sets){
  if(!valid.length)return null;
  return valid.reduce((best,s)=>Number(s.weight)>Number(best.weight)?s:best);
 }
-function formatExerciseLoad(weight,unit){
- const n=Number(weight);
+function formatExerciseLoad(weight,fromUnit){
+ const n=Number(displayWeight(weight,fromUnit));
  if(n===0)return "Bodyweight";
  const text=Number.isInteger(n)?String(n):String(Math.round(n*10)/10);
- return `${text} ${unit||"kg"}`;
+ return `${text} ${preferredUnit()}`;
 }
 function goneExerciseMuscleId(id){
  const known=typeof exerciseMuscleId==="function"?exerciseMuscleId(id):"";
@@ -84,23 +84,21 @@ function exerciseSessionHistory(exerciseId){
  return history;
 }
 function exerciseProgressLadder(sessionsNewestFirst){
+ const to=preferredUnit();
  const steps=[...sessionsNewestFirst].reverse().map(s=>{
   if(!s.heavy)return null;
-  const n=Number(s.heavy.weight);
-  const unit=s.entry.unit||s.workout.unit||"kg";
-  return {n,unit,body:n===0};
+  const from=s.entry.unit||s.workout.unit||"kg";
+  const n=Number(displayWeight(s.heavy.weight,from));
+  return {n,unit:to,body:Number(s.heavy.weight)===0};
  }).filter(Boolean);
  if(!steps.length)return "";
- const units=new Set(steps.filter(s=>!s.body).map(s=>s.unit));
- const same=units.size<=1;
- const shared=[...units][0]||"kg";
  const parts=steps.map(s=>{
   if(s.body)return "Bodyweight";
-  const text=Number.isInteger(s.n)?String(s.n):String(Math.round(s.n*10)/10);
-  return same?text:`${text} ${s.unit}`;
+  const text=Number.isInteger(s.n)?String(s.n):String(s.n);
+  return text;
  });
  const joined=parts.join(" → ");
- if(same&&steps.some(s=>!s.body))return `${joined} ${shared}`;
+ if(steps.some(s=>!s.body))return `${joined} ${to}`;
  return joined;
 }
 

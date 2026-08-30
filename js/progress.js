@@ -41,7 +41,10 @@ function renderProgress(){
   const workouts=progressWorkoutEntries();
   const totals=progressTotals(workouts);
   const muscleCount=new Set(workouts.flatMap(w=>w.muscles||[])).size;
-  const volume=totals.volume ? Math.round(totals.volume).toLocaleString("en-IN") : "0";
+  const u=preferredUnit();
+  const volumeKg=totals.volume||0;
+  const volumeShown=u==="lb"?volumeKg*2.2046226218:volumeKg;
+  const volume=volumeShown ? Math.round(volumeShown).toLocaleString("en-IN") : "0";
 
   target.innerHTML=`
     <section class="progress-overview card">
@@ -55,7 +58,7 @@ function renderProgress(){
         <div class="progress-stat"><strong>${workouts.length}</strong><span>Workouts</span></div>
         <div class="progress-stat"><strong>${totals.exerciseCount}</strong><span>Exercises</span></div>
         <div class="progress-stat"><strong>${totals.setCount}</strong><span>Sets</span></div>
-        <div class="progress-stat"><strong>${volume}</strong><span>kg · reps</span></div>
+        <div class="progress-stat"><strong>${volume}</strong><span>${u} · reps</span></div>
       </div>
       <div class="progress-footnote">
         <svg class="icon" aria-hidden="true"><use href="#target"/></svg>
