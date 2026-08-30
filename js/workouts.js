@@ -8,21 +8,6 @@ function cancelWorkoutForm(){
 let selectedWeekStart=weekStart(new Date());
 let selectedMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 
-
-function workoutIconName(type){
-  const map={
-    completed:"check",
-    rest:"minus",
-    active:"play",
-    inProgress:"play",
-    notStarted:"calendar"
-  };
-  return map[type]||"dumbbell";
-}
-function workoutIcon(type, cls="icon"){
-  return `<svg class="${cls}" aria-hidden="true"><use href="#${workoutIconName(type)}"/></svg>`;
-}
-
 function localTimeValue(d=new Date()){return d.toTimeString().slice(0,5)}
 function formatTime(t){if(!t)return "—";let [h,m]=t.split(":").map(Number);let ap=h>=12?"PM":"AM",hh=h%12||12;return `${hh}:${String(m).padStart(2,"0")} ${ap}`}
 function durationMinutes(w){
@@ -59,7 +44,6 @@ function monthRangeLabel(month){
  const part=d=>`${pad2(d.getDate())} ${d.toLocaleDateString("en-IN",{month:"short"})}`;
  return `${part(start)} – ${part(end)}`;
 }
-function weekKey(d){return dateKey(weekStart(d))}
 function weekDates(start){return Array.from({length:7},(_,i)=>{let d=new Date(start);d.setDate(d.getDate()+i);return d})}
 function isToday(d){return dateKey(d)===dateKey(new Date())}
 function monthStart(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(1);return x}
@@ -108,7 +92,6 @@ function workoutCard(w){
  return `<button class="workout-card card" onclick="viewWorkout('${w.id}')"><div class="workout-avatar"><svg class="icon"><use href="#dumbbell"/></svg></div><div class="workout-card-copy"><strong>${esc(w.muscles.map(muscle).join(" + "))}</strong>${date?`<span class="workout-card-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(date)}</span></span>`:""}<div class="workout-metrics"><b><svg class="inline-icon"><use href="#dumbbell"/></svg><span>${ex}</span><small>Exercises</small></b><b><svg class="inline-icon"><use href="#layers"/></svg><span>${sets}</span><small>Sets</small></b><b><svg class="inline-icon"><use href="#clock"/></svg><span>${durationLabel(dur)}</span></b></div></div><span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span></button>`;
 }
 function renderRecentWorkouts(){ /* Progress page. */ const ws=[...state.workouts].sort((a,b)=>{const dateDiff=(b.date||"").localeCompare(a.date||"");return dateDiff||(b.createdAt||0)-(a.createdAt||0)});return `<section class="recent-section"><div class="section-head"><h2>Workout History</h2></div>${ws.length?ws.map(workoutCard).join(""):`<div class="empty card">No workouts logged yet.</div>`}</section>`}
-function moveWeek(n){selectedWeekStart=new Date(selectedWeekStart);selectedWeekStart.setDate(selectedWeekStart.getDate()+n*7);selected=new Date(selectedWeekStart);selectedMonth=monthStart(selected);renderCalendar();renderHome()}
 function selectWorkoutDay(k){selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);renderCalendar();renderHome()}
 function goToWeekDay(k){go("workouts");selectWorkoutDay(k)}
 function openWeekPicker(){
@@ -316,7 +299,6 @@ function saveWorkout(){
  if(editing){renderCalendar();renderHome();if(typeof renderNotificationBell==="function")renderNotificationBell()}
  else go("home");
 }
-function workoutSignature(w){const muscles=[...(w.muscles||[])].sort();const exercises=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg")).sort((a,b)=>a.exerciseId.localeCompare(b.exerciseId));return JSON.stringify({date:w.date,muscles,exercises})}
 function normalizedEntry(entry,fallbackUnit="kg"){if(typeof entry==="string")return {exerciseId:entry,sets:[],unit:fallbackUnit};const e=entry||{exerciseId:"",sets:[]};return {...e,unit:e.unit||fallbackUnit}}
 function formatSet(set,unit){return `${Number(set.weight)} ${unit||"kg"} · ${Number(set.reps)} reps`}
 function viewWorkout(id){
