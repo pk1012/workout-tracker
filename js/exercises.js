@@ -498,7 +498,8 @@ function deleteMuscle(id){
  const used=workoutsUsingMuscle(id);
  const proceed=()=>{moveMuscleToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();};
  if(!used.length){
-  confirmAction(`Delete “${m.name}”? ${n?`Its ${n} exercise(s) will also move to Recycle Bin.`:""} Items stay for 30 days.`,proceed,true);
+  const extra=n===0?"":n===1?" Its 1 exercise will also be deleted from your library.":` Its ${n} exercises will also be deleted from your library.`;
+  confirmAction(`Delete “${m.name}”?${n===0?" It will be deleted from your library.":extra}`,proceed,true);
   return;
  }
  confirmHistoryUse(

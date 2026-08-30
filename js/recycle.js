@@ -280,7 +280,7 @@ function emptyRecycleBin(){
  ensureBin(state);
  const n=state.bin.workouts.length+state.bin.exercises.length+state.bin.muscles.length;
  if(!n){notify("Recycle Bin is already empty.");return}
- confirmAction("Empty Recycle Bin? Everything here will be deleted forever.",()=>{
+ confirmAction("Empty Recycle Bin? Everything here will be deleted forever and cannot be undone.",()=>{
   state.bin=emptyBin();
   save();
   driveAfterBinChange();

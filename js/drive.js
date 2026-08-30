@@ -425,7 +425,7 @@ function showDriveRestoreSheet(remote){
   <div class="workout-entry-header">
    <div class="handle"></div>
    <h2 class="workout-form-title">Restore from Drive?</h2>
-   <div class="muted workout-form-description">This phone has no workouts. Google Drive has a backup${remote.savedAt?` from ${esc(formatDriveSaved(remote.savedAt))}`:""}. Restore replaces data on this phone. Drive is not changed until you save again.</div>
+   <div class="muted workout-form-description">This phone has no workouts. Google Drive has a backup${remote.savedAt?` from ${esc(formatDriveSaved(remote.savedAt))}`:""}. Restore replaces data on this phone. Drive is not changed yet.</div>
   </div>
   <div class="workout-entry-scroll"></div>
   <div class="modal-actions workout-modal-actions">
