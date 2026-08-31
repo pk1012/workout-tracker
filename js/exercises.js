@@ -321,33 +321,28 @@ function exerciseGraphAxisLabel(label){
  return esc(label);
 }
 function exerciseGraphSvg(buckets,zoom){
- const unit=preferredUnit();
- const ns=buckets.map(b=>b.n);
- const min=Math.min(...ns);
- const max=Math.max(...ns);
  const slot=zoom==="week"?112:zoom==="month"?68:zoom==="year"?56:76;
- const padL=52,padR=18,padT=18,padB=zoom==="week"?46:36;
+ const padL=22,padR=18,padT=18,padB=zoom==="week"?46:36;
  const h=228;
- const innerMin=220;
+ const innerMin=200;
  const w=Math.max(innerMin+padL+padR,(buckets.length-1)*slot+padL+padR);
  const innerW=Math.max(innerMin,w-padL-padR);
  const innerH=h-padT-padB;
+ const ns=buckets.map(b=>b.n);
+ const min=Math.min(...ns);
+ const max=Math.max(...ns);
  const xAt=i=>padL+(buckets.length===1?innerW/2:i*(innerW/Math.max(1,buckets.length-1)));
  const yAt=n=>max===min?padT+innerH/2:padT+((max-n)/(max-min))*innerH;
  const pts=buckets.map((b,i)=>`${xAt(i).toFixed(1)},${yAt(b.n).toFixed(1)}`);
  const line=buckets.length>1?`<polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.join(" ")}"/>`:"";
  const dots=buckets.map((b,i)=>`<circle cx="${xAt(i).toFixed(1)}" cy="${yAt(b.n).toFixed(1)}" r="4" fill="currentColor"/>`).join("");
- const maxLabel=`${graphWeightText(max)} ${unit}`;
- const minLabel=max===min?"":`${graphWeightText(min)} ${unit}`;
- const yMax=`<text class="graph-axis graph-y" x="${padL-8}" y="${padT+4}" text-anchor="end">${esc(maxLabel)}</text>`;
- const yMin=minLabel?`<text class="graph-axis graph-y" x="${padL-8}" y="${padT+innerH+4}" text-anchor="end">${esc(minLabel)}</text>`:"";
  const xLabels=buckets.map((b,i)=>{
   const x=xAt(i).toFixed(1);
   const y=h-padB+14;
   const inner=exerciseGraphAxisLabel(b.label);
   return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="middle">${inner}</text></g>`;
  }).join("");
- return `<svg class="exercise-history-plot" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-hidden="true">${yMax}${yMin}${line}${dots}${xLabels}</svg>`;
+ return `<svg class="exercise-history-plot" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-hidden="true">${line}${dots}${xLabels}</svg>`;
 }
 function exerciseHistoryListBody(history,unit){
  return history.map(({workout,entry})=>{
@@ -366,7 +361,14 @@ function exerciseHistoryGraphBody(history,zoom){
  }
  const zooms=["day","week","month","year"];
  const zoomBar=`<div class="segment exercise-history-zoom">${zooms.map(z=>`<button type="button" class="${zoom===z?"active":""}" onclick="setExerciseHistoryZoom('${z}')">${z[0].toUpperCase()+z.slice(1)}</button>`).join("")}</div>`;
- return `<div class="exercise-history-graph">${zoomBar}<div class="card exercise-history-graph-card"><div class="exercise-history-graph-scroll">${exerciseGraphSvg(buckets,zoom)}</div></div></div>`;
+ const ns=buckets.map(b=>b.n);
+ const min=Math.min(...ns);
+ const max=Math.max(...ns);
+ const unit=preferredUnit();
+ const maxLabel=`${graphWeightText(max)} ${unit}`;
+ const minLabel=max===min?"":`${graphWeightText(min)} ${unit}`;
+ const yAxis=`<div class="exercise-history-graph-y" aria-hidden="true"><span>${esc(maxLabel)}</span>${minLabel?`<span>${esc(minLabel)}</span>`:""}</div>`;
+ return `<div class="exercise-history-graph">${zoomBar}<div class="card exercise-history-graph-card" data-zoom="${esc(zoom)}"><div class="exercise-history-graph-plot">${yAxis}<div class="exercise-history-graph-scroll">${exerciseGraphSvg(buckets,zoom)}</div></div></div></div>`;
 }
 function setExerciseHistoryView(view){
  exerciseHistoryUi.view=view==="graph"?"graph":"list";
@@ -415,12 +417,14 @@ function renderExerciseHistorySheet(){
   </div>
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
- const ladderEl=document.querySelector(".exercise-progress-ladder");
- if(ladderEl){
-  const pin=()=>{ladderEl.scrollLeft=ladderEl.scrollWidth};
-  pin();
-  requestAnimationFrame(pin);
- }
+ const pin=el=>{
+  if(!el)return;
+  const go=()=>{el.scrollLeft=el.scrollWidth};
+  go();
+  requestAnimationFrame(go);
+ };
+ pin(document.querySelector(".exercise-progress-ladder"));
+ pin(document.querySelector(".exercise-history-graph-scroll"));
 }
 
 /* Exercise Library / Settings management */
