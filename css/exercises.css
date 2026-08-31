@@ -232,7 +232,7 @@
   font-size:14px;
   line-height:1.4;
   font-weight:650;
-  color:var(--text);
+  color:var(--muted);
   -webkit-overflow-scrolling:touch;
   touch-action:pan-x;
   scrollbar-width:none;
