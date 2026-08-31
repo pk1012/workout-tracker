@@ -415,6 +415,12 @@ function renderExerciseHistorySheet(){
   </div>
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
+ const ladderEl=document.querySelector(".exercise-progress-ladder");
+ if(ladderEl){
+  const pin=()=>{ladderEl.scrollLeft=ladderEl.scrollWidth};
+  pin();
+  requestAnimationFrame(pin);
+ }
 }
 
 /* Exercise Library / Settings management */
