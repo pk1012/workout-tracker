@@ -303,7 +303,7 @@
 .exercise-history-graph-y{
   flex:none;
   width:52px;
-  height:228px;
+  min-height:220px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
@@ -330,6 +330,7 @@
 .exercise-history-graph-scroll::-webkit-scrollbar{display:none}
 .exercise-history-plot{
   display:block;
+  height:100%;
   color:var(--primary);
 }
 .exercise-history-plot .graph-axis{

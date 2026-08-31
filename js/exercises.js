@@ -320,10 +320,10 @@ function exerciseGraphAxisLabel(label){
  }
  return esc(label);
 }
-function exerciseGraphSvg(buckets,zoom){
+function exerciseGraphSvg(buckets,zoom,plotH){
  const slot=zoom==="week"?112:zoom==="month"?68:zoom==="year"?56:76;
  const padL=22,padR=18,padT=18,padB=zoom==="week"?46:36;
- const h=228;
+ const h=Math.max(220,Math.floor(plotH||228));
  const innerMin=200;
  const w=Math.max(innerMin+padL+padR,(buckets.length-1)*slot+padL+padR);
  const innerW=Math.max(innerMin,w-padL-padR);
@@ -424,7 +424,25 @@ function renderExerciseHistorySheet(){
   requestAnimationFrame(go);
  };
  pin(document.querySelector(".exercise-progress-ladder"));
- pin(document.querySelector(".exercise-history-graph-scroll"));
+ layoutExerciseHistoryGraph();
+}
+function layoutExerciseHistoryGraph(){
+ const run=()=>{
+  const scroll=document.querySelector(".exercise-history-graph-scroll");
+  const axis=document.querySelector(".exercise-history-graph-y");
+  if(!scroll)return;
+  const h=Math.max(220,Math.floor(scroll.clientHeight||0));
+  const history=exerciseSessionHistory(exerciseHistoryUi.id);
+  const zoom=exerciseHistoryUi.zoom;
+  const buckets=exerciseGraphBuckets(exerciseWeightedPoints(history),zoom);
+  if(buckets.length){
+   scroll.innerHTML=exerciseGraphSvg(buckets,zoom,h);
+   if(axis)axis.style.height=h+"px";
+  }
+  scroll.scrollLeft=scroll.scrollWidth;
+ };
+ run();
+ requestAnimationFrame(run);
 }
 
 /* Exercise Library / Settings management */
