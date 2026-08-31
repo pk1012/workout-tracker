@@ -340,7 +340,7 @@ function exerciseGraphSvg(buckets,zoom,plotH){
  const values=buckets.map((b,i)=>`<text class="graph-dot-label" x="${xAt(i).toFixed(1)}" y="${(yAt(b.n)-10).toFixed(1)}" text-anchor="middle">${esc(graphWeightText(b.n))}</text>`).join("");
  const xLabels=buckets.map((b,i)=>{
   const x=xAt(i).toFixed(1);
-  const y=h-padB+14;
+  const y=h-padB+18;
   const inner=exerciseGraphAxisLabel(b.label);
   return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="middle">${inner}</text></g>`;
  }).join("");
