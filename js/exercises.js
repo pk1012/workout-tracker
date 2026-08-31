@@ -13,6 +13,7 @@ function sortedExercisesForMuscle(muscleId){
  * can evolve without changing the Exercise Library in Settings.
  */
 let exerciseScreenState={search:"",filter:"All",historyFilter:"all"};
+let exerciseHistoryUi={id:"",view:"list",zoom:"day"};
 
 function exerciseMuscleName(exercise){
  const live=state.muscles.find(m=>m.id===exercise.muscleId)?.name;
@@ -260,31 +261,155 @@ function applyExerciseHistoryFilter(){
  renderExercises();
 }
 
-function openExerciseHistory(id){
- const exercise=exerciseScreenCatalog().find(e=>e.id===id)||state.exercises.find(e=>e.id===id);
- if(!exercise)return;
- const history=exerciseSessionHistory(id);
- const latest=history[0]?.entry;
- const unit=latest?.unit||history[0]?.workout?.unit||"kg";
- const hasHistory=history.length>0;
- const ladder=exerciseProgressLadder(history);
- const group=exerciseMuscleName(exercise)||"Unknown";
- const body=hasHistory?history.map(({workout,entry})=>{
+function graphWeightText(n){
+ const x=Number(n);
+ if(!Number.isFinite(x))return "";
+ return Number.isInteger(x)?String(x):String(Math.round(x*10)/10);
+}
+function graphDayLabel(date){
+ const d=new Date(`${date}T00:00:00`);
+ const day=d.toLocaleDateString("en-IN",{day:"numeric",month:"short"});
+ return `${day} ${String(d.getFullYear()).slice(-2)}`;
+}
+function graphMonthLabel(d){
+ return `${d.toLocaleDateString("en-IN",{month:"short"})} ${String(d.getFullYear()).slice(-2)}`;
+}
+function exerciseWeightedPoints(sessionsNewestFirst){
+ const to=preferredUnit();
+ const byDate=new Map();
+ for(const s of sessionsNewestFirst||[]){
+  if(!s?.heavy||Number(s.heavy.weight)===0)continue;
+  const date=s.workout?.date||"";
+  if(!date)continue;
+  const from=s.entry?.unit||s.workout?.unit||"kg";
+  const n=Number(displayWeight(s.heavy.weight,from));
+  if(!Number.isFinite(n)||n<=0)continue;
+  const prev=byDate.get(date);
+  if(!prev||n>prev.n)byDate.set(date,{date,n,unit:to});
+ }
+ return [...byDate.values()].sort((a,b)=>a.date.localeCompare(b.date));
+}
+function exerciseGraphBuckets(points,zoom){
+ const list=points||[];
+ if(zoom==="day")return list.map(p=>({key:p.date,n:p.n,label:graphDayLabel(p.date)}));
+ const map=new Map();
+ for(const p of list){
+  const d=new Date(`${p.date}T00:00:00`);
+  if(Number.isNaN(d.getTime()))continue;
+  let key="",label="";
+  if(zoom==="week"){
+   const start=weekStart(d);
+   key=dateKey(start);
+   label=rangeLabel(start);
+  }else if(zoom==="month"){
+   key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+   label=graphMonthLabel(d);
+  }else{
+   key=String(d.getFullYear());
+   label=key;
+  }
+  const prev=map.get(key);
+  if(!prev||p.n>prev.n)map.set(key,{key,n:p.n,label});
+ }
+ return [...map.values()].sort((a,b)=>a.key.localeCompare(b.key));
+}
+function exerciseGraphAxisLabel(label){
+ const parts=String(label||"").split(" – ");
+ if(parts.length===2){
+  return `<tspan x="0" dy="0">${esc(parts[0])}</tspan><tspan x="0" dy="11">${esc(parts[1])}</tspan>`;
+ }
+ return esc(label);
+}
+function exerciseGraphSvg(buckets,zoom){
+ const unit=preferredUnit();
+ const ns=buckets.map(b=>b.n);
+ const min=Math.min(...ns);
+ const max=Math.max(...ns);
+ const slot=zoom==="week"?112:zoom==="month"?68:zoom==="year"?56:76;
+ const padL=52,padR=18,padT=18,padB=zoom==="week"?46:36;
+ const h=228;
+ const innerMin=220;
+ const w=Math.max(innerMin+padL+padR,(buckets.length-1)*slot+padL+padR);
+ const innerW=Math.max(innerMin,w-padL-padR);
+ const innerH=h-padT-padB;
+ const xAt=i=>padL+(buckets.length===1?innerW/2:i*(innerW/Math.max(1,buckets.length-1)));
+ const yAt=n=>max===min?padT+innerH/2:padT+((max-n)/(max-min))*innerH;
+ const pts=buckets.map((b,i)=>`${xAt(i).toFixed(1)},${yAt(b.n).toFixed(1)}`);
+ const line=buckets.length>1?`<polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.join(" ")}"/>`:"";
+ const dots=buckets.map((b,i)=>`<circle cx="${xAt(i).toFixed(1)}" cy="${yAt(b.n).toFixed(1)}" r="4" fill="currentColor"/>`).join("");
+ const maxLabel=`${graphWeightText(max)} ${unit}`;
+ const minLabel=max===min?"":`${graphWeightText(min)} ${unit}`;
+ const yMax=`<text class="graph-axis graph-y" x="${padL-8}" y="${padT+4}" text-anchor="end">${esc(maxLabel)}</text>`;
+ const yMin=minLabel?`<text class="graph-axis graph-y" x="${padL-8}" y="${padT+innerH+4}" text-anchor="end">${esc(minLabel)}</text>`:"";
+ const xLabels=buckets.map((b,i)=>{
+  const x=xAt(i).toFixed(1);
+  const y=h-padB+14;
+  const inner=exerciseGraphAxisLabel(b.label);
+  return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="middle">${inner}</text></g>`;
+ }).join("");
+ return `<svg class="exercise-history-plot" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-hidden="true">${yMax}${yMin}${line}${dots}${xLabels}</svg>`;
+}
+function exerciseHistoryListBody(history,unit){
+ return history.map(({workout,entry})=>{
   const dateLabel=new Date(`${workout.date}T00:00:00`).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
   const sets=entry.sets||[];
   const rows=sets.length
    ?sets.map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${Number(s.weight)===0?`Bodyweight · ${Number(s.reps)} reps`:esc(formatSet(s,entry.unit||unit))}</span></div>`).join("")
    :`<div class="detail-set"><span>No sets recorded</span></div>`;
   return `<div class="workout-detail card"><strong>${esc(dateLabel)}</strong>${rows}</div>`;
- }).join(""):`<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No history</strong><span>Complete this exercise in a workout to see its history.</span></div>`;
+ }).join("");
+}
+function exerciseHistoryGraphBody(history,zoom){
+ const buckets=exerciseGraphBuckets(exerciseWeightedPoints(history),zoom);
+ if(!buckets.length){
+  return `<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#chart"/></svg><strong>No weighted sets</strong><span>Log a weighted set to see a graph.</span></div>`;
+ }
+ const zooms=["day","week","month","year"];
+ const zoomBar=`<div class="segment exercise-history-zoom">${zooms.map(z=>`<button type="button" class="${zoom===z?"active":""}" onclick="setExerciseHistoryZoom('${z}')">${z[0].toUpperCase()+z.slice(1)}</button>`).join("")}</div>`;
+ return `<div class="exercise-history-graph">${zoomBar}<div class="card exercise-history-graph-card"><div class="exercise-history-graph-scroll">${exerciseGraphSvg(buckets,zoom)}</div></div></div>`;
+}
+function setExerciseHistoryView(view){
+ exerciseHistoryUi.view=view==="graph"?"graph":"list";
+ renderExerciseHistorySheet();
+}
+function setExerciseHistoryZoom(zoom){
+ exerciseHistoryUi.zoom=["day","week","month","year"].includes(zoom)?zoom:"day";
+ renderExerciseHistorySheet();
+}
+function openExerciseHistory(id){
+ exerciseHistoryUi={id,view:"list",zoom:"day"};
+ renderExerciseHistorySheet();
+}
+function renderExerciseHistorySheet(){
+ const id=exerciseHistoryUi.id;
+ const exercise=exerciseScreenCatalog().find(e=>e.id===id)||state.exercises.find(e=>e.id===id);
+ if(!exercise)return;
+ const history=exerciseSessionHistory(id);
+ const latest=history[0]?.entry;
+ const unit=latest?.unit||history[0]?.workout?.unit||"kg";
+ const hasHistory=history.length>0;
+ const view=hasHistory&&exerciseHistoryUi.view==="graph"?"graph":"list";
+ const zoom=exerciseHistoryUi.zoom;
+ const ladder=view==="list"?exerciseProgressLadder(history):"";
+ const group=exerciseMuscleName(exercise)||"Unknown";
+ const toggle=hasHistory?`<span class="segment exercise-history-view"><button type="button" class="${view==="list"?"active":""}" onclick="setExerciseHistoryView('list')">List</button><button type="button" class="${view==="graph"?"active":""}" onclick="setExerciseHistoryView('graph')">Graph</button></span>`:"";
+ const body=!hasHistory
+  ?`<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No history</strong><span>Complete this exercise in a workout to see its history.</span></div>`
+  :view==="graph"?exerciseHistoryGraphBody(history,zoom):exerciseHistoryListBody(history,unit);
+ const fill=!hasHistory||(view==="graph"&&!exerciseWeightedPoints(history).length);
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
-   <h2 class="workout-form-title">${esc(exercise.name)}</h2>
-   <div class="muted workout-form-description">${esc(group)} · Exercise history</div>
+   <div class="exercise-history-head">
+    <div class="exercise-history-titles">
+     <h2 class="workout-form-title">${esc(exercise.name)}</h2>
+     <div class="muted workout-form-description">${esc(group)} · Exercise history</div>
+    </div>
+    ${toggle}
+   </div>
    ${ladder?`<div class="exercise-progress-ladder">${esc(ladder)}</div>`:""}
   </div>
-  <div class="workout-entry-scroll${hasHistory?"":" exercise-history-empty-scroll"}">${body}</div>
+  <div class="workout-entry-scroll${fill?" exercise-history-empty-scroll":""}${view==="graph"?" exercise-history-graph-scroll-host":""}">${body}</div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
   </div>

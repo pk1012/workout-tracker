@@ -231,6 +231,82 @@
   color:var(--text);
 }
 
+.exercise-history-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.exercise-history-titles{min-width:0;flex:1}
+.modal:has(.workout-entry-sheet) .exercise-history-head .workout-form-title{
+  margin:0 0 6px;
+}
+.exercise-history-view{
+  flex:none;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  width:118px;
+  margin-top:2px;
+}
+.exercise-history-view button{
+  min-width:0;
+  padding-left:0;
+  padding-right:0;
+  text-align:center;
+}
+
+.modal:has(.workout-entry-sheet) .workout-entry-scroll.exercise-history-graph-scroll-host{
+  display:flex;
+  flex-direction:column;
+  padding-top:14px;
+}
+.exercise-history-graph{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  min-height:0;
+  flex:1;
+}
+.exercise-history-zoom{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  width:100%;
+}
+.exercise-history-zoom button{
+  min-width:0;
+  padding-left:0;
+  padding-right:0;
+  text-align:center;
+}
+.exercise-history-graph-card{
+  flex:1;
+  min-height:220px;
+  margin:0;
+  padding:8px 2px 8px;
+  display:flex;
+  flex-direction:column;
+}
+.exercise-history-graph-scroll{
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x;
+  scrollbar-width:none;
+  flex:1;
+}
+.exercise-history-graph-scroll::-webkit-scrollbar{display:none}
+.exercise-history-plot{
+  display:block;
+  color:var(--primary);
+}
+.exercise-history-plot .graph-axis{
+  fill:var(--muted);
+  font-size:10px;
+  font-weight:650;
+  font-family:inherit;
+}
+.exercise-history-plot .graph-y{font-size:11px}
+
 /* Filter sheet — reuse week-picker list inside workout-entry-sheet. */
 .exercise-history-filter-list{
   margin-top:14px;
