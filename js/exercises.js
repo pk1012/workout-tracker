@@ -324,7 +324,7 @@ function exerciseGraphSvg(buckets,zoom,plotH){
  const slot=zoom==="week"?112:zoom==="month"?68:zoom==="year"?56:100;
  const h=Math.max(220,Math.floor(plotH||228));
  const padT=Math.round(h*0.3);
- const padL=40,padR=40,padB=zoom==="week"?46:36;
+ const padL=40,padR=40,padB=zoom==="week"?54:44;
  const innerMin=200;
  const w=Math.max(innerMin+padL+padR,(buckets.length-1)*slot+padL+padR);
  const innerW=Math.max(innerMin,w-padL-padR);
@@ -340,7 +340,7 @@ function exerciseGraphSvg(buckets,zoom,plotH){
  const values=buckets.map((b,i)=>`<text class="graph-dot-label" x="${xAt(i).toFixed(1)}" y="${(yAt(b.n)-10).toFixed(1)}" text-anchor="middle">${esc(graphWeightText(b.n))}</text>`).join("");
  const xLabels=buckets.map((b,i)=>{
   const x=xAt(i).toFixed(1);
-  const y=h-padB+14;
+  const y=h-padB+22;
   const inner=exerciseGraphAxisLabel(b.label);
   return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="middle">${inner}</text></g>`;
  }).join("");
