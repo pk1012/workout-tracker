@@ -321,10 +321,10 @@ function exerciseGraphAxisLabel(label){
  return esc(label);
 }
 function exerciseGraphSvg(buckets,zoom,plotH){
- const slot=zoom==="week"?112:zoom==="month"?68:zoom==="year"?56:76;
+ const slot=zoom==="week"?112:zoom==="month"?68:zoom==="year"?56:100;
  const h=Math.max(220,Math.floor(plotH||228));
  const padT=Math.round(h*0.3);
- const padL=18,padR=18,padB=zoom==="week"?46:36;
+ const padL=40,padR=40,padB=zoom==="week"?46:36;
  const innerMin=200;
  const w=Math.max(innerMin+padL+padR,(buckets.length-1)*slot+padL+padR);
  const innerW=Math.max(innerMin,w-padL-padR);
@@ -337,16 +337,12 @@ function exerciseGraphSvg(buckets,zoom,plotH){
  const pts=buckets.map((b,i)=>`${xAt(i).toFixed(1)},${yAt(b.n).toFixed(1)}`);
  const line=buckets.length>1?`<polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.join(" ")}"/>`:"";
  const dots=buckets.map((b,i)=>`<circle cx="${xAt(i).toFixed(1)}" cy="${yAt(b.n).toFixed(1)}" r="4" fill="currentColor"/>`).join("");
- const values=buckets.map((b,i)=>{
-  const anchor=buckets.length>1&&i===0?"start":buckets.length>1&&i===buckets.length-1?"end":"middle";
-  return `<text class="graph-dot-label" x="${xAt(i).toFixed(1)}" y="${(yAt(b.n)-10).toFixed(1)}" text-anchor="${anchor}">${esc(graphWeightText(b.n))}</text>`;
- }).join("");
+ const values=buckets.map((b,i)=>`<text class="graph-dot-label" x="${xAt(i).toFixed(1)}" y="${(yAt(b.n)-10).toFixed(1)}" text-anchor="middle">${esc(graphWeightText(b.n))}</text>`).join("");
  const xLabels=buckets.map((b,i)=>{
   const x=xAt(i).toFixed(1);
   const y=h-padB+14;
-  const anchor=buckets.length>1&&i===0?"start":buckets.length>1&&i===buckets.length-1?"end":"middle";
   const inner=exerciseGraphAxisLabel(b.label);
-  return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="${anchor}">${inner}</text></g>`;
+  return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="middle">${inner}</text></g>`;
  }).join("");
  return `<svg class="exercise-history-plot" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-hidden="true">${line}${dots}${values}${xLabels}</svg>`;
 }
