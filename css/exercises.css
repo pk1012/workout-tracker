@@ -229,10 +229,10 @@
   overflow-x:auto;
   overflow-y:hidden;
   white-space:nowrap;
-  font-size:14px;
-  line-height:1.4;
-  font-weight:650;
-  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+  font-weight:400;
+  color:var(--text);
   -webkit-overflow-scrolling:touch;
   touch-action:pan-x;
   scrollbar-width:none;
