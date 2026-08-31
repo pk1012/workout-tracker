@@ -324,7 +324,7 @@ function exerciseGraphSvg(buckets,zoom,plotH){
  const slot=zoom==="week"?112:zoom==="month"?68:zoom==="year"?56:76;
  const h=Math.max(220,Math.floor(plotH||228));
  const padT=Math.round(h*0.3);
- const padL=16,padR=18,padB=zoom==="week"?46:36;
+ const padL=16,padR=16,padB=zoom==="week"?46:36;
  const innerMin=200;
  const w=Math.max(innerMin+padL+padR,(buckets.length-1)*slot+padL+padR);
  const innerW=Math.max(innerMin,w-padL-padR);
