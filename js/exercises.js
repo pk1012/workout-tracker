@@ -322,12 +322,13 @@ function exerciseGraphAxisLabel(label){
 }
 function exerciseGraphSvg(buckets,zoom,plotH){
  const slot=zoom==="week"?112:zoom==="month"?68:zoom==="year"?56:76;
- const padL=22,padR=18,padT=18,padB=zoom==="week"?46:36;
  const h=Math.max(220,Math.floor(plotH||228));
+ const padT=Math.round(h*0.3);
+ const padL=16,padR=18,padB=zoom==="week"?46:36;
  const innerMin=200;
  const w=Math.max(innerMin+padL+padR,(buckets.length-1)*slot+padL+padR);
  const innerW=Math.max(innerMin,w-padL-padR);
- const innerH=h-padT-padB;
+ const innerH=Math.max(40,h-padT-padB);
  const ns=buckets.map(b=>b.n);
  const min=Math.min(...ns);
  const max=Math.max(...ns);
@@ -336,13 +337,14 @@ function exerciseGraphSvg(buckets,zoom,plotH){
  const pts=buckets.map((b,i)=>`${xAt(i).toFixed(1)},${yAt(b.n).toFixed(1)}`);
  const line=buckets.length>1?`<polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.join(" ")}"/>`:"";
  const dots=buckets.map((b,i)=>`<circle cx="${xAt(i).toFixed(1)}" cy="${yAt(b.n).toFixed(1)}" r="4" fill="currentColor"/>`).join("");
+ const values=buckets.map((b,i)=>`<text class="graph-dot-label" x="${xAt(i).toFixed(1)}" y="${(yAt(b.n)-10).toFixed(1)}" text-anchor="middle">${esc(graphWeightText(b.n))}</text>`).join("");
  const xLabels=buckets.map((b,i)=>{
   const x=xAt(i).toFixed(1);
   const y=h-padB+14;
   const inner=exerciseGraphAxisLabel(b.label);
   return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="middle">${inner}</text></g>`;
  }).join("");
- return `<svg class="exercise-history-plot" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-hidden="true">${line}${dots}${xLabels}</svg>`;
+ return `<svg class="exercise-history-plot" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-hidden="true">${line}${dots}${values}${xLabels}</svg>`;
 }
 function exerciseHistoryListBody(history,unit){
  return history.map(({workout,entry})=>{
@@ -361,14 +363,7 @@ function exerciseHistoryGraphBody(history,zoom){
  }
  const zooms=["day","week","month","year"];
  const zoomBar=`<div class="segment exercise-history-zoom">${zooms.map(z=>`<button type="button" class="${zoom===z?"active":""}" onclick="setExerciseHistoryZoom('${z}')">${z[0].toUpperCase()+z.slice(1)}</button>`).join("")}</div>`;
- const ns=buckets.map(b=>b.n);
- const min=Math.min(...ns);
- const max=Math.max(...ns);
- const unit=preferredUnit();
- const maxLabel=`${graphWeightText(max)} ${unit}`;
- const minLabel=max===min?"":`${graphWeightText(min)} ${unit}`;
- const yAxis=`<div class="exercise-history-graph-y" aria-hidden="true"><span>${esc(maxLabel)}</span>${minLabel?`<span>${esc(minLabel)}</span>`:""}</div>`;
- return `<div class="exercise-history-graph">${zoomBar}<div class="card exercise-history-graph-card" data-zoom="${esc(zoom)}"><div class="exercise-history-graph-plot">${yAxis}<div class="exercise-history-graph-scroll">${exerciseGraphSvg(buckets,zoom)}</div></div></div></div>`;
+ return `<div class="exercise-history-graph">${zoomBar}<div class="card exercise-history-graph-card" data-zoom="${esc(zoom)}"><div class="exercise-history-graph-plot"><div class="exercise-history-graph-scroll">${exerciseGraphSvg(buckets,zoom)}</div></div></div></div>`;
 }
 function setExerciseHistoryView(view){
  exerciseHistoryUi.view=view==="graph"?"graph":"list";
@@ -429,16 +424,12 @@ function renderExerciseHistorySheet(){
 function layoutExerciseHistoryGraph(){
  const run=()=>{
   const scroll=document.querySelector(".exercise-history-graph-scroll");
-  const axis=document.querySelector(".exercise-history-graph-y");
   if(!scroll)return;
   const h=Math.max(220,Math.floor(scroll.clientHeight||0));
   const history=exerciseSessionHistory(exerciseHistoryUi.id);
   const zoom=exerciseHistoryUi.zoom;
   const buckets=exerciseGraphBuckets(exerciseWeightedPoints(history),zoom);
-  if(buckets.length){
-   scroll.innerHTML=exerciseGraphSvg(buckets,zoom,h);
-   if(axis)axis.style.height=h+"px";
-  }
+  if(buckets.length)scroll.innerHTML=exerciseGraphSvg(buckets,zoom,h);
   scroll.scrollLeft=scroll.scrollWidth;
  };
  run();

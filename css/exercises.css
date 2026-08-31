@@ -300,24 +300,6 @@
   min-width:0;
   flex:1;
 }
-.exercise-history-graph-y{
-  flex:none;
-  width:52px;
-  min-height:220px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  padding:18px 6px 36px 4px;
-  box-sizing:border-box;
-  text-align:right;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:650;
-  line-height:1.2;
-}
-.exercise-history-graph-card[data-zoom="week"] .exercise-history-graph-y{
-  padding-bottom:46px;
-}
 .exercise-history-graph-scroll{
   overflow-x:auto;
   overflow-y:hidden;
@@ -336,6 +318,12 @@
 .exercise-history-plot .graph-axis{
   fill:var(--muted);
   font-size:10px;
+  font-weight:650;
+  font-family:inherit;
+}
+.exercise-history-plot .graph-dot-label{
+  fill:var(--text);
+  font-size:11px;
   font-weight:650;
   font-family:inherit;
 }
