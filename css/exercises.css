@@ -225,11 +225,19 @@
 
 .exercise-progress-ladder{
   margin:8px 0 0;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  white-space:nowrap;
   font-size:14px;
   line-height:1.4;
   font-weight:650;
   color:var(--text);
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x;
+  scrollbar-width:none;
 }
+.exercise-progress-ladder::-webkit-scrollbar{display:none}
 
 .exercise-history-head{
   display:flex;
