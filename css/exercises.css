@@ -290,7 +290,7 @@
   flex:1;
   min-height:220px;
   margin:0;
-  padding:12px;
+  padding:12px 14px 10px;
   display:flex;
   flex-direction:column;
 }
