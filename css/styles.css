@@ -199,6 +199,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .sheet h2{font-size:28px;font-weight:760;letter-spacing:-.6px}
 .modal{background:rgba(16,18,24,.42);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
 .modal-open{overflow:hidden}
+html.page-scroll-lock,
+html.page-scroll-lock body{
+  overflow:hidden !important;
+  overscroll-behavior:none;
+}
+html.page-scroll-lock body{
+  position:fixed;
+  left:0;
+  right:0;
+  width:100%;
+}
 .handle{width:44px;height:4px;margin-bottom:20px;background:var(--line)}
 .modal-actions{gap:10px}
 .confirm-icon{width:46px;height:46px;border-radius:14px;background:var(--soft);color:var(--primary);display:grid;place-items:center;margin-bottom:14px}.confirm-icon .icon{width:23px;height:23px}.confirm-title{margin-bottom:6px!important}.confirm-copy{font-size:14px;line-height:1.45}
