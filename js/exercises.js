@@ -337,12 +337,16 @@ function exerciseGraphSvg(buckets,zoom,plotH){
  const pts=buckets.map((b,i)=>`${xAt(i).toFixed(1)},${yAt(b.n).toFixed(1)}`);
  const line=buckets.length>1?`<polyline fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.join(" ")}"/>`:"";
  const dots=buckets.map((b,i)=>`<circle cx="${xAt(i).toFixed(1)}" cy="${yAt(b.n).toFixed(1)}" r="4" fill="currentColor"/>`).join("");
- const values=buckets.map((b,i)=>`<text class="graph-dot-label" x="${xAt(i).toFixed(1)}" y="${(yAt(b.n)-10).toFixed(1)}" text-anchor="middle">${esc(graphWeightText(b.n))}</text>`).join("");
+ const values=buckets.map((b,i)=>{
+  const anchor=buckets.length>1&&i===0?"start":buckets.length>1&&i===buckets.length-1?"end":"middle";
+  return `<text class="graph-dot-label" x="${xAt(i).toFixed(1)}" y="${(yAt(b.n)-10).toFixed(1)}" text-anchor="${anchor}">${esc(graphWeightText(b.n))}</text>`;
+ }).join("");
  const xLabels=buckets.map((b,i)=>{
   const x=xAt(i).toFixed(1);
   const y=h-padB+14;
+  const anchor=buckets.length>1&&i===0?"start":buckets.length>1&&i===buckets.length-1?"end":"middle";
   const inner=exerciseGraphAxisLabel(b.label);
-  return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="middle">${inner}</text></g>`;
+  return `<g transform="translate(${x} ${y})"><text class="graph-axis graph-x" text-anchor="${anchor}">${inner}</text></g>`;
  }).join("");
  return `<svg class="exercise-history-plot" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-hidden="true">${line}${dots}${values}${xLabels}</svg>`;
 }
