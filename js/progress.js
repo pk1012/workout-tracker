@@ -1,4 +1,4 @@
-/* Progress page only.
+/* History page (#progress).
  * This file intentionally touches only #progress / #progressView.
  */
 function progressWorkoutEntries(){
