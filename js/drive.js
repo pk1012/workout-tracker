@@ -744,6 +744,7 @@ function queueDriveSave(reason){
 
 function syncDrive(){
  if(!isDriveConnected()){connectDrive();return}
+ if(!driveSyncNeeded()){renderDriveCard();return}
  queueDriveSave("sync");
 }
 
