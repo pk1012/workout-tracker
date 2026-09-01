@@ -1,4 +1,5 @@
 const {
+ looksLikeState,
  isValidState,
  historicalWorkoutExerciseMuscleId,
  uniqueRestoredName,
@@ -36,6 +37,10 @@ const sameDay={
  ]
 };
 assert.strictEqual(isValidState(sameDay),false);
+assert.strictEqual(looksLikeState(sameDay),true);
+assert.strictEqual(looksLikeState(dup),true);
+assert.strictEqual(looksLikeState({muscles:[],exercises:[],workouts:[]}),true);
+assert.strictEqual(looksLikeState({workouts:[]}),false);
 
 const chest="m-chest",tri="m-tri",bench="e-bench";
 const afterMove={

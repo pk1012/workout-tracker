@@ -50,8 +50,11 @@
   });
   return {...w,exercises};
  }
+ function looksLikeState(s){
+  return !!(s&&Array.isArray(s.muscles)&&Array.isArray(s.exercises)&&Array.isArray(s.workouts));
+ }
  function isValidState(s){
-  if(!s||!Array.isArray(s.muscles)||!Array.isArray(s.exercises)||!Array.isArray(s.workouts))return false;
+  if(!looksLikeState(s))return false;
   if(!s.muscles.every(m=>m&&typeof m.id==="string"&&typeof m.name==="string"&&m.name.trim()))return false;
   const muscleIds=new Set(s.muscles.map(m=>m.id));
   if(muscleIds.size!==s.muscles.length)return false;
@@ -80,7 +83,7 @@
    });
   });
  }
- const api={isValidDateString,uniqueRestoredName,catalogExerciseMuscleId,historicalWorkoutExerciseMuscleId,findWorkoutOnDate,stampWorkoutExerciseMuscleIds,isValidState};
+ const api={isValidDateString,uniqueRestoredName,catalogExerciseMuscleId,historicalWorkoutExerciseMuscleId,findWorkoutOnDate,stampWorkoutExerciseMuscleIds,looksLikeState,isValidState};
  if(typeof module==="object"&&module.exports)module.exports=api;
  else Object.assign(root,api);
 })(typeof globalThis!=="undefined"?globalThis:this);

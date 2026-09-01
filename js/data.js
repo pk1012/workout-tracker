@@ -1,4 +1,4 @@
-const VERSION="1.7.292",BUILD="2026.09.01";
+const VERSION="1.7.293",BUILD="2026.09.01";
 const defaults={Abs:["Cable Crunch","Hanging Leg Raise","Plank"],Back:["Lat Pulldown","Seated Cable Row","Single Arm Dumbbell Row","T-Bar Row"],Biceps:["Behind-the-Back Cable Curl","Cable Curl","Hammer Curl","Incline Dumbbell Curl"],Calves:["Calf Raise","Seated Calf Raise"],Cardio:["Cycling","Running","Walking"],Chest:["Flat Bench Press","Inclined Dumbbell Press","Pec Deck Fly","Wide Chest Press Machine"],Legs:["Leg Extension","Leg Press","Romanian Deadlift","Squat"],Shoulders:["Dumbbell Lateral Raise","Face Pull","Overhead Press","Rear Delt Fly"],Triceps:["Cable Pushdown","Overhead Cable Extension","Skull Crusher"]};
 const STORE_KEY="wt_state";
 const STORE_BACKUP_KEY="wt_state_backup";
@@ -7,9 +7,6 @@ const DEVICE_KEY="wt_device_id";
 const IDB_NAME="workout-tracker";
 function newId(){return globalThis.crypto?.randomUUID?crypto.randomUUID():`id-${Date.now()}-${Math.random().toString(36).slice(2)}`}
 
-function looksLikeState(s){
- return !!(s&&Array.isArray(s.muscles)&&Array.isArray(s.exercises)&&Array.isArray(s.workouts));
-}
 function readLocalState(key){
  try{
   const parsed=JSON.parse(localStorage.getItem(key)||"null");
