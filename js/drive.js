@@ -124,8 +124,17 @@ function clearDriveSession(opts={}){
 function drivePending(){return lsGet(K_PENDING)==="1"}
 function driveDeclined(){return lsGet(K_DECLINED)==="1"}
 function driveAdopted(){return lsGet(K_ADOPTED)==="1"}
+function driveComparableHash(s){
+ if(typeof driveContentHash!=="function")return "";
+ try{
+  const copy=JSON.parse(JSON.stringify(s||{}));
+  delete copy.activeWorkout;
+  if(typeof migrateState==="function")migrateState(copy);
+  return driveContentHash(copy);
+ }catch(err){return ""}
+}
 function driveStateHash(){
- return typeof driveContentHash==="function"?driveContentHash(state):"";
+ return driveComparableHash(state);
 }
 function markDriveSynced(){const h=driveStateHash();if(h)lsSet(K_HASH,h)}
 function isDriveDirty(){
@@ -640,7 +649,7 @@ async function runDriveHandshake(reason){
  driveBusy=true;
  try{
   const remote=await loadDriveRemote();
-  const contentSame=!remote.unreadable&&!!remote.state&&driveContentHash(state)===driveContentHash(remote.state);
+  const contentSame=!remote.unreadable&&!!remote.state&&driveComparableHash(state)===driveComparableHash(remote.state);
   const decision=drivePolicy({
    hasLocalWorkouts:hasCompletedWorkouts(state),
    remoteExists:remote.exists,
@@ -763,7 +772,7 @@ function queueDriveSave(reason){
   });
   if(preview.action!=="upload"){
    if(preview.action==="idle"&&!isDriveDirty())setDriveDiverge(false);
-   else if(preview.action==="need-confirm")setDriveDiverge(true);
+   else if(preview.action==="need-confirm")runDriveHandshake(reason);
    return;
   }
   setDrivePending(true);
@@ -810,12 +819,9 @@ function driveAfterFileRestore(){
   queueDriveSave("auto");
   return;
  }
- if(preview.action==="idle"){
-  setDriveDiverge(false);
-  return;
- }
- setDriveDiverge(true);
- notify("This phone was restored. Sync and confirm to update Google Drive.");
+ Promise.resolve(runDriveHandshake("auto")).then(()=>{
+  if(lsGet(K_DIVERGE)==="1")notify("This phone was restored. Sync and confirm to update Google Drive.");
+ });
 }
 
 function openNotifications(){

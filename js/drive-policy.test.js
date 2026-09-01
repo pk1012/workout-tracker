@@ -58,6 +58,13 @@ assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:lo
 const hashA=driveContentHash(state);
 const hashB=driveContentHash(parseDriveBackup(driveSnapshot(state,{version:"2",savedAt:"later",deviceId:other})).state);
 assert.strictEqual(hashA,hashB);
+const reordered={
+ muscles:[{name:"Chest",id:"m1"}],
+ exercises:[{muscleId:"m1",name:"Bench",id:"e1"}],
+ workouts:[{exercises:[],muscles:["m1"],date:"2026-08-01",id:"w1"}],
+ bin:{muscles:[],exercises:[],workouts:[]}
+};
+assert.strictEqual(driveContentHash(state),driveContentHash(reordered));
 assert.notStrictEqual(driveContentHash(state),driveContentHash({...state,workouts:[]}));
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:other,contentSame:true}).action,"idle");
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:local,contentSame:true}).action,"idle");

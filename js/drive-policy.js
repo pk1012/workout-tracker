@@ -39,10 +39,15 @@
   };
  }
 
+ function stableStringify(value){
+  if(value===null||typeof value!=="object")return JSON.stringify(value);
+  if(Array.isArray(value))return `[${value.map(stableStringify).join(",")}]`;
+  return `{${Object.keys(value).sort().map(k=>`${JSON.stringify(k)}:${stableStringify(value[k])}`).join(",")}}`;
+ }
  function driveContentHash(s){
   try{
    const snap=driveSnapshot(s,{version:"",savedAt:"",deviceId:""});
-   const text=JSON.stringify(snap.state);
+   const text=stableStringify(snap.state);
    let h=2166136261;
    for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
    return (h>>>0).toString(16);
@@ -92,7 +97,7 @@
   return{action:"upload",sameWriter,otherWriter};
  }
 
- const api={hasCompletedWorkouts,driveSnapshot,parseDriveBackup,driveContentHash,drivePolicy};
+ const api={hasCompletedWorkouts,driveSnapshot,parseDriveBackup,stableStringify,driveContentHash,drivePolicy};
  if(typeof module==="object"&&module.exports)module.exports=api;
  else Object.assign(root,api);
 })(typeof globalThis!=="undefined"?globalThis:this);
