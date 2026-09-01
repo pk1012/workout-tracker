@@ -39,6 +39,20 @@
   };
  }
 
+ function omitDeletedAt(item){
+  if(!item||typeof item!=="object")return item;
+  const next={...item};
+  delete next.deletedAt;
+  if(Array.isArray(next.exercises))next.exercises=next.exercises.map(omitDeletedAt);
+  return next;
+ }
+ function binForHash(bin){
+  return{
+   workouts:(bin?.workouts||[]).map(omitDeletedAt),
+   exercises:(bin?.exercises||[]).map(omitDeletedAt),
+   muscles:(bin?.muscles||[]).map(omitDeletedAt)
+  };
+ }
  function stableStringify(value){
   if(value===null||typeof value!=="object")return JSON.stringify(value);
   if(Array.isArray(value))return `[${value.map(stableStringify).join(",")}]`;
@@ -47,7 +61,7 @@
  function driveContentHash(s){
   try{
    const snap=driveSnapshot(s,{version:"",savedAt:"",deviceId:""});
-   const text=stableStringify(snap.state);
+   const text=stableStringify({...snap.state,bin:binForHash(snap.state.bin)});
    let h=2166136261;
    for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
    return (h>>>0).toString(16);
