@@ -158,7 +158,7 @@ function exerciseScreenItems(){
 }
 
 function exerciseCategoryNames(){
- return ["All","Chest","Back","Legs","Shoulders","Arms","Core","Calves","Cardio"];
+ return ["All","Arms","Back","Calves","Cardio","Chest","Core","Legs","Shoulders"];
 }
 function exerciseCategoryButtons(){
  return exerciseCategoryNames().map(name=>`<button type="button" class="exercise-chip ${exerciseScreenState.filter===name?"active":""}" onclick="setExerciseFilter('${name}')">${name}</button>`).join("");
