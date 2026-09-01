@@ -39,6 +39,16 @@
   };
  }
 
+ function driveContentHash(s){
+  try{
+   const snap=driveSnapshot(s,{version:"",savedAt:"",deviceId:""});
+   const text=JSON.stringify(snap.state);
+   let h=2166136261;
+   for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
+   return (h>>>0).toString(16);
+  }catch(err){return ""}
+ }
+
  /* sameWriter: this install last wrote the file, or there is no file yet.
     otherWriter: a different install wrote the file (or the file has no device id). */
  function drivePolicy(input){
@@ -49,12 +59,14 @@
   const flushEmpty=!!input.flushEmpty;
   const flushLibrary=!!input.flushLibrary;
   const adopted=!!input.adopted;
+  const contentSame=!!input.contentSame;
   const localDeviceId=input.localDeviceId||"";
   const remoteDeviceId=input.remoteDeviceId||"";
   const sameWriter=!remoteExists||adopted||(!!remoteDeviceId&&remoteDeviceId===localDeviceId);
   const otherWriter=remoteExists&&!adopted&&(!remoteDeviceId||remoteDeviceId!==localDeviceId);
 
   if(forceOverwrite)return{action:"upload",sameWriter,otherWriter};
+  if(contentSame&&remoteExists)return{action:"idle",sameWriter,otherWriter};
   if(flushEmpty){
    if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};
    return{action:"upload",sameWriter,otherWriter};
@@ -80,7 +92,7 @@
   return{action:"upload",sameWriter,otherWriter};
  }
 
- const api={hasCompletedWorkouts,driveSnapshot,parseDriveBackup,drivePolicy};
+ const api={hasCompletedWorkouts,driveSnapshot,parseDriveBackup,driveContentHash,drivePolicy};
  if(typeof module==="object"&&module.exports)module.exports=api;
  else Object.assign(root,api);
 })(typeof globalThis!=="undefined"?globalThis:this);

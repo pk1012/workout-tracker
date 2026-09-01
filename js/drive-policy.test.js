@@ -1,4 +1,4 @@
-const {hasCompletedWorkouts,driveSnapshot,parseDriveBackup,drivePolicy}=require("./drive-policy.js");
+const {hasCompletedWorkouts,driveSnapshot,parseDriveBackup,driveContentHash,drivePolicy}=require("./drive-policy.js");
 const assert=require("assert");
 
 const local="device-a";
@@ -54,5 +54,15 @@ assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:loc
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:other,flushLibrary:true}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushLibrary:true}).action,"offer-restore");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushLibrary:true,restoreDeclined:true}).action,"need-confirm");
+
+const hashA=driveContentHash(state);
+const hashB=driveContentHash(parseDriveBackup(driveSnapshot(state,{version:"2",savedAt:"later",deviceId:other})).state);
+assert.strictEqual(hashA,hashB);
+assert.notStrictEqual(driveContentHash(state),driveContentHash({...state,workouts:[]}));
+assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:other,contentSame:true}).action,"idle");
+assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:local,contentSame:true}).action,"idle");
+assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:other,contentSame:true,forceOverwrite:true}).action,"upload");
+assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:other,contentSame:true,flushLibrary:true}).action,"idle");
+assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:other,contentSame:false}).action,"need-confirm");
 
 console.log("drive-policy tests passed");

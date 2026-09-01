@@ -125,13 +125,7 @@ function drivePending(){return lsGet(K_PENDING)==="1"}
 function driveDeclined(){return lsGet(K_DECLINED)==="1"}
 function driveAdopted(){return lsGet(K_ADOPTED)==="1"}
 function driveStateHash(){
- try{
-  const snap=driveSnapshot(state,{version:"",savedAt:"",deviceId:""});
-  const text=JSON.stringify(snap.state);
-  let h=2166136261;
-  for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619)}
-  return (h>>>0).toString(16);
- }catch(err){return ""}
+ return typeof driveContentHash==="function"?driveContentHash(state):"";
 }
 function markDriveSynced(){const h=driveStateHash();if(h)lsSet(K_HASH,h)}
 function isDriveDirty(){
@@ -557,14 +551,18 @@ function confirmDriveRestore(){
  delete next.activeWorkout;
  state=migrateState(next);
  save();
- lsSet(K_ADOPTED,"1");
+ lsDel(K_ADOPTED);
  lsDel(K_DECLINED);
+ if(remote.deviceId)lsSet(K_REMOTE,remote.deviceId);
+ if(remote.savedAt)lsSet(K_SAVED,remote.savedAt);
+ markDriveSynced();
+ setDriveDiverge(false);
+ setDrivePending(false);
  clearRestoreNotification();
  selected=new Date();selected.setHours(0,0,0,0);if(typeof monthStart==="function")selectedMonth=monthStart(selected);
  closeModal();
  go("workouts");
  notify("Backup restored successfully.","success");
- queueDriveSave("connect");
 }
 
 function declineDriveRestore(){
@@ -601,6 +599,7 @@ async function runDriveHandshake(reason){
  driveBusy=true;
  try{
   const remote=await loadDriveRemote();
+  const contentSame=!remote.unreadable&&!!remote.state&&driveContentHash(state)===driveContentHash(remote.state);
   const decision=drivePolicy({
    hasLocalWorkouts:hasCompletedWorkouts(state),
    remoteExists:remote.exists,
@@ -611,8 +610,18 @@ async function runDriveHandshake(reason){
    forceOverwrite:reason==="overwrite",
    flushEmpty:reason==="empty",
    flushLibrary:reason==="library",
-   remoteHasWorkouts:remote.unreadable?true:hasCompletedWorkouts(remote.state)
+   remoteHasWorkouts:remote.unreadable?true:hasCompletedWorkouts(remote.state),
+   contentSame
   });
+  if(decision.action==="idle"){
+   if(contentSame){
+    setDriveDiverge(false);
+    markDriveSynced();
+    setDrivePending(false);
+   }
+   renderDriveCard();
+   return;
+  }
   if(decision.action==="offer-restore"){
    setDrivePending(false);
    if(reason==="library"){renderDriveCard();return}
@@ -708,10 +717,12 @@ function queueDriveSave(reason){
    restoreDeclined:driveDeclined(),
    adopted:driveAdopted(),
    flushEmpty:reason==="empty",
-   flushLibrary:reason==="library"
+   flushLibrary:reason==="library",
+   contentSame:!isDriveDirty()
   });
   if(preview.action!=="upload"){
-   if(preview.action==="need-confirm")setDriveDiverge(true);
+   if(preview.action==="idle"&&!isDriveDirty())setDriveDiverge(false);
+   else if(preview.action==="need-confirm")setDriveDiverge(true);
    return;
   }
   setDrivePending(true);
@@ -749,11 +760,16 @@ function driveAfterFileRestore(){
   remoteDeviceId:lsGet(K_REMOTE),
   localDeviceId:getDeviceId(),
   restoreDeclined:driveDeclined(),
-  adopted:driveAdopted()
+  adopted:driveAdopted(),
+  contentSame:!isDriveDirty()
  });
  if(preview.action==="upload"){
   setDriveDiverge(false);
   queueDriveSave("auto");
+  return;
+ }
+ if(preview.action==="idle"){
+  setDriveDiverge(false);
   return;
  }
  setDriveDiverge(true);
