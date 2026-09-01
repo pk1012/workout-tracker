@@ -68,3 +68,21 @@ function renderProgress(){
     ${renderRecentWorkouts()}
   `;
 }
+
+function historyExportWorkouts(){
+  return [...(state.workouts||[])].sort((a,b)=>{
+    const dateDiff=(a.date||"").localeCompare(b.date||"");
+    return dateDiff || (a.createdAt||0)-(b.createdAt||0);
+  });
+}
+
+function historyExportFileStem(){
+  return `Workout-History-${dateKey(new Date())}`;
+}
+
+async function exportHistoryXlsx(){
+  const headers=["Date","Title","Exercise","Set","Weight","Unit","Reps","Start","End","Duration"];
+  const rows=historyExportWorkouts().flatMap(w=>workoutExportRows(w));
+  const blob=buildXlsx(headers,rows,"History");
+  await saveXlsxFile(blob,`${historyExportFileStem()}.xlsx`);
+}

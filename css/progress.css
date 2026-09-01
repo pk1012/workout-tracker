@@ -1,4 +1,27 @@
 /* History page — all selectors are scoped to #progress. */
+#progress .history-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+#progress .history-head-copy{min-width:0;flex:1}
+#progress .history-export{
+  flex:none;
+  width:40px;
+  height:40px;
+  margin-top:0;
+  padding-top:1px;
+  display:grid;
+  align-content:start;
+  justify-items:center;
+  color:var(--primary);
+}
+#progress .history-export .icon{
+  width:22px;
+  height:22px;
+}
+
 #progress #progressView{
   display:grid;
   gap:16px;
