@@ -28,11 +28,48 @@ function isLiveExercise(id){return state.exercises.some(e=>e.id===id)}
 function musclePickButton(id,name,gone){
  const slug=String(name).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
  const chosen=(workoutDraft.muscles||[]).includes(id);
- return `<button type="button" class="pick workout-muscle-button workout-muscle-${slug}${chosen?" selected":""}${gone?" library-gone":""}" data-muscle="${id}" onclick="this.classList.toggle('selected')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(name)}</span></button>`;
+ return `<button type="button" class="pick workout-muscle-button workout-muscle-${slug}${chosen?" selected":""}${gone?" library-gone":""}" data-muscle="${esc(id)}" onclick="toggleDraftMuscle('${esc(id)}')"><span class="workout-muscle-icon" aria-hidden="true"><svg class="icon"><use href="#dumbbell"/></svg></span><span>${esc(name)}</span></button>`;
 }
 function exercisePickButton(id,name,gone){
  const on=(workoutDraft.exercises||[]).some(x=>x.exerciseId===id);
- return `<button type="button" class="exercise-row exercise-pick pick${on?" selected":""}${gone?" library-gone":""}" data-exercise="${id}" onclick="this.classList.toggle('selected')"><span>${esc(name)}</span><span class="pick-plus"><svg class="icon" aria-hidden="true"><use href="#plus"/></svg></span></button>`;
+ return `<button type="button" class="exercise-row exercise-pick pick${on?" selected":""}${gone?" library-gone":""}" data-exercise="${esc(id)}" onclick="toggleDraftExercise('${esc(id)}')"><span>${esc(name)}</span><span class="pick-plus"><svg class="icon" aria-hidden="true"><use href="#plus"/></svg></span></button>`;
+}
+function selectedPickIds(attr){
+ return [...document.querySelectorAll(`[data-${attr}].selected`)].map(el=>el.getAttribute(`data-${attr}`)).filter(Boolean);
+}
+function idsInTapOrder(stored,selected){
+ const set=new Set(selected||[]);
+ const kept=(stored||[]).filter(id=>set.has(id));
+ const extra=(selected||[]).filter(id=>!kept.includes(id));
+ return [...kept,...extra];
+}
+function toggleDraftMuscle(id){
+ const btn=document.querySelector(`[data-muscle="${id}"]`);
+ if(!btn)return;
+ const on=btn.classList.toggle("selected");
+ const ids=workoutDraft.muscles||[];
+ workoutDraft.muscles=on?(ids.includes(id)?ids:[...ids,id]):ids.filter(x=>x!==id);
+}
+function draftExerciseEntry(id){
+ const previous=(workoutDraft.exercises||[]).find(e=>e.exerciseId===id);
+ if(previous)return previous;
+ const ghost=(workoutDraft.goneExercises||[]).find(e=>e.exerciseId===id);
+ if(ghost)return {exerciseId:id,name:ghost.name||"Deleted exercise",muscleId:ghost.muscleId,sets:ghost.sets?.length?ghost.sets.map(s=>({...s})):[{weight:"",reps:""}]};
+ const live=state.exercises.find(e=>e.id===id);
+ if(live)return {exerciseId:id,name:live.name,muscleId:live.muscleId,sets:[{weight:"",reps:""}]};
+ return null;
+}
+function toggleDraftExercise(id){
+ const btn=document.querySelector(`[data-exercise="${id}"]`);
+ if(!btn)return;
+ const on=btn.classList.toggle("selected");
+ const list=workoutDraft.exercises||[];
+ if(on){
+  if(!list.some(e=>e.exerciseId===id)){
+   const entry=draftExerciseEntry(id);
+   if(entry)workoutDraft.exercises=[...list,entry];
+  }
+ }else workoutDraft.exercises=list.filter(e=>e.exerciseId!==id);
 }
 let selectedWeekStart=weekStart(new Date());
 let selectedMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
@@ -282,7 +319,7 @@ function editWorkout(id){
  renderWorkoutBasicsSheet();
 }
 function chooseExercises(){
- let ids=[...document.querySelectorAll("[data-muscle].selected")].map(x=>x.dataset.muscle),date=document.getElementById("workDate")?.value,start=document.getElementById("startTime")?.value,end=document.getElementById("endTime")?.value;
+ let ids=idsInTapOrder(workoutDraft.muscles,selectedPickIds("muscle")),date=document.getElementById("workDate")?.value,start=document.getElementById("startTime")?.value,end=document.getElementById("endTime")?.value;
  if(!ids.length){notify("Select at least one muscle group.");return}
  if(!isValidDateString(date)){notify("Choose a valid workout date.");return}
  if(workoutOnDate(date,workoutDraft.editId)){notify(dateTakenMessage());return}
@@ -336,18 +373,9 @@ function renderExerciseSelection(){
 }
 
 function continueToSetDetails(){
- const ids=[...document.querySelectorAll("[data-exercise].selected")].map(x=>x.dataset.exercise);
+ const ids=idsInTapOrder((workoutDraft.exercises||[]).map(e=>e.exerciseId),selectedPickIds("exercise"));
  if(!ids.length){notify("Select at least one exercise.");return}
- const previous=new Map((workoutDraft.exercises||[]).map(e=>[e.exerciseId,e]));
- const gone=new Map((workoutDraft.goneExercises||[]).map(e=>[e.exerciseId,e]));
- workoutDraft.exercises=ids.map(id=>{
-  if(previous.has(id))return previous.get(id);
-  const ghost=gone.get(id);
-  if(ghost)return {exerciseId:id,name:ghost.name||"Deleted exercise",muscleId:ghost.muscleId,sets:ghost.sets?.length?ghost.sets.map(s=>({...s})):[{weight:"",reps:""}]};
-  const live=state.exercises.find(e=>e.id===id);
-  if(live)return {exerciseId:id,name:live.name,muscleId:live.muscleId,sets:[{weight:"",reps:""}]};
-  return null;
- }).filter(Boolean);
+ workoutDraft.exercises=ids.map(id=>draftExerciseEntry(id)).filter(Boolean);
  if(!workoutDraft.exercises.length){notify("Select at least one exercise.");return}
  renderSetDetails();
 }
