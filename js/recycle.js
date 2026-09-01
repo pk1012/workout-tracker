@@ -109,7 +109,7 @@ function renderRecycleToolbar(){
     <svg class="icon" aria-hidden="true"><use href="#filter"/></svg><span>Filter</span>
    </button>
   </div>
-  <div class="exercise-chip-scroller" role="tablist" aria-label="Deleted item types">${recycleChip("all","All")}${recycleChip("workouts","Workouts")}${recycleChip("muscles","Muscle groups")}${recycleChip("exercises","Exercises")}</div>`;
+  <div class="exercise-chip-scroller" role="tablist" aria-label="Deleted item types">${recycleChip("all","All")}${recycleChip("exercises","Exercises")}${recycleChip("muscles","Muscle groups")}${recycleChip("workouts","Workouts")}</div>`;
 }
 
 function refreshRecycleList(){
