@@ -106,9 +106,7 @@ function exerciseProgressLadder(sessionsNewestFirst){
 function exerciseCategoryMatches(exercise,filter){
  if(filter==="All")return true;
  const group=exerciseMuscleName(exercise).toLowerCase();
- if(filter==="Arms")return group==="biceps"||group==="triceps"||group==="forearms";
- if(filter==="Core")return group==="abs"||group==="core";
- return group===filter.toLowerCase();
+ return group===String(filter||"").toLowerCase();
 }
 
 function exerciseHistory(exerciseId){
@@ -158,10 +156,15 @@ function exerciseScreenItems(){
 }
 
 function exerciseCategoryNames(){
- return ["All","Arms","Back","Calves","Cardio","Chest","Core","Legs","Shoulders"];
+ return ["All",...sortedMuscles().map(m=>m.name)];
+}
+function exerciseFilterChip(name,active,fn){
+ return `<button type="button" class="exercise-chip ${active?"active":""}" onclick="${esc(`${fn}(${JSON.stringify(name)})`)}">${esc(name)}</button>`;
 }
 function exerciseCategoryButtons(){
- return exerciseCategoryNames().map(name=>`<button type="button" class="exercise-chip ${exerciseScreenState.filter===name?"active":""}" onclick="setExerciseFilter('${name}')">${name}</button>`).join("");
+ const names=exerciseCategoryNames();
+ if(!names.includes(exerciseScreenState.filter))exerciseScreenState.filter="All";
+ return names.map(name=>exerciseFilterChip(name,exerciseScreenState.filter===name,"setExerciseFilter")).join("");
 }
 
 function renderExerciseScreenRows(items){
@@ -442,7 +445,9 @@ function layoutExerciseHistoryGraph(){
 let libraryState={search:"",filter:"All",emptyGroups:"all"};
 
 function libraryCategoryButtons(){
- return exerciseCategoryNames().map(name=>`<button type="button" class="exercise-chip ${libraryState.filter===name?"active":""}" onclick="setLibraryFilter('${name}')">${name}</button>`).join("");
+ const names=exerciseCategoryNames();
+ if(!names.includes(libraryState.filter))libraryState.filter="All";
+ return names.map(name=>exerciseFilterChip(name,libraryState.filter===name,"setLibraryFilter")).join("");
 }
 function libraryQuery(){return (libraryState.search||"").trim().toLowerCase()}
 function libraryMuscleMatches(muscle,filter){
