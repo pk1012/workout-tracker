@@ -1,4 +1,4 @@
-const VERSION="1.7.296",BUILD="2026.09.01";
+const VERSION="1.7.297",BUILD="2026.09.01";
 const defaults={Abs:["Cable Crunch","Hanging Leg Raise","Plank"],Back:["Lat Pulldown","Seated Cable Row","Single Arm Dumbbell Row","T-Bar Row"],Biceps:["Behind-the-Back Cable Curl","Cable Curl","Hammer Curl","Incline Dumbbell Curl"],Calves:["Calf Raise","Seated Calf Raise"],Cardio:["Cycling","Running","Walking"],Chest:["Flat Bench Press","Inclined Dumbbell Press","Pec Deck Fly","Wide Chest Press Machine"],Legs:["Leg Extension","Leg Press","Romanian Deadlift","Squat"],Shoulders:["Dumbbell Lateral Raise","Face Pull","Overhead Press","Rear Delt Fly"],Triceps:["Cable Pushdown","Overhead Cable Extension","Skull Crusher"]};
 const STORE_KEY="wt_state";
 const STORE_BACKUP_KEY="wt_state_backup";
@@ -75,9 +75,16 @@ function openIdb(){
    const db=req.result;
    if(!db.objectStoreNames.contains("kv"))db.createObjectStore("kv");
   };
-  req.onsuccess=()=>resolve(req.result);
+  req.onsuccess=()=>{
+   const db=req.result;
+   db.onversionchange=()=>closeIdb(db);
+   resolve(db);
+  };
   req.onerror=()=>reject(req.error);
  });
+}
+function closeIdb(db){
+ try{db&&db.close()}catch(err){}
 }
 function unwrapIdb(raw){
  if(looksLikeState(raw))return{state:raw,at:0};
@@ -121,11 +128,13 @@ async function persistAllNow(){
  const localOk=writeLocal(json,at);
  requestPersistentStorage();
  let idbOk=false;
+ let db;
  try{
-  const db=await openIdb();
+  db=await openIdb();
   await idbWriteState(db,snapshot,at);
   idbOk=true;
  }catch(err){}
+ finally{closeIdb(db)}
  if(!localOk&&!idbOk){warnPersistFailed();return false}
  return true;
 }
@@ -142,6 +151,8 @@ function persistAll(){
 }
 function save(){persistAll()}
 async function wipeStoredData(){
+ persistWanted=false;
+ try{await persistLock}catch(err){}
  try{localStorage.removeItem(STORE_KEY)}catch(err){}
  try{localStorage.removeItem(STORE_BACKUP_KEY)}catch(err){}
  try{localStorage.removeItem(STORE_AT_KEY)}catch(err){}
@@ -157,8 +168,10 @@ let state=readLocalState(STORE_KEY)||readLocalState(STORE_BACKUP_KEY);
 const storageReady=(async()=>{
  try{
   const db=await openIdb();
-  const idb=await idbGetState(db);
-  state=pickNewerState(state,readLocalAt(),idb.state,idb.at);
+  try{
+   const idb=await idbGetState(db);
+   state=pickNewerState(state,readLocalAt(),idb.state,idb.at);
+  }finally{closeIdb(db)}
  }catch(err){}
  if(!state)state=seedDefaults();
  migrateState(state);
