@@ -88,6 +88,61 @@ function monthDates(d){
 }
 function inSelectedMonth(d){return d.getFullYear()===selectedMonth.getFullYear()&&d.getMonth()===selectedMonth.getMonth()}
 function iAmThisMonth(d){const n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()}
+function earliestLoggedDate(){
+ let min=null;
+ (state.workouts||[]).forEach(w=>{
+  if(!isValidDateString(w?.date))return;
+  if(!min||w.date<min)min=w.date;
+ });
+ return min?new Date(min+"T00:00:00"):null;
+}
+function shiftMonth(d,n){
+ const x=monthStart(d);
+ x.setMonth(x.getMonth()+n);
+ return monthStart(x);
+}
+function shiftWeek(d,n){
+ const x=weekStart(d);
+ x.setDate(x.getDate()+n*7);
+ return weekStart(x);
+}
+function monthPickerItems(){
+ const now=monthStart(new Date());
+ const newest=shiftMonth(now,12);
+ let oldest=shiftMonth(now,-12);
+ const first=earliestLoggedDate();
+ if(first){
+  const em=monthStart(first);
+  if(em<oldest)oldest=em;
+ }
+ const items=[];
+ for(let d=newest,guard=0;d>=oldest&&guard<240;d=shiftMonth(d,-1),guard++)items.push(new Date(d));
+ return items;
+}
+function weekPickerItems(){
+ const now=weekStart(new Date());
+ const newest=shiftWeek(now,52);
+ let oldest=shiftWeek(now,-52);
+ const first=earliestLoggedDate();
+ if(first){
+  const ew=weekStart(first);
+  if(ew<oldest)oldest=ew;
+ }
+ const items=[];
+ for(let d=newest,guard=0;d>=oldest&&guard<1200;d=shiftWeek(d,-1),guard++)items.push(new Date(d));
+ return items;
+}
+function pinPickerChoice(){
+ const el=document.querySelector(".modal.show .week-list button.chosen");
+ const box=el&&el.closest(".workout-entry-scroll");
+ if(!el||!box)return;
+ const go=()=>{
+  const top=el.getBoundingClientRect().top-box.getBoundingClientRect().top+box.scrollTop;
+  box.scrollTop=Math.max(0,top-box.clientHeight/2+el.clientHeight/2);
+ };
+ go();
+ requestAnimationFrame(go);
+}
 function weekdayHeads(){return weekDates(weekStart(new Date())).map(d=>d.toLocaleDateString("en-IN",{weekday:"short"}))}
 
 function renderCalendar(){
@@ -124,7 +179,7 @@ function renderRecentWorkouts(){ /* History page. */ const ws=[...state.workouts
 function selectWorkoutDay(k){selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);renderCalendar();renderHome()}
 function goToWeekDay(k){go("workouts");selectWorkoutDay(k)}
 function openWeekPicker(){
- let s=weekStart(new Date()),items=[];for(let i=0;i<52;i++){let d=new Date(s);d.setDate(d.getDate()-i*7);items.push(d)}
+ const items=weekPickerItems();
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
@@ -141,13 +196,12 @@ function openWeekPicker(){
   </div>
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
+ pinPickerChoice();
 }
 function iAmThisWeek(d){return dateKey(d)===dateKey(weekStart(new Date()))}
 function chooseWeek(k){selectedWeekStart=weekStart(new Date(k+"T00:00:00"));selected=new Date(selectedWeekStart);selectedMonth=monthStart(selected);closeModal();renderCalendar();renderHome()}
 function openMonthPicker(){
- const now=monthStart(new Date());
- const items=[];
- for(let i=0;i<24;i++){const d=monthStart(now);d.setMonth(d.getMonth()-i);items.push(new Date(d))}
+ const items=monthPickerItems();
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
@@ -164,6 +218,7 @@ function openMonthPicker(){
   </div>
  `,"workout-entry-sheet");
  document.body.classList.add("workout-form-open");
+ pinPickerChoice();
 }
 function chooseMonth(k){
  selectedMonth=monthStart(new Date(k+"T00:00:00"));
