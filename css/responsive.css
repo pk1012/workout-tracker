@@ -507,11 +507,8 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 .modal:has(.workout-entry-sheet) .workout-detail{
   padding:12px 14px;
 }
-.modal:has(.workout-entry-sheet) .workout-detail>strong{
-  display:block;
-  margin:0;
-  padding:0 0 12px;
-  line-height:1.25;
+.modal:has(.workout-entry-sheet) .workout-detail.is-expanded .collapsible-head{
+  padding-bottom:12px;
 }
 .modal:has(.workout-entry-sheet) .detail-set{
   margin-top:0;

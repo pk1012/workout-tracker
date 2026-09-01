@@ -1,6 +1,48 @@
 /* Exercise Library actions and Start Workout set-editor heading. */
 .actions{display:flex;gap:14px;font-weight:700}.edit{color:var(--primary)}.delete{color:#d94b5b}
-.set-editor-head{font-size:16px;margin-bottom:10px}
+.set-editor-head{font-size:16px}
+.collapsible-card .collapsible-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  width:100%;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.collapsible-card .collapsible-head strong{
+  flex:1;
+  min-width:0;
+  line-height:1.25;
+}
+.collapsible-chevron{
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--primary);
+  transition:transform .2s ease;
+}
+.collapsible-chevron .icon{
+  width:20px;
+  height:20px;
+}
+.collapsible-card.is-expanded .collapsible-chevron{
+  transform:rotate(180deg);
+}
+.collapsible-card.is-expanded .set-editor-head{
+  margin-bottom:10px;
+}
+.collapsible-body[hidden]{
+  display:none !important;
+}
 .notice-list{display:grid;gap:10px;margin-top:14px}
 .notice-item{
   width:100%;

@@ -383,13 +383,8 @@ function renderSetDetails(){
  const selectedNames=workoutDraft.exercises.map(e=>e.name||state.exercises.find(x=>x.id===e.exerciseId)?.name||"Deleted exercise");
  const content=workoutDraft.exercises.map((entry,i)=>{
      const name=selectedNames[i];
-     return `<div class="set-editor card pad">
-       <div class="set-editor-head"><strong>${esc(name)}</strong></div>
-       <div id="sets-${i}">${entry.sets.map((set,j)=>setRow(i,j,set)).join("")}</div>
-       <button class="add-set" onclick="addSet(${i})">
-         <svg class="icon"><use href="#plus"></use></svg> Add Set
-       </button>
-     </div>`;
+     const body=`<div id="sets-${i}">${entry.sets.map((set,j)=>setRow(i,j,set)).join("")}</div><button class="add-set" onclick="addSet(${i})"><svg class="icon"><use href="#plus"></use></svg> Add Set</button>`;
+     return collapsibleCard(esc(name),body,{cardClass:"set-editor card pad",headClass:"set-editor-head collapsible-head"});
    }).join("");
 
  modal(`
@@ -506,7 +501,8 @@ function viewWorkout(id){
  let entries=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg"));
  const details=entries.map((e,i)=>{
   const name=workoutExerciseName((w.exercises||[])[i]||e);
-  return `<div class="workout-detail card"><strong>${esc(name)}</strong>${(e.sets||[]).map((s,j)=>`<div class="detail-set"><span>Set ${j+1}</span><span>${esc(formatSet(s,e.unit))}</span></div>`).join("")}</div>`;
+  const body=(e.sets||[]).map((s,j)=>`<div class="detail-set"><span>Set ${j+1}</span><span>${esc(formatSet(s,e.unit))}</span></div>`).join("");
+  return collapsibleCard(esc(name),body);
  }).join("");
  modal(`
   <div class="workout-entry-header">

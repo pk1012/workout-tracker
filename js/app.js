@@ -82,6 +82,21 @@ function closeModal(){
  unlockPageScroll();
  if(typeof pendingDriveRestore!=="undefined"&&pendingDriveRestore)declineDriveRestore();
 }
+function collapsibleChevron(){
+ return `<span class="collapsible-chevron" aria-hidden="true"><svg class="icon"><use href="#chevron-down"/></svg></span>`;
+}
+function collapsibleCard(title,body,{cardClass="workout-detail card",headClass="collapsible-head"}={}){
+ return `<div class="${cardClass} collapsible-card is-collapsed"><button type="button" class="${headClass}" aria-expanded="false" onclick="toggleCollapsibleCard(this)"><strong>${title}</strong>${collapsibleChevron()}</button><div class="collapsible-body" hidden>${body}</div></div>`;
+}
+function toggleCollapsibleCard(btn){
+ const card=btn?.closest(".collapsible-card");
+ if(!card)return;
+ const expanded=card.classList.toggle("is-expanded");
+ card.classList.toggle("is-collapsed",!expanded);
+ btn.setAttribute("aria-expanded",expanded?"true":"false");
+ const body=card.querySelector(".collapsible-body");
+ if(body)body.hidden=!expanded;
+}
 function notify(message,type="info"){let host=document.getElementById("toastHost");if(!host){host=document.createElement("div");host.id="toastHost";document.body.appendChild(host)}const toast=document.createElement("div");toast.className=`toast ${type}`;toast.innerHTML=`<svg class="icon"><use href="#${type==="success"?"check":type==="error"?"close":"info"}"/></svg><span>${esc(message)}</span>`;host.appendChild(toast);requestAnimationFrame(()=>toast.classList.add("show"));setTimeout(()=>{toast.classList.remove("show");setTimeout(()=>toast.remove(),220)},2800)}
 let pendingConfirm=null;
 let pendingConfirmBack=null;
