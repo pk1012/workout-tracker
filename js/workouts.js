@@ -471,6 +471,36 @@ function formatSet(set,unit){
  const text=Number.isInteger(shown)?String(shown):String(shown);
  return `${text} ${to} · ${Number(set.reps)} reps`;
 }
+function workoutExportFileStem(w){
+ const title=(workoutMuscleLabel(w)||"Workout").replace(/[^a-zA-Z0-9]+/g,"-").replace(/^-|-$/g,"");
+ return `${title||"Workout"}-${w.date||dateKey(new Date())}`;
+}
+function workoutExportRows(w){
+ const title=workoutMuscleLabel(w);
+ const date=w.date||"";
+ const start=formatTime(w.startTime);
+ const end=formatTime(w.endTime);
+ const dur=durationLabel(durationMinutes(w));
+ const to=preferredUnit();
+ const rows=[];
+ (w.exercises||[]).forEach(raw=>{
+  const e=normalizedEntry(raw,w.unit||"kg");
+  const name=workoutExerciseName(raw);
+  const from=e.unit==="lb"?"lb":"kg";
+  (e.sets||[]).forEach((s,j)=>{
+   const shown=convertWeight(Number(s.weight)||0,from,to);
+   rows.push([date,title,name,j+1,shown,to,Number(s.reps)||0,start,end,dur]);
+  });
+ });
+ return rows;
+}
+async function exportWorkoutXlsx(id){
+ const w=state.workouts.find(x=>x.id===id);
+ if(!w)return;
+ const headers=["Date","Title","Exercise","Set","Weight","Unit","Reps","Start","End","Duration"];
+ const blob=buildXlsx(headers,workoutExportRows(w));
+ await saveXlsxFile(blob,`${workoutExportFileStem(w)}.xlsx`);
+}
 function viewWorkout(id){
  let w=state.workouts.find(x=>x.id===id);if(!w)return;
  let entries=(w.exercises||[]).map(e=>normalizedEntry(e,w.unit||"kg"));
@@ -481,8 +511,13 @@ function viewWorkout(id){
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
-   <h2 class="workout-form-title">${esc(workoutMuscleLabel(w))}</h2>
-   <div class="muted workout-form-description">${new Date(w.date+"T00:00:00").toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · ${formatTime(w.startTime)} – ${formatTime(w.endTime)} · ${durationLabel(durationMinutes(w))}</div>
+   <div class="view-workout-head">
+    <div class="view-workout-titles">
+     <h2 class="workout-form-title">${esc(workoutMuscleLabel(w))}</h2>
+     <div class="muted workout-form-description">${new Date(w.date+"T00:00:00").toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · ${formatTime(w.startTime)} – ${formatTime(w.endTime)} · ${durationLabel(durationMinutes(w))}</div>
+    </div>
+    <button type="button" class="view-workout-export" aria-label="Export to Excel" onclick="exportWorkoutXlsx('${esc(w.id)}')"><svg class="icon" aria-hidden="true"><use href="#export"/></svg></button>
+   </div>
   </div>
   <div class="workout-entry-scroll">
    ${details}

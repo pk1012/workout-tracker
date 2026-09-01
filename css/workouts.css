@@ -218,3 +218,27 @@
     min-height:92px;
   }
 }
+
+.view-workout-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.view-workout-titles{min-width:0;flex:1}
+.modal:has(.workout-entry-sheet) .view-workout-head .workout-form-title{
+  margin:0 0 6px;
+}
+.view-workout-export{
+  flex:none;
+  width:40px;
+  height:40px;
+  margin-top:0;
+  display:grid;
+  place-items:center;
+  color:var(--primary);
+}
+.view-workout-export .icon{
+  width:22px;
+  height:22px;
+}
