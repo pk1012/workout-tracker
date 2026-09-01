@@ -110,6 +110,10 @@
   border-radius:var(--radius);
   font-size:14px;
 }
+#more .drive-card .drive-actions .primary:disabled{
+  opacity:.4;
+  pointer-events:none;
+}
 #more .drive-card.has-restore{
   grid-template-areas:"icon main" "restore restore" "actions actions";
 }
