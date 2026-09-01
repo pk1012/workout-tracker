@@ -33,8 +33,8 @@ function backup(){
 }
 
 function restoreBackup(){
- const driveOn=typeof isDriveConnected==="function"&&isDriveConnected();
- const driveRestore=driveOn
+ const driveRestoreOn=typeof isDriveConnected==="function"&&isDriveConnected()&&typeof driveSyncNeeded==="function"&&driveSyncNeeded();
+ const driveRestore=driveRestoreOn
   ?`<button class="outline btn-wide workout-cancel-button" type="button" onclick="restoreFromDriveBackup()">Restore from Drive</button>`
   :`<button class="outline btn-wide workout-cancel-button" type="button" disabled aria-disabled="true">Restore from Drive</button>`;
  modal(`

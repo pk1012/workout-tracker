@@ -583,7 +583,7 @@ function confirmDriveRestore(){
 }
 
 async function restoreFromDriveBackup(){
- if(!isDriveConnected())return;
+ if(!isDriveConnected()||!driveSyncNeeded())return;
  if(!navigator.onLine){
   notify("Could not restore this Drive backup.","error");
   return;
