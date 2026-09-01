@@ -116,7 +116,7 @@ function monthPickerItems(){
   if(em<oldest)oldest=em;
  }
  const items=[];
- for(let d=newest,guard=0;d>=oldest&&guard<240;d=shiftMonth(d,-1),guard++)items.push(new Date(d));
+ for(let d=newest,guard=0;d>=oldest&&guard<600;d=shiftMonth(d,-1),guard++)items.push(new Date(d));
  return items;
 }
 function weekPickerItems(){
@@ -129,7 +129,7 @@ function weekPickerItems(){
   if(ew<oldest)oldest=ew;
  }
  const items=[];
- for(let d=newest,guard=0;d>=oldest&&guard<1200;d=shiftWeek(d,-1),guard++)items.push(new Date(d));
+ for(let d=newest,guard=0;d>=oldest&&guard<2600;d=shiftWeek(d,-1),guard++)items.push(new Date(d));
  return items;
 }
 function pinPickerChoice(){
