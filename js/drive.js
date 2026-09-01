@@ -568,11 +568,11 @@ function applyDriveBackupToPhone(remote){
 }
 
 let pendingDriveRestore=null;
-function confirmDriveRestore(){
- const remote=pendingDriveRestore;
+function confirmDriveRestore(remote){
+ const next=remote||pendingDriveRestore;
  pendingDriveRestore=null;
  restorePrompted=false;
- if(!applyDriveBackupToPhone(remote)){
+ if(!applyDriveBackupToPhone(next)){
   closeModal();
   notify("Could not restore this Drive backup.","error");
   return;
@@ -597,7 +597,7 @@ async function restoreFromDriveBackup(){
   pendingDriveRestore=remote;
   confirmAction(
    "Replace this phone’s workouts and library with the Drive backup? Data only on this phone will be lost. Drive is not changed.",
-   ()=>confirmDriveRestore(),
+   ()=>confirmDriveRestore(remote),
    true,
    ()=>{pendingDriveRestore=null;closeModal();}
   );

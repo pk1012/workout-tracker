@@ -80,7 +80,6 @@ function closeModal(){
  host.classList.remove("show","modal-locked");
  document.body.classList.remove("modal-open","workout-form-open");
  unlockPageScroll();
- if(typeof pendingDriveRestore!=="undefined"&&pendingDriveRestore)declineDriveRestore();
 }
 function collapsibleChevron(){
  return `<span class="collapsible-chevron" aria-hidden="true"><svg class="icon"><use href="#chevron-down"/></svg></span>`;
