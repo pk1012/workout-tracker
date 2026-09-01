@@ -114,6 +114,10 @@
   opacity:.4;
   pointer-events:none;
 }
+.modal:has(.workout-entry-sheet) .workout-modal-actions .workout-cancel-button:disabled{
+  opacity:.4;
+  pointer-events:none;
+}
 #more .drive-card.has-restore{
   grid-template-areas:"icon main" "restore restore" "actions actions";
 }

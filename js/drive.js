@@ -548,16 +548,8 @@ function showDriveRestoreSheet(remote){
  document.body.classList.add("workout-form-open");
 }
 
-let pendingDriveRestore=null;
-function confirmDriveRestore(){
- const remote=pendingDriveRestore;
- pendingDriveRestore=null;
- restorePrompted=false;
- if(!remote?.state||!isValidState(remote.state)){
-  closeModal();
-  notify("Could not restore this Drive backup.","error");
-  return;
- }
+function applyDriveBackupToPhone(remote){
+ if(!remote?.state||!isValidState(remote.state))return false;
  const next=JSON.parse(JSON.stringify(remote.state));
  delete next.activeWorkout;
  state=migrateState(next);
@@ -571,9 +563,47 @@ function confirmDriveRestore(){
  setDrivePending(false);
  clearRestoreNotification();
  selected=new Date();selected.setHours(0,0,0,0);if(typeof monthStart==="function")selectedMonth=monthStart(selected);
+ if(typeof refreshAppViews==="function")refreshAppViews();
+ return true;
+}
+
+let pendingDriveRestore=null;
+function confirmDriveRestore(){
+ const remote=pendingDriveRestore;
+ pendingDriveRestore=null;
+ restorePrompted=false;
+ if(!applyDriveBackupToPhone(remote)){
+  closeModal();
+  notify("Could not restore this Drive backup.","error");
+  return;
+ }
  closeModal();
  go("workouts");
  notify("Backup restored successfully.","success");
+}
+
+async function restoreFromDriveBackup(){
+ if(!isDriveConnected())return;
+ if(!navigator.onLine){
+  notify("Could not restore this Drive backup.","error");
+  return;
+ }
+ try{
+  const remote=await loadDriveRemote();
+  if(!remote.exists||remote.unreadable||!remote.state||!isValidState(remote.state)){
+   notify("Could not restore this Drive backup.","error");
+   return;
+  }
+  pendingDriveRestore=remote;
+  confirmAction(
+   "Replace this phone’s workouts and library with the Drive backup? Data only on this phone will be lost. Drive is not changed.",
+   ()=>confirmDriveRestore(),
+   true,
+   ()=>{pendingDriveRestore=null;closeModal();}
+  );
+ }catch(err){
+  notify("Could not restore this Drive backup.","error");
+ }
 }
 
 function declineDriveRestore(){

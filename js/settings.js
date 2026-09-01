@@ -33,6 +33,10 @@ function backup(){
 }
 
 function restoreBackup(){
+ const driveOn=typeof isDriveConnected==="function"&&isDriveConnected();
+ const driveRestore=driveOn
+  ?`<button class="outline btn-wide workout-cancel-button" type="button" onclick="restoreFromDriveBackup()">Restore from Drive</button>`
+  :`<button class="outline btn-wide workout-cancel-button" type="button" disabled aria-disabled="true">Restore from Drive</button>`;
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
@@ -43,6 +47,7 @@ function restoreBackup(){
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="backup()">Export Backup</button>
    <button class="outline btn-wide workout-cancel-button" onclick="document.getElementById('restoreFile').click()">Choose Backup File</button>
+   ${driveRestore}
    <input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreFromFile(this.files[0])">
   </div>
  `,"workout-entry-sheet");
