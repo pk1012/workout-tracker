@@ -233,7 +233,7 @@
   flex:none;
   width:40px;
   height:40px;
-  margin-top:0;
+  margin-top:-2px;
   padding-top:1px;
   display:grid;
   align-content:start;
