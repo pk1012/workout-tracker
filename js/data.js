@@ -1,4 +1,4 @@
-const VERSION="1.7.273",BUILD="2026.09.01";
+const VERSION="1.7.274",BUILD="2026.09.01";
 const defaults={Abs:["Cable Crunch","Hanging Leg Raise","Plank"],Back:["Lat Pulldown","Seated Cable Row","Single Arm Dumbbell Row","T-Bar Row"],Biceps:["Behind-the-Back Cable Curl","Cable Curl","Hammer Curl","Incline Dumbbell Curl"],Calves:["Calf Raise","Seated Calf Raise"],Cardio:["Cycling","Running","Walking"],Chest:["Flat Bench Press","Inclined Dumbbell Press","Pec Deck Fly","Wide Chest Press Machine"],Legs:["Leg Extension","Leg Press","Romanian Deadlift","Squat"],Shoulders:["Dumbbell Lateral Raise","Face Pull","Overhead Press","Rear Delt Fly"],Triceps:["Cable Pushdown","Overhead Cable Extension","Skull Crusher"]};
 const STORE_KEY="wt_state";
 const STORE_BACKUP_KEY="wt_state_backup";
@@ -112,21 +112,36 @@ function idbWriteState(db,next,at){
 function warnPersistFailed(){
  if(typeof notify==="function")notify("Could not save on this phone.","error");
 }
-async function persistAll(){
+let persistLock=Promise.resolve();
+let persistWanted=false;
+async function persistAllNow(){
  purgeExpiredBin(state);
  let json;
  try{json=JSON.stringify(state)}catch(err){warnPersistFailed();return false}
+ let snapshot;
+ try{snapshot=JSON.parse(json)}catch(err){warnPersistFailed();return false}
  const at=Date.now();
  const localOk=writeLocal(json,at);
  requestPersistentStorage();
  let idbOk=false;
  try{
   const db=await openIdb();
-  await idbWriteState(db,state,at);
+  await idbWriteState(db,snapshot,at);
   idbOk=true;
  }catch(err){}
  if(!localOk&&!idbOk){warnPersistFailed();return false}
  return true;
+}
+async function flushPersist(){
+ if(!persistWanted)return;
+ persistWanted=false;
+ await persistAllNow();
+ if(persistWanted)return flushPersist();
+}
+function persistAll(){
+ persistWanted=true;
+ persistLock=persistLock.then(flushPersist,flushPersist);
+ return persistLock;
 }
 function save(){persistAll()}
 async function wipeStoredData(){
