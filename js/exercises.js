@@ -157,9 +157,11 @@ function exerciseScreenItems(){
   });
 }
 
+function exerciseCategoryNames(){
+ return ["All","Chest","Back","Legs","Shoulders","Arms","Core","Calves","Cardio"];
+}
 function exerciseCategoryButtons(){
- const names=["All","Chest","Back","Legs","Shoulders","Arms","Core","Calves","Cardio"];
- return names.map(name=>`<button type="button" class="exercise-chip ${exerciseScreenState.filter===name?"active":""}" onclick="setExerciseFilter('${name}')">${name}</button>`).join("");
+ return exerciseCategoryNames().map(name=>`<button type="button" class="exercise-chip ${exerciseScreenState.filter===name?"active":""}" onclick="setExerciseFilter('${name}')">${name}</button>`).join("");
 }
 
 function renderExerciseScreenRows(items){
@@ -437,13 +439,109 @@ function layoutExerciseHistoryGraph(){
 }
 
 /* Exercise Library / Settings management */
+let libraryState={search:"",filter:"All",emptyGroups:"all"};
+
+function libraryCategoryButtons(){
+ return exerciseCategoryNames().map(name=>`<button type="button" class="exercise-chip ${libraryState.filter===name?"active":""}" onclick="setLibraryFilter('${name}')">${name}</button>`).join("");
+}
+function libraryQuery(){return (libraryState.search||"").trim().toLowerCase()}
+function libraryMuscleMatches(muscle,filter){
+ return exerciseCategoryMatches({muscleId:muscle.id,muscleName:muscle.name},filter);
+}
+function libraryFilteredGroups(){
+ const q=libraryQuery();
+ const hideEmpty=libraryState.emptyGroups==="hide";
+ return sortedMuscles().reduce((list,m)=>{
+  if(!libraryMuscleMatches(m,libraryState.filter))return list;
+  const allEx=sortedExercisesForMuscle(m.id);
+  const groupHit=!!q&&m.name.toLowerCase().includes(q);
+  const ex=!q||groupHit?allEx:allEx.filter(e=>e.name.toLowerCase().includes(q));
+  if(q&&!groupHit&&!ex.length)return list;
+  if(hideEmpty&&!ex.length&&!groupHit)return list;
+  list.push({muscle:m,exercises:ex});
+  return list;
+ },[]);
+}
+function libraryGroupCard(m,ex){
+ return `<div class="section card pad library-group"><div class="row"><div class="section-title">${esc(m.name)}</div><div class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openMuscle('${m.id}')">-</button><button class="delete" type="button" aria-label="Delete" onclick="deleteMuscle('${m.id}')">-</button></div></div>${ex.length?ex.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span><span class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openExercise('${e.id}')">-</button><button class="delete" type="button" aria-label="Delete" onclick="deleteExercise('${e.id}')">-</button></span></div>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`;
+}
+function libraryListHtml(){
+ const groups=libraryFilteredGroups();
+ if(!groups.length){
+  return `<div class="exercise-screen-panel card exercise-screen-empty"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No exercises found</strong><span>Try another search or filter.</span></div>`;
+ }
+ return groups.map(({muscle,exercises})=>libraryGroupCard(muscle,exercises)).join("");
+}
+function renderLibraryToolbar(){
+ return `
+  <div class="exercise-screen-toolbar">
+   <label class="exercise-search">
+    <svg class="icon" aria-hidden="true"><use href="#search"/></svg>
+    <input id="librarySearch" type="search" value="${esc(libraryState.search)}" placeholder="Search exercises" autocomplete="off" oninput="setLibrarySearch(this.value)">
+   </label>
+   <button type="button" class="exercise-filter-button" onclick="openLibraryFilter()">
+    <svg class="icon" aria-hidden="true"><use href="#filter"/></svg><span>Filter</span>
+   </button>
+  </div>
+  <div class="exercise-chip-scroller" role="tablist" aria-label="Exercise muscle groups">${libraryCategoryButtons()}</div>`;
+}
+function refreshLibraryList(){
+ const list=document.getElementById("libraryList");
+ if(!list){renderLibrary();return}
+ list.innerHTML=libraryListHtml();
+}
 function renderLibrary(){
  const target=document.getElementById("library");
  if(!target)return;
- target.innerHTML=sortedMuscles().map(m=>{
-  const ex=sortedExercisesForMuscle(m.id);
-  return `<div class="section card pad library-group"><div class="row"><div class="section-title">${esc(m.name)}</div><div class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openMuscle('${m.id}')">-</button><button class="delete" type="button" aria-label="Delete" onclick="deleteMuscle('${m.id}')">-</button></div></div>${ex.length?ex.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span><span class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openExercise('${e.id}')">-</button><button class="delete" type="button" aria-label="Delete" onclick="deleteExercise('${e.id}')">-</button></span></div>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`;
- }).join("");
+ target.innerHTML=`${renderLibraryToolbar()}<div id="libraryList">${libraryListHtml()}</div>`;
+}
+function setLibrarySearch(value){
+ libraryState.search=value||"";
+ refreshLibraryList();
+}
+function setLibraryFilter(filter){
+ libraryState.filter=filter||"All";
+ renderLibrary();
+}
+function libraryEmptyOption(id,label){
+ const selected=libraryState.emptyGroups===id;
+ return `<button type="button" data-library-empty="${id}" class="${selected?"chosen":""}" onclick="setLibraryEmptyGroups('${id}')"><span>${label}</span>${selected?'<em><svg class="icon" aria-hidden="true"><use href="#check"/></svg></em>':""}</button>`;
+}
+function openLibraryFilter(){
+ modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <h2 class="workout-form-title">Filter Library</h2>
+   <div class="muted workout-form-description">Choose which groups to show.</div>
+  </div>
+  <div class="workout-entry-scroll">
+   <div class="week-list exercise-history-filter-list">
+    ${libraryEmptyOption("all","All groups")}
+    ${libraryEmptyOption("hide","Hide empty groups")}
+   </div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="primary btn-wide workout-next-button" onclick="applyLibraryFilter()">Done</button>
+  </div>
+ `,"workout-entry-sheet exercise-filter-sheet");
+ document.body.classList.add("workout-form-open");
+}
+function setLibraryEmptyGroups(value){
+ libraryState.emptyGroups=value==="hide"?"hide":"all";
+ document.querySelectorAll("[data-library-empty]").forEach(btn=>{
+  const on=btn.dataset.libraryEmpty===libraryState.emptyGroups;
+  btn.classList.toggle("chosen",on);
+  const check=btn.querySelector("em");
+  if(on&&!check){
+   btn.insertAdjacentHTML("beforeend",'<em><svg class="icon" aria-hidden="true"><use href="#check"/></svg></em>');
+  }else if(!on&&check){
+   check.remove();
+  }
+ });
+}
+function applyLibraryFilter(){
+ closeModal();
+ renderLibrary();
 }
 
 function workoutsNewestFirst(list){
