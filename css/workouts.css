@@ -234,8 +234,10 @@
   width:40px;
   height:40px;
   margin-top:0;
+  padding-top:1px;
   display:grid;
-  place-items:center;
+  align-content:start;
+  justify-items:center;
   color:var(--primary);
 }
 .view-workout-export .icon{
