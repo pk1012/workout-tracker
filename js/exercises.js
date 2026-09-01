@@ -353,7 +353,7 @@ function exerciseHistoryListBody(history,unit){
   const rows=sets.length
    ?sets.map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${Number(s.weight)===0?`Bodyweight · ${Number(s.reps)} reps`:esc(formatSet(s,entry.unit||unit))}</span></div>`).join("")
    :`<div class="detail-set"><span>No sets recorded</span></div>`;
-  return `<div class="workout-detail card"><strong>${esc(dateLabel)}</strong>${rows}</div>`;
+  return collapsibleCard(esc(dateLabel),rows);
  }).join("");
 }
 function exerciseHistoryGraphBody(history,zoom){
