@@ -217,8 +217,15 @@ function setExerciseSearch(value){
 }
 
 function setExerciseFilter(filter){
- exerciseScreenState.filter=filter;
- renderExercises();
+ exerciseScreenState.filter=filter||"All";
+ const names=exerciseCategoryNames();
+ if(!names.includes(exerciseScreenState.filter))exerciseScreenState.filter="All";
+ const scroller=document.querySelector("#exerciseList .exercise-chip-scroller");
+ if(!document.getElementById("exerciseScreenRows")||!scroller){renderExercises();return}
+ refreshExerciseScreenRows();
+ scroller.querySelectorAll(".exercise-chip").forEach(btn=>{
+  btn.classList.toggle("active",btn.textContent===exerciseScreenState.filter);
+ });
 }
 
 function exerciseHistoryFilterOption(id,label){
