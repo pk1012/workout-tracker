@@ -506,7 +506,14 @@ function setLibrarySearch(value){
 }
 function setLibraryFilter(filter){
  libraryState.filter=filter||"All";
- renderLibrary();
+ const names=exerciseCategoryNames();
+ if(!names.includes(libraryState.filter))libraryState.filter="All";
+ const scroller=document.querySelector("#library .exercise-chip-scroller");
+ if(!document.getElementById("libraryList")||!scroller){renderLibrary();return}
+ refreshLibraryList();
+ scroller.querySelectorAll(".exercise-chip").forEach(btn=>{
+  btn.classList.toggle("active",btn.textContent===libraryState.filter);
+ });
 }
 function libraryEmptyOption(id,label){
  const selected=libraryState.emptyGroups===id;
