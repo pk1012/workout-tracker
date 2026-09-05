@@ -620,6 +620,7 @@ function openExercise(id="",muscleId="",draftName){
  const name=draftName!=null?draftName:(e?e.name:"");
  const group=muscleId||(e&&e.muscleId)||"";
  const blank=!e&&!group?`<option value="" selected>Muscle group</option>`:"";
+ const groupClass=!e&&!group?" is-placeholder":"";
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
@@ -627,7 +628,7 @@ function openExercise(id="",muscleId="",draftName){
   </div>
   <div class="workout-entry-scroll">
    <div class="field"><label>Exercise name</label><input id="exerciseName" class="input" value="${esc(name)}" placeholder="Exercise name"></div>
-   <div class="field"><label>Muscle group</label><select id="exerciseMuscle" class="input">${blank}${ms.map(m=>`<option value="${m.id}" ${group===m.id?"selected":""}>${esc(m.name)}</option>`).join("")}</select></div>
+   <div class="field"><label>Muscle group</label><select id="exerciseMuscle" class="input${groupClass}" onchange="this.classList.toggle('is-placeholder',!this.value)">${blank}${ms.map(m=>`<option value="${m.id}" ${group===m.id?"selected":""}>${esc(m.name)}</option>`).join("")}</select></div>
   </div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="saveExercise('${id}')">Save Exercise</button>

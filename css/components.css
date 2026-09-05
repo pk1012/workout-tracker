@@ -89,3 +89,17 @@
   font-size:13px;
   line-height:1.4;
 }
+#exerciseName::placeholder{
+  color:#c4c7cf;
+  opacity:1;
+}
+select#exerciseMuscle.is-placeholder{
+  color:#c4c7cf;
+}
+select#exerciseMuscle option{
+  color:var(--text);
+}
+[data-theme=dark] #exerciseName::placeholder,
+[data-theme=dark] select#exerciseMuscle.is-placeholder{
+  color:#6e6f78;
+}
