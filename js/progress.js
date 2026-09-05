@@ -1,6 +1,8 @@
 /* History page (#progress).
  * This file intentionally touches only #progress / #progressView.
  */
+let historyMonth=monthStart(new Date());
+
 function progressWorkoutEntries(){
   return [...state.workouts]
     .sort((a,b)=>{
@@ -11,6 +13,21 @@ function progressWorkoutEntries(){
 
 function progressEntrySets(entry){
   return Array.isArray(entry?.sets) ? entry.sets : [];
+}
+
+function historyMonthPrefix(month){
+  return dateKey(monthStart(month)).slice(0,7);
+}
+
+function historyMonthWorkouts(month){
+  const prefix=historyMonthPrefix(month);
+  return progressWorkoutEntries().filter(w=>typeof w?.date==="string"&&w.date.startsWith(prefix));
+}
+
+function historyMonthTitle(month){
+  const d=monthStart(month);
+  const name=d.toLocaleDateString("en-IN",{month:"long"});
+  return d.getFullYear()===new Date().getFullYear()?name:`${name} ${d.getFullYear()}`;
 }
 
 function progressTotals(workouts){
@@ -34,13 +51,42 @@ function progressTotals(workouts){
   return {exerciseCount,setCount,volume};
 }
 
+function openHistoryMonthPicker(){
+  const items=monthPickerItems();
+  const chosen=dateKey(monthStart(historyMonth));
+  modal(`
+  <div class="workout-entry-header">
+   <div class="handle"></div>
+   <div class="picker-title">
+    <h2 class="workout-form-title">Select Month</h2>
+    <button aria-label="Close" onclick="closeModal()"><svg class="icon"><use href="#close"/></svg></button>
+   </div>
+  </div>
+  <div class="workout-entry-scroll">
+   <div class="week-list">${items.map(d=>`<button type="button" onclick="chooseHistoryMonth('${dateKey(d)}')" class="${dateKey(d)===chosen?"chosen":""}"><b>${d.toLocaleDateString("en-IN",{month:"short"})}</b><span>${d.getFullYear()}</span>${iAmThisMonth(d)?'<em>This Month <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
+  </div>
+  <div class="modal-actions workout-modal-actions">
+   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Close</button>
+  </div>
+ `,"workout-entry-sheet");
+  document.body.classList.add("workout-form-open");
+  pinPickerChoice();
+}
+
+function chooseHistoryMonth(k){
+  historyMonth=monthStart(new Date(k+"T00:00:00"));
+  closeModal();
+  renderProgress();
+}
+
 function renderProgress(){
   const target=document.getElementById("progressView");
   if(!target)return;
 
-  const workouts=progressWorkoutEntries();
-  const totals=progressTotals(workouts);
-  const muscleCount=new Set(workouts.flatMap(w=>w.muscles||[])).size;
+  const month=monthStart(historyMonth);
+  const monthWorkouts=historyMonthWorkouts(month);
+  const totals=progressTotals(monthWorkouts);
+  const muscleCount=new Set(monthWorkouts.flatMap(w=>w.muscles||[])).size;
   const u=preferredUnit();
   const volumeKg=totals.volume||0;
   const volumeShown=u==="lb"?volumeKg*2.2046226218:volumeKg;
@@ -48,21 +94,14 @@ function renderProgress(){
 
   target.innerHTML=`
     <section class="progress-overview card">
-      <div class="progress-section-head">
-        <div>
-          <h2>Training Overview</h2>
-          <p>See how your training is adding up.</p>
-        </div>
+      <div class="section-head">
+        <h2>${esc(historyMonthTitle(month))}</h2>
+        <button class="week-select" type="button" onclick="openHistoryMonthPicker()" aria-label="Select month"><b>${monthNumberChip(month)}</b><span>${monthRangeLabel(month)}</span><i><svg class="icon" aria-hidden="true"><use href="#chevron-down"/></svg></i></button>
       </div>
       <div class="progress-stats">
-        <div class="progress-stat"><strong>${workouts.length}</strong><span>Workouts</span></div>
-        <div class="progress-stat"><strong>${totals.exerciseCount}</strong><span>Exercises</span></div>
-        <div class="progress-stat"><strong>${totals.setCount}</strong><span>Sets</span></div>
+        <div class="progress-stat"><strong>${monthWorkouts.length}</strong><span>Workouts</span></div>
         <div class="progress-stat"><strong>${volume}</strong><span>${u} · reps</span></div>
-      </div>
-      <div class="progress-footnote">
-        <svg class="icon" aria-hidden="true"><use href="#target"/></svg>
-        <span>${muscleCount} muscle ${muscleCount===1?"group":"groups"} trained</span>
+        <div class="progress-stat"><strong>${muscleCount}</strong><span>Muscle groups</span></div>
       </div>
     </section>
     ${renderRecentWorkouts()}
@@ -80,9 +119,6 @@ function historyExportFileStem(){
   return `Workout-History-${dateKey(new Date())}`;
 }
 
-async function exportHistoryXlsx(){
-  const headers=["Date","Title","Exercise","Set","Weight","Unit","Reps","Start","End","Duration"];
-  const rows=historyExportWorkouts().flatMap(w=>workoutExportRows(w));
-  const blob=buildXlsx(headers,rows,"History");
-  await saveXlsxFile(blob,`${historyExportFileStem()}.xlsx`);
+function exportHistoryXlsx(){
+  downloadWorkoutHistoryXlsx(historyExportWorkouts(),historyExportFileStem());
 }

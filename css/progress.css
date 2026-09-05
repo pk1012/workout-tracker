@@ -33,23 +33,36 @@
   padding:20px;
 }
 
-#progress .progress-section-head h2{
+#progress .progress-overview .section-head{
+  padding:0 2px;
+  margin-bottom:0;
+  gap:8px;
+}
+
+#progress .progress-overview .section-head h2{
   margin:0;
   font-size:17px;
   font-weight:750;
   letter-spacing:-.2px;
+  min-width:0;
 }
 
-#progress .progress-section-head p{
-  margin:5px 0 0;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.35;
+#progress .progress-overview .week-select{
+  min-width:0;
+}
+
+#progress .progress-overview .week-select span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+[data-theme=dark] #progress .progress-overview .week-select{
+  color:var(--primary);
 }
 
 #progress .progress-stats{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   margin-top:18px;
   border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);
@@ -82,22 +95,6 @@
   color:var(--muted);
   font-size:11px;
   line-height:1.2;
-}
-
-#progress .progress-footnote{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  margin-top:13px;
-  color:var(--muted);
-  font-size:11px;
-}
-
-#progress .progress-footnote .icon{
-  width:15px;
-  height:15px;
-  color:var(--primary);
-  flex:none;
 }
 
 /* Workout History on History — same cards as the old Workouts recent list. */
@@ -163,14 +160,24 @@
     padding:16px;
   }
 
-  #progress .progress-section-head h2{font-size:17px}
+  #progress .progress-overview .section-head h2{font-size:17px}
+
+  #progress .progress-overview .week-select{
+    gap:6px;
+    font-size:12px;
+  }
+  #progress .progress-overview .week-select b{
+    padding:5px 6px;
+    border-radius:7px;
+  }
+  #progress .progress-overview .week-select span{font-size:12px}
+  #progress .progress-overview .week-select i{display:grid;place-items:center}
+  #progress .progress-overview .week-select i .icon{width:14px;height:14px}
 
   #progress .progress-stats{margin-top:14px}
 
   #progress .progress-stat{padding:12px 4px}
   #progress .progress-stat strong{font-size:18px}
-
-  #progress .progress-footnote{margin-top:11px}
 
   #progress .recent-section .workout-card{min-height:92px}
 }
