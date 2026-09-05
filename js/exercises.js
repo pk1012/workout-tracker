@@ -619,7 +619,7 @@ function openExercise(id="",muscleId="",draftName){
  let e=id?state.exercises.find(x=>x.id===id):null,ms=sortedMuscles();
  const name=draftName!=null?draftName:(e?e.name:"");
  const group=muscleId||(e&&e.muscleId)||"";
- const blank=!e&&!group?`<option value="" selected></option>`:"";
+ const blank=!e&&!group?`<option value="" selected>Muscle group</option>`:"";
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
