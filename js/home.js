@@ -35,7 +35,22 @@ function remainingDays(days){
  const todayCompleted=state.workouts.some(w=>w.date===todayKey);
  return days.filter(d=>d>=today && (!isToday(d) || !todayCompleted)).length;
 }
-function quickProgress(){let ws=weekStart(selectedWeekStart),we=weekEnd(ws),w=state.workouts.filter(x=>x.date>=dateKey(ws)&&x.date<=dateKey(we));let volume=0;w.forEach(x=>(x.exercises||[]).forEach(raw=>{let e=normalizedEntry(raw,x.unit||"kg");(e.sets||[]).forEach(s=>volume+=(Number(s.weight)||0)*(Number(s.reps)||0)*(e.unit==="lb"?0.45359237:1))}));const u=preferredUnit();const shown=u==="lb"?volume*2.2046226218:volume;return `<section class="quick card"><div class="section-head"><h2>Quick Progress</h2><button onclick="go('progress')">View full history <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><div class="quick-grid"><div><i><svg class="icon"><use href="#activity"/></svg></i><b>${w.length}</b><span>Workouts</span><small>This Week</small></div><div><i><svg class="icon"><use href="#layers"/></svg></i><b>${Math.round(shown).toLocaleString()} ${u}</b><span>Volume</span><small>This Week</small></div><div><i><svg class="icon"><use href="#chart"/></svg></i><b>${countPRs()}</b><span>PRs</span><small>This Month</small></div><div><i><svg class="icon"><use href="#target"/></svg></i><b>${calcProgress()}</b><span>Day Progress</span><small>Keep it up!</small></div></div></section>`}
+function quickProgress(){
+ const ws=weekStart(selectedWeekStart),we=weekEnd(ws);
+ const w=state.workouts.filter(x=>x.date>=dateKey(ws)&&x.date<=dateKey(we));
+ let volume=0,sets=0;
+ w.forEach(x=>(x.exercises||[]).forEach(raw=>{
+  const e=normalizedEntry(raw,x.unit||"kg");
+  (e.sets||[]).forEach(s=>{
+   sets++;
+   volume+=(Number(s.weight)||0)*(Number(s.reps)||0)*(e.unit==="lb"?0.45359237:1);
+  });
+ }));
+ const u=preferredUnit();
+ const shown=u==="lb"?volume*2.2046226218:volume;
+ const weekLabel=iAmThisWeek(ws)?"This Week":rangeLabel(ws);
+ return `<section class="quick card"><div class="section-head"><h2>Quick Progress</h2><button onclick="go('progress')">View full history <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><div class="quick-grid"><div><i><svg class="icon"><use href="#layers"/></svg></i><b>${sets}</b><span>Sets</span><small>${weekLabel}</small></div><div><i><svg class="icon"><use href="#layers"/></svg></i><b>${Math.round(shown).toLocaleString()} ${u}</b><span>Volume</span><small>${weekLabel}</small></div><div><i><svg class="icon"><use href="#chart"/></svg></i><b>${countPRs()}</b><span>PRs</span><small>This Month</small></div><div><i><svg class="icon"><use href="#target"/></svg></i><b>${calcProgress()}</b><span>Day Progress</span><small>Keep it up!</small></div></div></section>`
+}
 function countPRs(){
  const now=new Date(),monthStart=new Date(now.getFullYear(),now.getMonth(),1),seen=new Map(),prs=[];
  const workouts=[...state.workouts].sort((a,b)=>String(a.date).localeCompare(String(b.date))||(a.createdAt||0)-(b.createdAt||0));
