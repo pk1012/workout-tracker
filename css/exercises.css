@@ -254,14 +254,20 @@
   flex:none;
   display:grid;
   grid-template-columns:1fr 1fr;
-  width:118px;
+  width:84px;
   margin-top:2px;
 }
 .exercise-history-view button{
   min-width:0;
-  padding-left:0;
-  padding-right:0;
-  text-align:center;
+  min-height:32px;
+  padding:0;
+  display:grid;
+  place-items:center;
+}
+.exercise-history-view button .icon{
+  width:18px;
+  height:18px;
+  display:block;
 }
 
 .modal:has(.workout-entry-sheet) .workout-entry-scroll.exercise-history-graph-scroll-host{

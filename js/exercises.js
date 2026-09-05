@@ -395,7 +395,7 @@ function renderExerciseHistorySheet(){
  const zoom=exerciseHistoryUi.zoom;
  const ladder=view==="list"?exerciseProgressLadder(history):"";
  const group=exerciseMuscleName(exercise)||"Unknown";
- const toggle=hasHistory?`<span class="segment exercise-history-view"><button type="button" class="${view==="list"?"active":""}" onclick="setExerciseHistoryView('list')">List</button><button type="button" class="${view==="graph"?"active":""}" onclick="setExerciseHistoryView('graph')">Graph</button></span>`:"";
+ const toggle=hasHistory?`<span class="segment exercise-history-view"><button type="button" class="${view==="list"?"active":""}" onclick="setExerciseHistoryView('list')" aria-label="List"><svg class="icon" aria-hidden="true"><use href="#view-list"/></svg></button><button type="button" class="${view==="graph"?"active":""}" onclick="setExerciseHistoryView('graph')" aria-label="Graph"><svg class="icon" aria-hidden="true"><use href="#view-bars"/></svg></button></span>`:"";
  const body=!hasHistory
   ?`<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No history</strong><span>Complete this exercise in a workout to see its history.</span></div>`
   :view==="graph"?exerciseHistoryGraphBody(history,zoom):exerciseHistoryListBody(history,unit);
