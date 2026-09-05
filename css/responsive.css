@@ -150,6 +150,15 @@
   border-radius:var(--nav-radius);
   box-shadow:0 10px 32px rgba(20,22,35,.13),0 2px 8px rgba(20,22,35,.06);
 }
+@media(min-width:601px){
+  .bottom-nav{
+    left:50%;
+    right:auto;
+    transform:translateX(-50%);
+    width:min(560px,calc(100% - 32px));
+    max-width:none;
+  }
+}
 .nav-btn{
   min-height:0;
   height:100%;
