@@ -187,7 +187,11 @@ function renderCalendar(){
  const days=monthGrid(month);
  const inMonth=monthDates(month);
  const count=inMonth.filter(d=>state.workouts.some(w=>w.date===dateKey(d))).length;
- const restCount=inMonth.filter(d=>!state.workouts.some(w=>w.date===dateKey(d))).length;
+ const todayKey=dateKey(new Date());
+ const restCount=inMonth.filter(d=>{
+  const k=dateKey(d);
+  return k<todayKey && !state.workouts.some(w=>w.date===k);
+ }).length;
  const remaining=remainingDays(inMonth);
  const sel=dateKey(selected);
  const heads=weekdayHeads();
