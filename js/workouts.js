@@ -465,7 +465,6 @@ function formatSet(set,unit){
  const from=unit==="lb"?"lb":"kg";
  const to=preferredUnit();
  const w=Number(set.weight);
- if(w===0)return `Bodyweight · ${Number(set.reps)} reps`;
  const shown=convertWeight(w,from,to);
  const text=Number.isInteger(shown)?String(shown):String(shown);
  return `${text} ${to} · ${Number(set.reps)} reps`;

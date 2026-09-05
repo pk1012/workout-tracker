@@ -28,7 +28,7 @@ function heaviestSet(sets){
 }
 function formatExerciseLoad(weight,fromUnit){
  const n=Number(displayWeight(weight,fromUnit));
- if(n===0)return "Bodyweight";
+ if(!Number.isFinite(n))return "";
  const text=Number.isInteger(n)?String(n):String(Math.round(n*10)/10);
  return `${text} ${preferredUnit()}`;
 }
@@ -90,17 +90,11 @@ function exerciseProgressLadder(sessionsNewestFirst){
   if(!s.heavy)return null;
   const from=s.entry.unit||s.workout.unit||"kg";
   const n=Number(displayWeight(s.heavy.weight,from));
-  return {n,unit:to,body:Number(s.heavy.weight)===0};
- }).filter(Boolean);
+  if(!Number.isFinite(n))return null;
+  return Number.isInteger(n)?String(n):String(n);
+ }).filter(s=>s!=null);
  if(!steps.length)return "";
- const parts=steps.map(s=>{
-  if(s.body)return "Bodyweight";
-  const text=Number.isInteger(s.n)?String(s.n):String(s.n);
-  return text;
- });
- const joined=parts.join(" → ");
- if(steps.some(s=>!s.body))return `${joined} ${to}`;
- return joined;
+ return `${steps.join(" → ")} ${to}`;
 }
 
 function exerciseCategoryMatches(exercise,filter){
@@ -290,12 +284,12 @@ function exerciseWeightedPoints(sessionsNewestFirst){
  const to=preferredUnit();
  const byDate=new Map();
  for(const s of sessionsNewestFirst||[]){
-  if(!s?.heavy||Number(s.heavy.weight)===0)continue;
+  if(!s?.heavy)continue;
   const date=s.workout?.date||"";
   if(!date)continue;
   const from=s.entry?.unit||s.workout?.unit||"kg";
   const n=Number(displayWeight(s.heavy.weight,from));
-  if(!Number.isFinite(n)||n<=0)continue;
+  if(!Number.isFinite(n)||n<0)continue;
   const prev=byDate.get(date);
   if(!prev||n>prev.n)byDate.set(date,{date,n,unit:to});
  }
@@ -363,7 +357,7 @@ function exerciseHistoryListBody(history,unit){
   const dateLabel=new Date(`${workout.date}T00:00:00`).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
   const sets=entry.sets||[];
   const rows=sets.length
-   ?sets.map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${Number(s.weight)===0?`Bodyweight · ${Number(s.reps)} reps`:esc(formatSet(s,entry.unit||unit))}</span></div>`).join("")
+   ?sets.map((s,i)=>`<div class="detail-set"><span>Set ${i+1}</span><span>${esc(formatSet(s,entry.unit||unit))}</span></div>`).join("")
    :`<div class="detail-set"><span>No sets recorded</span></div>`;
   return collapsibleCard(esc(dateLabel),rows);
  }).join("");
@@ -371,7 +365,7 @@ function exerciseHistoryListBody(history,unit){
 function exerciseHistoryGraphBody(history,zoom){
  const buckets=exerciseGraphBuckets(exerciseWeightedPoints(history),zoom);
  if(!buckets.length){
-  return `<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#chart"/></svg><strong>No weighted sets</strong><span>Log a weighted set to see a graph.</span></div>`;
+  return `<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#chart"/></svg><strong>No sets to graph</strong><span>Log a set to see a graph.</span></div>`;
  }
  const zooms=["day","week","month","year"];
  const zoomBar=`<div class="segment exercise-history-zoom">${zooms.map(z=>`<button type="button" class="${zoom===z?"active":""}" onclick="setExerciseHistoryZoom('${z}')">${z[0].toUpperCase()+z.slice(1)}</button>`).join("")}</div>`;
