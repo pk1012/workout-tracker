@@ -119,6 +119,9 @@ function historyExportFileStem(){
   return `Workout-History-${dateKey(new Date())}`;
 }
 
-function exportHistoryXlsx(){
-  downloadWorkoutHistoryXlsx(historyExportWorkouts(),historyExportFileStem());
+async function exportHistoryXlsx(){
+  const headers=["Date","Title","Exercise","Set","Weight","Unit","Reps","Start","End","Duration"];
+  const rows=historyExportWorkouts().flatMap(w=>workoutExportRows(w));
+  const blob=buildXlsx(headers,rows,"History");
+  await saveXlsxFile(blob,`${historyExportFileStem()}.xlsx`);
 }
