@@ -184,7 +184,6 @@ function restoreBinWorkout(id){
  confirmAction("Restore this workout to your history?",()=>{
   const next=JSON.parse(JSON.stringify(item));
   delete next.deletedAt;
-  delete next.muscleNames;
   if(next.date&&workoutOnDate(next.date,next.id)){notify(dateTakenMessage());return}
   state.workouts.push(next);
   state.bin.workouts=state.bin.workouts.filter(w=>w.id!==id);
