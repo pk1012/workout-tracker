@@ -1,4 +1,4 @@
-const {hasCompletedWorkouts,driveSnapshot,parseDriveBackup,driveContentHash,drivePolicy}=require("./drive-policy.js");
+const {hasCompletedWorkouts,hasBinnedWorkouts,driveSnapshot,parseDriveBackup,driveContentHash,drivePolicy}=require("./drive-policy.js");
 const assert=require("assert");
 
 const local="device-a";
@@ -12,6 +12,9 @@ const state={
 
 assert.strictEqual(hasCompletedWorkouts(state),true);
 assert.strictEqual(hasCompletedWorkouts({workouts:[]}),false);
+assert.strictEqual(hasBinnedWorkouts({bin:{workouts:[{id:"w1"}]}}),true);
+assert.strictEqual(hasBinnedWorkouts({bin:{workouts:[]}}),false);
+assert.strictEqual(hasBinnedWorkouts({workouts:[]}),false);
 
 const snap=driveSnapshot(state,{version:"1",savedAt:"t",deviceId:local});
 assert.strictEqual(snap.format,"workout-tracker-drive");
@@ -43,9 +46,15 @@ assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:oth
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:other,restoreDeclined:true}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:local,restoreDeclined:true}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:local,restoreDeclined:true,forceOverwrite:true}).action,"upload");
-assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true}).action,"upload");
-assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushEmpty:true}).action,"upload");
-assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:other,flushEmpty:true}).action,"need-confirm");
+/* C: Recycle still has workouts — flushEmpty may upload for same writer. */
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true,hasBinnedWorkouts:true}).action,"upload");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushEmpty:true,hasBinnedWorkouts:true}).action,"upload");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:other,flushEmpty:true,hasBinnedWorkouts:true}).action,"need-confirm");
+/* A: nothing in Recycle — never silent-upload over Drive history. */
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true,hasBinnedWorkouts:false,remoteHasWorkouts:true}).action,"need-confirm");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true}).action,"need-confirm");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true,hasBinnedWorkouts:false,remoteHasWorkouts:false}).action,"idle");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushEmpty:true,hasBinnedWorkouts:false}).action,"idle");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:false}).action,"idle");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:true}).action,"offer-restore");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushLibrary:true}).action,"upload");
