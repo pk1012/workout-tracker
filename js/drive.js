@@ -608,7 +608,7 @@ async function restoreFromDriveBackup(){
    "Replace this phone’s workouts and library with the Drive backup? Data only on this phone will be lost. Drive is not changed.",
    ()=>confirmDriveRestore(remote),
    true,
-   ()=>{pendingDriveRestore=null;closeModal();}
+   ()=>{pendingDriveRestore=null;if(typeof restoreBackup==="function")restoreBackup();else closeModal();}
   );
  }catch(err){
   notify("Could not restore this Drive backup.","error");

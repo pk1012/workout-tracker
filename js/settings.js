@@ -62,7 +62,7 @@ function restoreFromFile(file){
    const parsed=JSON.parse(reader.result);
    const restored=parsed?.format==="workout-tracker-backup"?parsed.state:parsed;
    if(!isValidState(restored))throw new Error("Invalid backup format.");
-   confirmAction("Restore this backup? Your current workout data will be replaced.",()=>applyRestore(restored,parsed),true);
+   confirmAction("Restore this backup? Your current workout data will be replaced.",()=>applyRestore(restored,parsed),true,()=>restoreBackup());
    return;
   }catch(err){notify("Could not restore this backup. Please choose a valid Workout Tracker JSON backup.","error")}
  };
