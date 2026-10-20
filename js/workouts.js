@@ -670,7 +670,6 @@ function viewWorkout(id){
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="editWorkout('${w.id}')">Edit Workout</button>
    <button class="outline btn-wide workout-cancel-button" onclick="deleteWorkout('${w.id}')">Delete Workout</button>
-   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Done</button>
   </div>
  `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
