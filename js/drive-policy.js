@@ -97,6 +97,9 @@
    if(input.hasBinnedWorkouts)return{action:"upload",sameWriter,otherWriter};
    /* A: nothing recoverable left — never silent-upload over a Drive history. */
    if(remoteExists&&input.remoteHasWorkouts!==false)return{action:"need-confirm",sameWriter,otherWriter};
+   /* Drive also has no workouts; contentSame already idled above, so
+      bin/library still differ — keep Sync confirm available. */
+   if(remoteExists)return{action:"need-confirm",sameWriter,otherWriter};
    return{action:"idle",sameWriter,otherWriter};
   }
   if(flushLibrary){
@@ -115,6 +118,9 @@
    return{action:"offer-restore",sameWriter,otherWriter};
   }
   if(!hasLocalWorkouts){
+   /* Skipped restore (or no offer path) with a Drive file still present —
+      contentSame already idled when matched; otherwise Sync must confirm. */
+   if(remoteExists)return{action:"need-confirm",sameWriter,otherWriter};
    return{action:"idle",sameWriter,otherWriter};
   }
   if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};

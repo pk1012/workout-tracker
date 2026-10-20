@@ -669,9 +669,16 @@ async function runDriveHandshake(reason){
     setDriveDiverge(false);
     markDriveSynced();
     setDrivePending(false);
+    renderDriveCard();
+    return;
    }
-   renderDriveCard();
-   return;
+   /* Idle while content still differs — keep Sync offered; on Sync, fall
+      through to the overwrite confirm so diverge cannot stick forever. */
+   setDriveDiverge(true);
+   if(reason!=="sync"){
+    renderDriveCard();
+    return;
+   }
   }
   if(decision.action==="offer-restore"){
    setDrivePending(false);

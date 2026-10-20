@@ -38,7 +38,8 @@ assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:oth
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:""}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:other}).action,"offer-restore");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local}).action,"offer-restore");
-assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,restoreDeclined:true,remoteDeviceId:local}).action,"idle");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,restoreDeclined:true,remoteDeviceId:local}).action,"need-confirm");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,restoreDeclined:true,remoteDeviceId:local,contentSame:true}).action,"idle");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false}).action,"idle");
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:other,forceOverwrite:true}).action,"upload");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:other,forceOverwrite:true}).action,"upload");
@@ -53,7 +54,8 @@ assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:ot
 /* A: nothing in Recycle — never silent-upload over Drive history. */
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true,hasBinnedWorkouts:false,remoteHasWorkouts:true}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true}).action,"need-confirm");
-assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true,hasBinnedWorkouts:false,remoteHasWorkouts:false}).action,"idle");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true,hasBinnedWorkouts:false,remoteHasWorkouts:false}).action,"need-confirm");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true,hasBinnedWorkouts:false,remoteHasWorkouts:false,contentSame:true}).action,"idle");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushEmpty:true,hasBinnedWorkouts:false}).action,"idle");
 /* Both sides empty of workouts but content differs (bin/library) — Sync confirms. */
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:false}).action,"need-confirm");
