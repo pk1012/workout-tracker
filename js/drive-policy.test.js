@@ -55,7 +55,9 @@ assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:lo
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushEmpty:true,hasBinnedWorkouts:false,remoteHasWorkouts:false}).action,"idle");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushEmpty:true,hasBinnedWorkouts:false}).action,"idle");
-assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:false}).action,"idle");
+/* Both sides empty of workouts but content differs (bin/library) — Sync confirms. */
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:false}).action,"need-confirm");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:false,contentSame:true}).action,"idle");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,remoteHasWorkouts:true}).action,"offer-restore");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushLibrary:true}).action,"upload");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushLibrary:true,remoteHasWorkouts:false}).action,"upload");
