@@ -88,15 +88,16 @@ function weekStart(d){let x=new Date(d);x.setHours(0,0,0,0);let day=x.getDay();l
 function weekEnd(d){let x=weekStart(d);x.setDate(x.getDate()+6);return x}
 function weekNumber(d){
  // Use ISO-8601 week numbers so the label matches the calendar week.
- // Examples: 2–8 Feb 2025 = #06, 5–11 May 2025 = #19,
+ // Examples: 3–9 Feb 2025 = #06, 5–11 May 2025 = #19,
  // 24–30 Aug 2026 = #35, 13–19 Sep 2027 = #37.
  const x=new Date(d);
  x.setHours(0,0,0,0);
  // ISO week: Thursday determines the ISO year.
  const day=x.getDay() || 7;
  x.setDate(x.getDate() + 4 - day);
- const yearStart=new Date(x.getFullYear(),0,1);
- return Math.ceil((((x-yearStart)/86400000)+1)/7);
+ // UTC day math avoids DST making local day lengths ≠ 24h.
+ const dayIndex=Math.round((Date.UTC(x.getFullYear(),x.getMonth(),x.getDate())-Date.UTC(x.getFullYear(),0,1))/86400000);
+ return Math.floor(dayIndex/7)+1;
 }
 function rangeLabel(start){
  let end=weekEnd(start);
@@ -247,7 +248,7 @@ function workoutCard(w){
  const date=workoutCardDate(w);
  return `<button class="workout-card card" onclick="viewWorkout('${w.id}')"><div class="workout-avatar"><svg class="icon"><use href="#dumbbell"/></svg></div><div class="workout-card-copy"><strong>${esc(workoutMuscleLabel(w))}</strong>${date?`<span class="workout-card-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(date)}</span></span>`:""}<div class="workout-metrics"><b><svg class="inline-icon"><use href="#dumbbell"/></svg><span>${ex}</span><small>Exercises</small></b><b><svg class="inline-icon"><use href="#layers"/></svg><span>${sets}</span><small>Sets</small></b><b><svg class="inline-icon"><use href="#clock"/></svg><span>${durationLabel(dur)}</span></b></div></div><span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span></button>`;
 }
-function renderRecentWorkouts(){ /* History page. */ const ws=[...state.workouts].sort((a,b)=>{const dateDiff=(b.date||"").localeCompare(a.date||"");return dateDiff||(b.createdAt||0)-(a.createdAt||0)});return `<section class="recent-section"><div class="section-head"><h2>Workout History</h2></div>${ws.length?ws.map(workoutCard).join(""):`<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No workouts logged yet</strong><span>Start a workout to see it here.</span></div>`}</section>`}
+function renderRecentWorkouts(workouts){ /* History page. */ const source=Array.isArray(workouts)?workouts:state.workouts;const ws=[...source].sort((a,b)=>{const dateDiff=(b.date||"").localeCompare(a.date||"");return dateDiff||(b.createdAt||0)-(a.createdAt||0)});const emptyTitle=Array.isArray(workouts)?"No workouts this month":"No workouts logged yet";const emptyHint=Array.isArray(workouts)?"Pick another month or start a workout.":"Start a workout to see it here.";return `<section class="recent-section"><div class="section-head"><h2>Workout History</h2></div>${ws.length?ws.map(workoutCard).join(""):`<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>${emptyTitle}</strong><span>${emptyHint}</span></div>`}</section>`}
 function selectWorkoutDay(k){
  if(Date.now()<monthSwipeLockUntil)return;
  selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);renderCalendar();renderHome()
@@ -373,15 +374,18 @@ function navigateMonth(delta){
 }
 function bindMonthSwipe(){
  const root=document.querySelector("#workoutView .workout-month");
- if(!root)return;
+ if(!root||root.dataset.swipeBound==="1")return;
+ root.dataset.swipeBound="1";
  let x0=0,y0=0,active=false;
  const threshold=48;
+ const endGesture=()=>{active=false};
  root.addEventListener("pointerdown",e=>{
   if(monthSwipeAnimating)return;
   if(e.pointerType==="mouse"&&e.button!==0)return;
   if(e.target.closest(".week-select"))return;
   active=true;
   x0=e.clientX;y0=e.clientY;
+  try{root.setPointerCapture(e.pointerId)}catch(_){}
  });
  root.addEventListener("pointerup",e=>{
   if(!active)return;
@@ -392,7 +396,8 @@ function bindMonthSwipe(){
   monthSwipeLockUntil=Date.now()+500;
   navigateMonth(dx<0?1:-1);
  });
- root.addEventListener("pointercancel",()=>{active=false});
+ root.addEventListener("pointercancel",endGesture);
+ root.addEventListener("lostpointercapture",endGesture);
 }
 
 function draftFromWorkout(w){
@@ -436,7 +441,10 @@ function workoutOnDate(date,exceptId){
 }
 function dateTakenMessage(){return "A workout already exists for this day."}
 function openWorkout(){
- workoutDraft={...emptyWorkoutDraft(),date:todayDateKey(),startTime:localTimeValue()};
+ const date=todayDateKey();
+ const existing=workoutOnDate(date);
+ if(existing){editWorkout(existing.id);return}
+ workoutDraft={...emptyWorkoutDraft(),date,startTime:localTimeValue()};
  renderWorkoutBasicsSheet();
 }
 function editWorkout(id){

@@ -11,10 +11,15 @@ function renderHome(){
  // An unfinished draft remains available to the workout flow, but is not presented as a third home status.
  const status=latest?homeCompleted(latest):homeNotStarted();
  const ws=weekStart(selectedWeekStart);
- document.getElementById("homeView").innerHTML=heroCard()+status+weeklyCard(ws)+quickProgress();
+ document.getElementById("homeView").innerHTML=heroCard(latest)+status+weeklyCard(ws)+quickProgress();
  bindWeekSwipe();
 }
-function heroCard(){return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>Keep your streak alive!</p><button class="hero-btn" onclick="openWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><img class="hero-art" src="assets/workout-hero.png" alt="Dumbbell and shaker illustration" aria-hidden="true"></section>`}
+function heroCard(latest){
+ if(latest){
+  return `<section class="hero-card"><div class="hero-copy"><h2>Workout Logged</h2><p>Today's session is saved.<br>Review or edit anytime.</p><button class="hero-btn" onclick="editWorkout('${latest.id}')">Edit Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><img class="hero-art" src="assets/workout-hero.png" alt="" aria-hidden="true"></section>`;
+ }
+ return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>Keep your streak alive!</p><button class="hero-btn" onclick="openWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><img class="hero-art" src="assets/workout-hero.png" alt="" aria-hidden="true"></section>`;
+}
 function homeNotStarted(){return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon neutral"><svg class="icon"><use href="#activity"/></svg></div><div class="status-copy"><strong>No workout yet</strong><span>Ready when you are.</span></div><button class="outline status-action" onclick="openWorkout()">Start Workout</button></div></section>`}
 function homeCompleted(w){
  return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon complete"><svg class="icon" aria-hidden="true"><use href="#check"/></svg></div><div class="status-copy green-text"><strong>Workout completed</strong><span>Great job! You crushed it.</span></div><button class="outline status-action" onclick="viewWorkout('${w.id}')">View Workout</button></div></section>`;
@@ -114,15 +119,18 @@ function navigateWeek(delta){
 }
 function bindWeekSwipe(){
  const root=document.querySelector("#homeView .weekly-card");
- if(!root)return;
+ if(!root||root.dataset.swipeBound==="1")return;
+ root.dataset.swipeBound="1";
  let x0=0,y0=0,active=false;
  const threshold=48;
+ const endGesture=()=>{active=false};
  root.addEventListener("pointerdown",e=>{
   if(weekSwipeAnimating)return;
   if(e.pointerType==="mouse"&&e.button!==0)return;
   if(e.target.closest(".week-select, .full-week"))return;
   active=true;
   x0=e.clientX;y0=e.clientY;
+  try{root.setPointerCapture(e.pointerId)}catch(_){}
  });
  root.addEventListener("pointerup",e=>{
   if(!active)return;
@@ -133,7 +141,8 @@ function bindWeekSwipe(){
   weekSwipeLockUntil=Date.now()+500;
   navigateWeek(dx<0?1:-1);
  });
- root.addEventListener("pointercancel",()=>{active=false});
+ root.addEventListener("pointercancel",endGesture);
+ root.addEventListener("lostpointercapture",endGesture);
 }
 function quickProgress(){
  const ws=weekStart(selectedWeekStart),we=weekEnd(ws);
