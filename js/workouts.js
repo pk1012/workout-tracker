@@ -252,7 +252,10 @@ function selectWorkoutDay(k){
  if(Date.now()<monthSwipeLockUntil)return;
  selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);renderCalendar();renderHome()
 }
-function goToWeekDay(k){go("workouts");selectWorkoutDay(k)}
+function goToWeekDay(k){
+ if(typeof weekSwipeLockUntil==="number"&&Date.now()<weekSwipeLockUntil)return;
+ go("workouts");selectWorkoutDay(k);
+}
 function openWeekPicker(){
  const items=weekPickerItems();
  modal(`
@@ -274,7 +277,15 @@ function openWeekPicker(){
  pinPickerChoice();
 }
 function iAmThisWeek(d){return dateKey(d)===dateKey(weekStart(new Date()))}
-function chooseWeek(k){selectedWeekStart=weekStart(new Date(k+"T00:00:00"));selected=new Date(selectedWeekStart);selectedMonth=monthStart(selected);closeModal();renderCalendar();renderHome()}
+function applySelectedWeek(k){
+ selectedWeekStart=weekStart(new Date(k+"T00:00:00"));
+ selected=new Date(selectedWeekStart);
+ selectedMonth=monthStart(selected);
+}
+function chooseWeek(k){
+ applySelectedWeek(k);
+ closeModal();renderCalendar();renderHome();
+}
 function openMonthPicker(){
  const items=monthPickerItems();
  modal(`

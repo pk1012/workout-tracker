@@ -3,6 +3,57 @@
 #home .head-icon{
   color:var(--primary);
 }
+#home .weekly-card{
+  touch-action:pan-y;
+  overflow-x:hidden;
+}
+#home .week-days-calendar{
+  position:relative;
+  overflow:hidden;
+}
+#home .week-days-calendar.is-swiping{
+  pointer-events:none;
+}
+#home .week-days-calendar-pane{
+  width:100%;
+  transition:transform .28s cubic-bezier(.22,.61,.36,1),opacity .28s cubic-bezier(.22,.61,.36,1);
+  will-change:transform,opacity;
+}
+#home .week-days-calendar-pane.is-out{
+  position:relative;
+}
+#home .week-days-calendar-pane.is-in{
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+}
+#home .week-days-calendar.swipe-next .is-in{
+  transform:translate3d(18%,0,0);
+  opacity:.55;
+}
+#home .week-days-calendar.swipe-prev .is-in{
+  transform:translate3d(-18%,0,0);
+  opacity:.55;
+}
+#home .week-days-calendar.swipe-next.is-animating .is-out{
+  transform:translate3d(-18%,0,0);
+  opacity:0;
+}
+#home .week-days-calendar.swipe-prev.is-animating .is-out{
+  transform:translate3d(18%,0,0);
+  opacity:0;
+}
+#home .week-days-calendar.swipe-next.is-animating .is-in,
+#home .week-days-calendar.swipe-prev.is-animating .is-in{
+  transform:translate3d(0,0,0);
+  opacity:1;
+}
+@media (prefers-reduced-motion:reduce){
+  #home .week-days-calendar-pane{
+    transition:none;
+  }
+}
 
 @media (max-width: 600px){
   #home .home-head{
