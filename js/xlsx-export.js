@@ -51,9 +51,11 @@
  }
  async function saveXlsxFile(blob,filename){
   const file=new File([blob],filename,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){
-   try{await navigator.share({files:[file],title:filename});return true}catch(err){if(err&&err.name==="AbortError")return false}
-  }
+  try{
+   if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:filename});return true}catch(err){if(err&&err.name==="AbortError")return false}
+   }
+  }catch(err){}
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;a.download=filename;a.click();
