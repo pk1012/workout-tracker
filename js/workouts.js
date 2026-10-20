@@ -492,7 +492,7 @@ function renderExerciseSelection(){
    <button class="primary btn-wide workout-next-button" onclick="continueToSetDetails()">Next: Enter Weight &amp; Reps <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button>
    <button class="outline btn-wide workout-cancel-button" onclick="renderWorkoutBasicsSheet()">Back</button>
   </div>
- `,"workout-entry-sheet",{kind:"form",onEscape:()=>cancelWorkoutForm()});
+ `,"workout-entry-sheet",{kind:"form",onEscape:()=>renderWorkoutBasicsSheet()});
 }
 
 function continueToSetDetails(){
@@ -523,7 +523,7 @@ function renderSetDetails(){
      <button class="primary btn-wide workout-next-button" onclick="saveWorkout()">${isEditingWorkout()?"Save Changes":"Complete Workout"}</button>
      <button class="outline btn-wide workout-cancel-button" onclick="renderExerciseSelection()">Back</button>
    </div>
- `,"workout-entry-sheet",{kind:"form",onEscape:()=>cancelWorkoutForm()});
+ `,"workout-entry-sheet",{kind:"form",onEscape:()=>renderExerciseSelection()});
 }
 
 function setRow(exIndex,setIndex,set){const remove=workoutDraft.exercises[exIndex].sets.length>1?`<button class="remove-set" aria-label="Remove set" onclick="removeSet(${exIndex},${setIndex})"><svg class="icon"><use href="#close"/></svg></button>`:`<span class="remove-placeholder"></span>`;return `<div class="set-row"><span class="set-number">${setIndex+1}</span><label class="set-field"><span>Weight</span><input class="input compact" type="number" min="0" step="0.1" value="${esc(set.weight??"")}" oninput="updateSet(${exIndex},${setIndex},'weight',this.value)"></label><label class="set-field"><span>Reps</span><input class="input compact" type="number" min="1" step="1" value="${esc(set.reps??"")}" oninput="updateSet(${exIndex},${setIndex},'reps',this.value)"></label>${remove}</div>`}
