@@ -73,6 +73,7 @@ function toggleDraftExercise(id){
 }
 let selectedWeekStart=weekStart(new Date());
 let selectedMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let monthSwipeLockUntil=0;
 
 function localTimeValue(d=new Date()){return d.toTimeString().slice(0,5)}
 function formatTime(t){if(!t)return "—";let [h,m]=t.split(":").map(Number);let ap=h>=12?"PM":"AM",hh=h%12||12;return `${hh}:${String(m).padStart(2,"0")} ${ap}`}
