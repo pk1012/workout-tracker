@@ -17,9 +17,40 @@
  if(!("serviceWorker" in navigator))return;
  var path=location.pathname;
  var base=location.hostname.indexOf("github.io")!==-1&&path.indexOf("/workout-tracker")===0?"/workout-tracker/":"./";
+ /* Listen before register so a fast skipWaiting cannot miss reload. */
+ navigator.serviceWorker.addEventListener("controllerchange",function(){
+  if(window.__wtReloading)return;
+  function reloadApp(){
+   if(window.__wtReloading)return;
+   window.__wtReloading=true;
+   location.reload();
+  }
+  var body=document.body;
+  if(!body||!body.classList.contains("workout-form-open")){
+   reloadApp();
+   return;
+  }
+  if(window.__wtWaitingForSheet)return;
+  window.__wtWaitingForSheet=true;
+  var watch=new MutationObserver(function(){
+   if(document.body.classList.contains("workout-form-open"))return;
+   watch.disconnect();
+   reloadApp();
+  });
+  watch.observe(document.body,{attributes:true,attributeFilter:["class"]});
+ });
  navigator.serviceWorker.register(base+"sw.js",{scope:base,updateViaCache:"none"}).then(function(reg){
   reg.update();
   if(reg.waiting)reg.waiting.postMessage({type:"SKIP_WAITING"});
+  reg.addEventListener("updatefound",function(){
+   var worker=reg.installing;
+   if(!worker)return;
+   worker.addEventListener("statechange",function(){
+    if(worker.state==="installed"&&navigator.serviceWorker.controller){
+     worker.postMessage({type:"SKIP_WAITING"});
+    }
+   });
+  });
  }).catch(function(){});
 })();
 </script>
@@ -46,15 +77,15 @@
 <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180.png">
 <link rel="apple-touch-icon" sizes="512x512" href="assets/icons/icon-512.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="css/styles.css?v=1.7.345">
-<link rel="stylesheet" href="css/components.css?v=1.7.345">
-<link rel="stylesheet" href="css/responsive.css?v=1.7.345">
-<link rel="stylesheet" href="css/home.css?v=1.7.345">
-<link rel="stylesheet" href="css/workouts.css?v=1.7.345">
-<link rel="stylesheet" href="css/progress.css?v=1.7.345">
-<link rel="stylesheet" href="css/exercises.css?v=1.7.345">
-<link rel="stylesheet" href="css/settings.css?v=1.7.345">
-<link rel="stylesheet" href="css/recycle.css?v=1.7.345">
+<link rel="stylesheet" href="css/styles.css?v=1.7.346">
+<link rel="stylesheet" href="css/components.css?v=1.7.346">
+<link rel="stylesheet" href="css/responsive.css?v=1.7.346">
+<link rel="stylesheet" href="css/home.css?v=1.7.346">
+<link rel="stylesheet" href="css/workouts.css?v=1.7.346">
+<link rel="stylesheet" href="css/progress.css?v=1.7.346">
+<link rel="stylesheet" href="css/exercises.css?v=1.7.346">
+<link rel="stylesheet" href="css/settings.css?v=1.7.346">
+<link rel="stylesheet" href="css/recycle.css?v=1.7.346">
 </head>
 <body>
 <div class="app">
@@ -163,18 +194,18 @@
 <symbol id="view-bars" viewBox="0 0 24 24"><path d="M4 5v14h16"/><path d="M7 16 11 11l3 2 6-8"/></symbol>
 </svg>
 <div id="modal" class="modal"></div>
-<script src="js/xlsx-export.js?v=1.7.345"></script>
-<script src="js/data-rules.js?v=1.7.345"></script>
-<script src="js/data.js?v=1.7.345"></script>
-<script src="js/workouts.js?v=1.7.345"></script>
-<script src="js/home.js?v=1.7.345"></script>
-<script src="js/exercises.js?v=1.7.345"></script>
-<script src="js/progress.js?v=1.7.345"></script>
-<script src="js/settings.js?v=1.7.345"></script>
-<script src="js/recycle.js?v=1.7.345"></script>
-<script src="js/drive-config.js?v=1.7.345"></script>
-<script src="js/drive-policy.js?v=1.7.345"></script>
-<script src="js/drive.js?v=1.7.345"></script>
-<script src="js/app.js?v=1.7.345"></script>
+<script src="js/xlsx-export.js?v=1.7.346"></script>
+<script src="js/data-rules.js?v=1.7.346"></script>
+<script src="js/data.js?v=1.7.346"></script>
+<script src="js/workouts.js?v=1.7.346"></script>
+<script src="js/home.js?v=1.7.346"></script>
+<script src="js/exercises.js?v=1.7.346"></script>
+<script src="js/progress.js?v=1.7.346"></script>
+<script src="js/settings.js?v=1.7.346"></script>
+<script src="js/recycle.js?v=1.7.346"></script>
+<script src="js/drive-config.js?v=1.7.346"></script>
+<script src="js/drive-policy.js?v=1.7.346"></script>
+<script src="js/drive.js?v=1.7.346"></script>
+<script src="js/app.js?v=1.7.346"></script>
 </body>
 </html>

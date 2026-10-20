@@ -354,26 +354,6 @@ if("serviceWorker" in navigator){
    if(typeof refreshAppViews==="function")refreshAppViews();
   }
  });
- let reloading=false;
- let waitingForSheet=false;
- const reloadApp=()=>{
-  if(reloading)return;
-  reloading=true;
-  location.reload();
- };
- navigator.serviceWorker.addEventListener("controllerchange",()=>{
-  if(reloading)return;
-  if(!document.body.classList.contains("workout-form-open")){
-   reloadApp();
-   return;
-  }
-  if(waitingForSheet)return;
-  waitingForSheet=true;
-  const watch=new MutationObserver(()=>{
-   if(document.body.classList.contains("workout-form-open"))return;
-   watch.disconnect();
-   reloadApp();
-  });
-  watch.observe(document.body,{attributes:true,attributeFilter:["class"]});
- });
+ /* Reload on controllerchange is wired in index.html (early) so updates
+    cannot race past app.js. Keep update checks / sheet date refresh here. */
 }
