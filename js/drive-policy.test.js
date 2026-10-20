@@ -52,7 +52,7 @@ assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:false,flushLibrary:tru
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushLibrary:true,remoteHasWorkouts:false}).action,"upload");
 assert.strictEqual(p({hasLocalWorkouts:true,remoteExists:true,remoteDeviceId:local,flushLibrary:true}).action,"upload");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:other,flushLibrary:true}).action,"need-confirm");
-assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushLibrary:true}).action,"offer-restore");
+assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushLibrary:true}).action,"need-confirm");
 assert.strictEqual(p({hasLocalWorkouts:false,remoteExists:true,remoteDeviceId:local,flushLibrary:true,restoreDeclined:true}).action,"need-confirm");
 
 const hashA=driveContentHash(state);

@@ -92,10 +92,9 @@
   }
   if(flushLibrary){
    if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};
-   if(!hasLocalWorkouts&&remoteExists&&!restoreDeclined&&input.remoteHasWorkouts!==false){
-    return{action:"offer-restore",sameWriter,otherWriter};
+   if(!hasLocalWorkouts&&remoteExists&&input.remoteHasWorkouts!==false){
+    return{action:"need-confirm",sameWriter,otherWriter};
    }
-   if(!hasLocalWorkouts&&remoteExists&&restoreDeclined)return{action:"need-confirm",sameWriter,otherWriter};
    return{action:"upload",sameWriter,otherWriter};
   }
 

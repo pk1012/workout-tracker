@@ -687,6 +687,10 @@ async function runDriveHandshake(reason){
   if(decision.action==="need-confirm"){
    setDrivePending(false);
    setDriveDiverge(true);
+   if(reason==="library"&&!hasCompletedWorkouts(state)&&!decision.otherWriter){
+    confirmAction("This phone has no workouts. Replace the Drive backup with this phone’s library? That can erase workouts still on Drive.",()=>queueDriveSave("overwrite"),true);
+    return;
+   }
   }
   if(decision.action==="upload"){
    const allowUpload=reason==="auto"||reason==="empty"||reason==="library"||reason==="retry"||reason==="connect"||reason==="sync"||reason==="overwrite"||(reason==="boot"&&(drivePending()||isDriveDirty()||!remote.exists));
