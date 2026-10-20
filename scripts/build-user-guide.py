@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Build user-guide.pdf from cropped feature shots. Run from repo root."""
+import re
 from pathlib import Path
 from fpdf import FPDF
 from PIL import Image
@@ -7,6 +8,14 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "user-guide.pdf"
 SHOTS = ROOT / "docs" / "guide-shots"
+
+
+def app_version():
+    text = (ROOT / "js" / "data.js").read_text()
+    match = re.search(r'const VERSION="([^"]+)"', text)
+    if not match:
+        raise SystemExit("VERSION missing in js/data.js")
+    return match.group(1)
 
 ITEMS = [
     {"section": "Home", "title": "Start Workout", "line": "Logs today.", "shot": "home-start.png"},
@@ -46,11 +55,17 @@ ITEMS = [
 
 
 class Guide(FPDF):
+    def __init__(self, version, **kwargs):
+        super().__init__(**kwargs)
+        self.app_version = version
+
     def footer(self):
         self.set_y(-12)
+        self.set_x(14)
         self.set_font("Helvetica", "", 9)
         self.set_text_color(140, 142, 150)
-        self.cell(0, 6, str(self.page_no()), align="C")
+        self.cell(80, 6, self.app_version, align="L")
+        self.cell(self.w - 108, 6, str(self.page_no()), align="R")
 
 
 def image_size(path, max_w, max_h):
@@ -72,7 +87,8 @@ def place_image(pdf, path, max_w, max_h):
 
 
 def main():
-    pdf = Guide(format="A4")
+    version = app_version()
+    pdf = Guide(version, format="A4")
     pdf.set_auto_page_break(auto=False, margin=14)
     pw = pdf.w - 28
     pdf.add_page()
@@ -83,7 +99,7 @@ def main():
     pdf.set_x(14)
     pdf.set_font("Helvetica", "", 11)
     pdf.set_text_color(90, 94, 104)
-    pdf.cell(pw, 6, "User guide", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(pw, 6, f"User guide  {version}", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(3)
 
     section = None
