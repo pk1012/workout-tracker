@@ -603,7 +603,7 @@ async function restoreFromDriveBackup(){
  }
  try{
   const remote=await loadDriveRemote();
-  if(!remote.exists||remote.unreadable||!remote.state||!looksLikeState(remote.state)){
+  if(!remote.exists||remote.unreadable||!remote.state||typeof isValidState!=="function"||!isValidState(remote.state)){
    notify("Could not restore this Drive backup.","error");
    return;
   }
@@ -687,7 +687,7 @@ async function runDriveHandshake(reason){
   if(decision.action==="offer-restore"){
    setDrivePending(false);
    if(reason==="library"){renderDriveCard();return}
-   if(remote.unreadable||!remote.state||!looksLikeState(remote.state)){
+   if(remote.unreadable||!remote.state||typeof isValidState!=="function"||!isValidState(remote.state)){
     notify("Drive backup could not be read.","error");
    }else{
     pendingDriveRestore=remote;
@@ -892,7 +892,7 @@ async function openPendingDriveRestore(){
  }
  try{
   const remote=await loadDriveRemote();
-  if(!remote.exists||!remote.state||!looksLikeState(remote.state)){
+  if(!remote.exists||!remote.state||typeof isValidState!=="function"||!isValidState(remote.state)){
    clearRestoreNotification();
    closeModal();
    notify("Could not restore this Drive backup.","error");
