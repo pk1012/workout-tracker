@@ -580,6 +580,7 @@ function confirmHistoryUse(title,used,head,tail,proceed,onCancel){
  pendingConfirmBack=typeof onCancel==="function"?onCancel:null;
  modal(`
   <div class="workout-entry-header">
+   <div class="handle"></div>
    <div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div>
    <h2 class="workout-form-title confirm-title">${esc(title)}</h2>
    <p class="muted workout-form-description confirm-copy">${esc(head)}<br><br>${lines.map(esc).join("<br>")}<br><br>${esc(tail)}</p>
@@ -601,6 +602,7 @@ function openExercise(id="",muscleId="",draftName){
  const groupClass=!e&&!group?" is-placeholder":"";
  modal(`
   <div class="workout-entry-header">
+   <div class="handle"></div>
    <h2 class="workout-form-title">${e?"Edit Exercise":"Add Exercise"}</h2>
   </div>
   <div class="workout-entry-scroll">
@@ -693,6 +695,7 @@ function openMuscle(id="",draftName){
  const name=draftName!=null?draftName:(m?m.name:"");
  modal(`
   <div class="workout-entry-header">
+   <div class="handle"></div>
    <h2 class="workout-form-title">${m?"Edit Muscle Group":"Add Muscle Group"}</h2>
   </div>
   <div class="workout-entry-scroll">

@@ -218,6 +218,7 @@ function connectDrive(){
  if(!id){
   modal(`
    <div class="workout-entry-header">
+    <div class="handle"></div>
     <h2 class="workout-form-title">Connect Google Drive</h2>
     <div class="muted workout-form-description">Paste the OAuth client ID from Google Cloud (Web application). Redirect URI must be ${esc(driveRedirectUri())}</div>
    </div>
@@ -543,6 +544,7 @@ function showDriveRestoreSheet(remote){
  restorePrompted=true;
  modal(`
   <div class="workout-entry-header">
+   <div class="handle"></div>
    <h2 class="workout-form-title">Restore from Drive?</h2>
    <div class="muted workout-form-description">This phone has no workouts. Google Drive has a backup${remote.savedAt?` from ${esc(formatDriveSaved(remote.savedAt))}`:""}. Restore replaces data on this phone. Drive is not changed yet.</div>
   </div>

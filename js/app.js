@@ -262,6 +262,7 @@ function confirmAction(message,onConfirm,asSheet,onCancel){
  if(asSheet){
   modal(`
    <div class="workout-entry-header">
+    <div class="handle"></div>
     <div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div>
     <h2 class="workout-form-title confirm-title">Are you sure?</h2>
     <p class="muted workout-form-description confirm-copy">${esc(message)}</p>
@@ -276,7 +277,7 @@ function confirmAction(message,onConfirm,asSheet,onCancel){
   return;
  }
  document.body.classList.remove("workout-form-open");
- modal(`<div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div><h2 class="confirm-title">Are you sure?</h2><p class="muted confirm-copy">${esc(message)}</p><div class="modal-actions"><button class="primary btn-wide" onclick="continueConfirmAction()">Continue</button><button class="outline btn-wide" onclick="cancelConfirmAction()">Cancel</button></div>`, "",{kind:"confirm"});
+ modal(`<div class="handle"></div><div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div><h2 class="confirm-title">Are you sure?</h2><p class="muted confirm-copy">${esc(message)}</p><div class="modal-actions"><button class="primary btn-wide" onclick="continueConfirmAction()">Continue</button><button class="outline btn-wide" onclick="cancelConfirmAction()">Cancel</button></div>`, "",{kind:"confirm"});
 }
 function continueConfirmAction(){
  const fn=pendingConfirm;
