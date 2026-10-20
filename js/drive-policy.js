@@ -108,7 +108,10 @@
   }
 
   if(!hasLocalWorkouts&&remoteExists&&!restoreDeclined){
-   if(input.remoteHasWorkouts===false)return{action:"idle",sameWriter,otherWriter};
+   /* Drive also has no workout history. contentSame already returned idle
+      above, so reaching here means bin/library still differ — Sync must
+      confirm before pushing the phone’s empty state (e.g. emptied Recycle). */
+   if(input.remoteHasWorkouts===false)return{action:"need-confirm",sameWriter,otherWriter};
    return{action:"offer-restore",sameWriter,otherWriter};
   }
   if(!hasLocalWorkouts){
