@@ -10,27 +10,28 @@
 }
 #workouts .workout-month{
   touch-action:pan-y;
-}
-#workouts #workoutView{
   overflow-x:hidden;
 }
-#workouts .workout-month.month-swipe-exit-next,
-#workouts .workout-month.month-swipe-exit-prev{
+#workouts .workout-month-calendar{
+  overflow:hidden;
+}
+#workouts .workout-month-calendar.month-swipe-exit-next,
+#workouts .workout-month-calendar.month-swipe-exit-prev{
   transition:transform .2s ease,opacity .2s ease;
   will-change:transform,opacity;
 }
-#workouts .workout-month.month-swipe-exit-next.is-leaving{
+#workouts .workout-month-calendar.month-swipe-exit-next.is-leaving{
   transform:translateX(-14%);
   opacity:.42;
 }
-#workouts .workout-month.month-swipe-exit-prev.is-leaving{
+#workouts .workout-month-calendar.month-swipe-exit-prev.is-leaving{
   transform:translateX(14%);
   opacity:.42;
 }
-#workouts .workout-month.month-swipe-enter-next{
+#workouts .workout-month-calendar.month-swipe-enter-next{
   animation:monthSwipeEnterNext .26s ease;
 }
-#workouts .workout-month.month-swipe-enter-prev{
+#workouts .workout-month-calendar.month-swipe-enter-prev{
   animation:monthSwipeEnterPrev .26s ease;
 }
 @keyframes monthSwipeEnterNext{
@@ -42,10 +43,10 @@
   to{transform:none;opacity:1}
 }
 @media (prefers-reduced-motion:reduce){
-  #workouts .workout-month.month-swipe-exit-next,
-  #workouts .workout-month.month-swipe-exit-prev,
-  #workouts .workout-month.month-swipe-enter-next,
-  #workouts .workout-month.month-swipe-enter-prev{
+  #workouts .workout-month-calendar.month-swipe-exit-next,
+  #workouts .workout-month-calendar.month-swipe-exit-prev,
+  #workouts .workout-month-calendar.month-swipe-enter-next,
+  #workouts .workout-month-calendar.month-swipe-enter-prev{
     transition:none;
     animation:none;
   }
