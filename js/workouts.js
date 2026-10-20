@@ -196,6 +196,7 @@ function renderCalendar(){
  const sel=dateKey(selected);
  const heads=weekdayHeads();
  document.getElementById("workoutView").innerHTML=`<section class="workout-week workout-month card"><div class="section-head"><h2>Monthly Activity</h2><button class="week-select" type="button" onclick="openMonthPicker()" aria-label="Select month"><b>${monthNumberChip(month)}</b><span>${monthRangeLabel(month)}</span><i><svg class="icon" aria-hidden="true"><use href="#chevron-down"/></svg></i></button></div><div class="workout-month-weekdays">${heads.map(h=>`<span>${h}</span>`).join("")}</div><div class="workout-days workout-month-days">${days.map(d=>{const k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d),out=inSelectedMonth(d)?"":" out-month";return `<button type="button" class="${k===sel?"selected ":""}${today?"is-today":""}${out}" aria-label="${d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}" onclick="selectWorkoutDay('${k}')"><small>${d.getDate()}</small><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><div class="week-stats"><span><svg class="icon" aria-hidden="true"><use href="#calendar-icon"/></svg><b>${count} workout${count===1?"":"s"}</b></span><i class="week-stats-rule" aria-hidden="true"></i><span><svg class="icon" aria-hidden="true"><use href="#activity"/></svg><b>${restCount} rest days</b></span><i class="week-stats-rule" aria-hidden="true"></i><span><svg class="icon" aria-hidden="true"><use href="#target"/></svg><b>${remaining} day${remaining===1?"":"s"} remaining</b></span></div></section>${renderSelectedDay(sel)}`;
+ bindMonthSwipe();
 }
 function renderSelectedDay(k){
  let d=new Date(k+"T00:00:00"),ws=state.workouts.filter(w=>w.date===k);
@@ -217,7 +218,10 @@ function workoutCard(w){
  return `<button class="workout-card card" onclick="viewWorkout('${w.id}')"><div class="workout-avatar"><svg class="icon"><use href="#dumbbell"/></svg></div><div class="workout-card-copy"><strong>${esc(workoutMuscleLabel(w))}</strong>${date?`<span class="workout-card-date"><svg class="inline-icon"><use href="#calendar-icon"/></svg><span>${esc(date)}</span></span>`:""}<div class="workout-metrics"><b><svg class="inline-icon"><use href="#dumbbell"/></svg><span>${ex}</span><small>Exercises</small></b><b><svg class="inline-icon"><use href="#layers"/></svg><span>${sets}</span><small>Sets</small></b><b><svg class="inline-icon"><use href="#clock"/></svg><span>${durationLabel(dur)}</span></b></div></div><span class="card-arrow" aria-hidden="true"><svg class="icon"><use href="#chevron-right"/></svg></span></button>`;
 }
 function renderRecentWorkouts(){ /* History page. */ const ws=[...state.workouts].sort((a,b)=>{const dateDiff=(b.date||"").localeCompare(a.date||"");return dateDiff||(b.createdAt||0)-(a.createdAt||0)});return `<section class="recent-section"><div class="section-head"><h2>Workout History</h2></div>${ws.length?ws.map(workoutCard).join(""):`<div class="card empty-panel"><svg class="icon" aria-hidden="true"><use href="#dumbbell"/></svg><strong>No workouts logged yet</strong><span>Start a workout to see it here.</span></div>`}</section>`}
-function selectWorkoutDay(k){selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);renderCalendar();renderHome()}
+function selectWorkoutDay(k){
+ if(Date.now()<monthSwipeLockUntil)return;
+ selected=new Date(k+"T00:00:00");selectedWeekStart=weekStart(selected);selectedMonth=monthStart(selected);renderCalendar();renderHome()
+}
 function goToWeekDay(k){go("workouts");selectWorkoutDay(k)}
 function openWeekPicker(){
  const items=weekPickerItems();
@@ -270,6 +274,36 @@ function chooseMonth(k){
  }
  selectedWeekStart=weekStart(selected);
  closeModal();renderCalendar();renderHome();
+}
+let monthSwipeLockUntil=0;
+function navigateMonth(delta){
+ const next=shiftMonth(selectedMonth,delta);
+ const items=monthPickerItems();
+ if(!items.length)return;
+ const newest=items[0],oldest=items[items.length-1];
+ if(next>newest||next<oldest)return;
+ chooseMonth(dateKey(next));
+}
+function bindMonthSwipe(){
+ const root=document.querySelector("#workoutView .workout-month");
+ if(!root)return;
+ let x0=0,y0=0,active=false;
+ const threshold=48;
+ root.addEventListener("pointerdown",e=>{
+  if(e.pointerType==="mouse"&&e.button!==0)return;
+  if(e.target.closest(".week-select"))return;
+  active=true;
+  x0=e.clientX;y0=e.clientY;
+ });
+ root.addEventListener("pointerup",e=>{
+  if(!active)return;
+  active=false;
+  const dx=e.clientX-x0,dy=e.clientY-y0;
+  if(Math.abs(dx)<threshold||Math.abs(dx)<=Math.abs(dy))return;
+  monthSwipeLockUntil=Date.now()+400;
+  navigateMonth(dx<0?1:-1);
+ });
+ root.addEventListener("pointercancel",()=>{active=false});
 }
 
 function draftFromWorkout(w){
