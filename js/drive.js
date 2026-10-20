@@ -571,7 +571,11 @@ function applyDriveBackupToPhone(remote){
  setDriveDiverge(false);
  setDrivePending(false);
  clearRestoreNotification();
- selected=new Date();selected.setHours(0,0,0,0);if(typeof monthStart==="function")selectedMonth=monthStart(selected);
+ selected=new Date();selected.setHours(0,0,0,0);
+ if(typeof monthStart==="function"){
+  selectedMonth=monthStart(selected);
+  if(typeof historyMonth!=="undefined")historyMonth=monthStart(selected);
+ }
  if(typeof refreshAppViews==="function")refreshAppViews();
  return true;
 }
