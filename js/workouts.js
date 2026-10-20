@@ -345,7 +345,7 @@ function bindMonthSwipe(){
   if(monthSwipeAnimating)return;
   const dx=e.clientX-x0,dy=e.clientY-y0;
   if(Math.abs(dx)<threshold||Math.abs(dx)<=Math.abs(dy))return;
-  monthSwipeLockUntil=Date.now()+700;
+  monthSwipeLockUntil=Date.now()+450;
   navigateMonth(dx<0?1:-1);
  });
  root.addEventListener("pointercancel",()=>{active=false});
