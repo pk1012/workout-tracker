@@ -276,7 +276,6 @@ function chooseMonth(k){
  selectedWeekStart=weekStart(selected);
  closeModal();renderCalendar();renderHome();
 }
-let monthSwipeLockUntil=0;
 function navigateMonth(delta){
  const next=shiftMonth(selectedMonth,delta);
  const items=monthPickerItems();
