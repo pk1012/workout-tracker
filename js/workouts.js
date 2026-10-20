@@ -262,10 +262,7 @@ function openWeekPicker(){
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
-   <div class="picker-title">
-    <h2 class="workout-form-title">Select Week</h2>
-    <button aria-label="Close" onclick="closeModal()"><svg class="icon"><use href="#close"/></svg></button>
-   </div>
+   <h2 class="workout-form-title">Select Week</h2>
   </div>
   <div class="workout-entry-scroll">
    <div class="week-list">${items.map(d=>`<button onclick="chooseWeek('${dateKey(d)}')" class="${dateKey(d)===dateKey(selectedWeekStart)?"chosen":""}"><b>${weekNumberChip(d)}</b><span>${rangeLabel(d)}</span>${iAmThisWeek(d)?'<em>This Week <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
@@ -289,10 +286,7 @@ function openMonthPicker(){
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
-   <div class="picker-title">
-    <h2 class="workout-form-title">Select Month</h2>
-    <button aria-label="Close" onclick="closeModal()"><svg class="icon"><use href="#close"/></svg></button>
-   </div>
+   <h2 class="workout-form-title">Select Month</h2>
   </div>
   <div class="workout-entry-scroll">
    <div class="week-list">${items.map(d=>`<button type="button" onclick="chooseMonth('${dateKey(d)}')" class="${dateKey(d)===dateKey(monthStart(selectedMonth))?"chosen":""}"><b>${d.toLocaleDateString("en-IN",{month:"short"})}</b><span>${d.getFullYear()}</span>${iAmThisMonth(d)?'<em>This Month <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>

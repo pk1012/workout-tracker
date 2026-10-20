@@ -89,9 +89,6 @@ function about(){
     <div class="detail-set"><span>Support</span><a class="about-link" href="mailto:support@workouttracker.app">support@workouttracker.app</a></div>
    </div>
   </div>
-  <div class="modal-actions workout-modal-actions">
-   <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
-  </div>
  `,"workout-entry-sheet about-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
 }

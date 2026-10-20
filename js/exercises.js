@@ -413,9 +413,6 @@ function renderExerciseHistorySheet(){
    ${ladder?`<div class="exercise-progress-ladder">${esc(ladder)}</div>`:""}
   </div>
   <div class="workout-entry-scroll${fill?" exercise-history-empty-scroll":""}${view==="graph"?" exercise-history-graph-scroll-host":""}">${body}</div>
-  <div class="modal-actions workout-modal-actions">
-   <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
-  </div>
  `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
  const pin=el=>{

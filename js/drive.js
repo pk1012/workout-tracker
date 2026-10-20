@@ -860,9 +860,6 @@ function openNotifications(){
    <h2 class="workout-form-title">Notifications</h2>
   </div>
   <div class="workout-entry-scroll${items.length?"":" notice-empty-scroll"}">${body}</div>
-  <div class="modal-actions workout-modal-actions">
-   <button class="primary btn-wide workout-next-button" type="button" onclick="closeModal()">Done</button>
-  </div>
  `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
 }
