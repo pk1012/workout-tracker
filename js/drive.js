@@ -558,7 +558,7 @@ function showDriveRestoreSheet(remote){
 }
 
 function applyDriveBackupToPhone(remote){
- if(!remote?.state||!looksLikeState(remote.state))return false;
+ if(!remote?.state||typeof isValidState!=="function"||!isValidState(remote.state))return false;
  const next=JSON.parse(JSON.stringify(remote.state));
  delete next.activeWorkout;
  state=migrateState(next);
