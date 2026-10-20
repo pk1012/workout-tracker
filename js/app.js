@@ -115,16 +115,15 @@ function trapModalFocus(e){
   first.focus();
  }
 }
+let modalEscapeHandler=null;
+const SHEET_SWIPE_THRESHOLD=72;
+
 function handleModalKeydown(e){
  if(!isModalOpen())return;
  if(e.key==="Escape"){
   if(e.defaultPrevented)return;
   e.preventDefault();
-  if(pendingConfirm){
-   cancelConfirmAction();
-   return;
-  }
-  tryDismissModal();
+  dismissOpenSheet();
   return;
  }
  if(e.key==="Tab")trapModalFocus(e);
@@ -138,6 +137,65 @@ function keepFocusInModal(e){
 document.addEventListener("keydown",handleModalKeydown);
 document.addEventListener("focusin",keepFocusInModal);
 
+function dismissOpenSheet(){
+ const host=document.getElementById("modal");
+ if(!host?.classList.contains("show"))return;
+ if(host.classList.contains("modal-locked"))return;
+ if(pendingConfirm){
+  cancelConfirmAction();
+  return;
+ }
+ if(typeof modalEscapeHandler==="function"){
+  const fn=modalEscapeHandler;
+  modalEscapeHandler=null;
+  fn();
+  return;
+ }
+ closeModal();
+}
+/* Backdrop taps no longer dismiss — grey area is visual only. */
+function tryDismissModal(){}
+
+function bindSheetSwipeDismiss(sheet){
+ if(!sheet||sheet.dataset.swipeDismissBound==="1")return;
+ sheet.dataset.swipeDismissBound="1";
+ let y0=0,x0=0,active=false;
+ const canStart=e=>{
+  const host=document.getElementById("modal");
+  if(!host?.classList.contains("modal-swipe"))return false;
+  if(e.pointerType==="mouse"&&e.button!==0)return false;
+  return !!e.target.closest(".workout-entry-header, .handle");
+ };
+ sheet.addEventListener("pointerdown",e=>{
+  if(!canStart(e))return;
+  active=true;
+  y0=e.clientY;
+  x0=e.clientX;
+  try{sheet.setPointerCapture(e.pointerId)}catch(_){}
+ });
+ const end=e=>{
+  if(!active)return;
+  active=false;
+  sheet.style.transform="";
+  sheet.style.transition="";
+  const dy=e.clientY-y0,dx=e.clientX-x0;
+  if(dy<SHEET_SWIPE_THRESHOLD||Math.abs(dy)<=Math.abs(dx))return;
+  dismissOpenSheet();
+ };
+ sheet.addEventListener("pointermove",e=>{
+  if(!active)return;
+  const dy=Math.max(0,e.clientY-y0);
+  sheet.style.transition="none";
+  sheet.style.transform=dy?`translateY(${Math.min(dy,220)}px)`:"";
+ });
+ sheet.addEventListener("pointerup",end);
+ sheet.addEventListener("pointercancel",()=>{
+  active=false;
+  sheet.style.transform="";
+  sheet.style.transition="";
+ });
+}
+
 function modal(html,sheetClass="",opts={}){
  const host=document.getElementById("modal");
  const wasOpen=host.classList.contains("show");
@@ -145,29 +203,30 @@ function modal(html,sheetClass="",opts={}){
   const active=document.activeElement;
   modalReturnFocus=active instanceof HTMLElement&&active!==document.body?active:null;
  }
+ const locked=!!opts.lockDismiss;
+ const swipe=!!opts.swipeDismiss&&!locked;
  host.innerHTML=`<div class="sheet ${sheetClass}">${html}</div>`;
  host.setAttribute("role","dialog");
  host.setAttribute("aria-modal","true");
- host.classList.toggle("modal-locked",!!opts.lockDismiss);
+ host.classList.toggle("modal-locked",locked);
+ host.classList.toggle("modal-swipe",swipe);
+ host.dataset.modalKind=locked?"locked":swipe?"swipe":(opts.kind||"buttons");
+ modalEscapeHandler=typeof opts.onEscape==="function"?opts.onEscape:null;
  host.classList.add("show");
  document.body.classList.add("modal-open");
  lockPageScroll();
+ const sheet=host.querySelector(".sheet");
+ if(swipe)bindSheetSwipeDismiss(sheet);
  requestAnimationFrame(focusModalSheet);
-}
-function tryDismissModal(){
- if(document.getElementById("modal")?.classList.contains("modal-locked"))return;
- if(pendingConfirm){
-  cancelConfirmAction();
-  return;
- }
- closeModal();
 }
 function closeModal(){
  const host=document.getElementById("modal");
  const wasOpen=host.classList.contains("show");
- host.classList.remove("show","modal-locked");
+ host.classList.remove("show","modal-locked","modal-swipe");
  host.removeAttribute("aria-modal");
  host.removeAttribute("role");
+ delete host.dataset.modalKind;
+ modalEscapeHandler=null;
  document.body.classList.remove("modal-open","workout-form-open");
  unlockPageScroll();
  if(!wasOpen)return;
@@ -199,10 +258,10 @@ function notify(message,type="info"){let host=document.getElementById("toastHost
 function confirmAction(message,onConfirm,asSheet,onCancel){
  pendingConfirm=onConfirm;
  pendingConfirmBack=typeof onCancel==="function"?onCancel:null;
+ /* Confirms: buttons only — no swipe, no backdrop, no handle. */
  if(asSheet){
   modal(`
    <div class="workout-entry-header">
-    <div class="handle"></div>
     <div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div>
     <h2 class="workout-form-title confirm-title">Are you sure?</h2>
     <p class="muted workout-form-description confirm-copy">${esc(message)}</p>
@@ -212,12 +271,12 @@ function confirmAction(message,onConfirm,asSheet,onCancel){
     <button class="primary btn-wide workout-next-button" onclick="continueConfirmAction()">Continue</button>
     <button class="outline btn-wide workout-cancel-button" onclick="cancelConfirmAction()">Cancel</button>
    </div>
-  `,"workout-entry-sheet");
+  `,"workout-entry-sheet",{kind:"confirm"});
   document.body.classList.add("workout-form-open");
   return;
  }
  document.body.classList.remove("workout-form-open");
- modal(`<div class="handle"></div><div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div><h2 class="confirm-title">Are you sure?</h2><p class="muted confirm-copy">${esc(message)}</p><div class="modal-actions"><button class="primary btn-wide" onclick="continueConfirmAction()">Continue</button><button class="outline btn-wide" onclick="cancelConfirmAction()">Cancel</button></div>`);
+ modal(`<div class="confirm-icon"><svg class="icon"><use href="#info"/></svg></div><h2 class="confirm-title">Are you sure?</h2><p class="muted confirm-copy">${esc(message)}</p><div class="modal-actions"><button class="primary btn-wide" onclick="continueConfirmAction()">Continue</button><button class="outline btn-wide" onclick="cancelConfirmAction()">Cancel</button></div>`, "",{kind:"confirm"});
 }
 function continueConfirmAction(){
  const fn=pendingConfirm;

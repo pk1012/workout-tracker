@@ -164,7 +164,7 @@ function openRecycleFilter(){
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="applyRecycleFilter()">Done</button>
   </div>
- `,"workout-entry-sheet exercise-filter-sheet");
+ `,"workout-entry-sheet exercise-filter-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
 }
 function setRecycleSort(sort){

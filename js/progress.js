@@ -65,10 +65,7 @@ function openHistoryMonthPicker(){
   <div class="workout-entry-scroll">
    <div class="week-list">${items.map(d=>`<button type="button" onclick="chooseHistoryMonth('${dateKey(d)}')" class="${dateKey(d)===chosen?"chosen":""}"><b>${d.toLocaleDateString("en-IN",{month:"short"})}</b><span>${d.getFullYear()}</span>${iAmThisMonth(d)?'<em>This Month <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
   </div>
-  <div class="modal-actions workout-modal-actions">
-   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Close</button>
-  </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{swipeDismiss:true});
   document.body.classList.add("workout-form-open");
   pinPickerChoice();
 }

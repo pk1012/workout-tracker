@@ -218,7 +218,6 @@ function connectDrive(){
  if(!id){
   modal(`
    <div class="workout-entry-header">
-    <div class="handle"></div>
     <h2 class="workout-form-title">Connect Google Drive</h2>
     <div class="muted workout-form-description">Paste the OAuth client ID from Google Cloud (Web application). Redirect URI must be ${esc(driveRedirectUri())}</div>
    </div>
@@ -229,10 +228,10 @@ function connectDrive(){
     <button class="primary btn-wide workout-next-button" type="button" onclick="saveDriveClientId()">Continue</button>
     <button class="outline btn-wide workout-cancel-button" type="button" onclick="closeModal()">Cancel</button>
    </div>
-  `,"workout-entry-sheet");
+  `,"workout-entry-sheet",{kind:"form"});
   document.body.classList.add("workout-form-open");
   return;
- }
+}
  startDriveOAuth(id);
 }
 
@@ -544,7 +543,6 @@ function showDriveRestoreSheet(remote){
  restorePrompted=true;
  modal(`
   <div class="workout-entry-header">
-   <div class="handle"></div>
    <h2 class="workout-form-title">Restore from Drive?</h2>
    <div class="muted workout-form-description">This phone has no workouts. Google Drive has a backup${remote.savedAt?` from ${esc(formatDriveSaved(remote.savedAt))}`:""}. Restore replaces data on this phone. Drive is not changed yet.</div>
   </div>
@@ -553,7 +551,7 @@ function showDriveRestoreSheet(remote){
    <button class="primary btn-wide workout-next-button" type="button" onclick="confirmDriveRestore()">Restore</button>
    <button class="outline btn-wide workout-cancel-button" type="button" onclick="declineDriveRestore()">Not now</button>
   </div>
- `,"workout-entry-sheet",{lockDismiss:true});
+ `,"workout-entry-sheet",{lockDismiss:true,kind:"confirm"});
  document.body.classList.add("workout-form-open");
 }
 
@@ -863,7 +861,7 @@ function openNotifications(){
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" type="button" onclick="closeModal()">Done</button>
   </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
 }
 function openWaitingSaveNotice(){
