@@ -8,7 +8,7 @@ function renderHome(){
  const todays=[...state.workouts].filter(w=>w.date===k).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
  const latest=todays[0];
  // Home intentionally exposes only two status states: completed or no workout yet.
- // An unfinished draft remains available to the workout flow, but is not presented as a third home status.
+ // In-progress Start Workout drafts are not persisted across refresh.
  const status=latest?homeCompleted(latest):homeNotStarted();
  const ws=weekStart(selectedWeekStart);
  document.getElementById("homeView").innerHTML=heroCard()+status+weeklyCard(ws)+quickProgress();
