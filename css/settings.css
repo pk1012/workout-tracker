@@ -174,14 +174,12 @@
 #library-management .section-title{margin-bottom:0;min-width:0}
 #library-management .actions{
   display:grid;
-  grid-template-columns:1.1em 1.1em;
-  column-gap:14px;
+  grid-template-columns:1.1em;
   align-items:center;
   justify-items:end;
   flex:none;
 }
-#library-management .actions .edit,
-#library-management .actions .delete{
+#library-management .actions .edit{
   min-width:1.1em;
   padding:0;
   line-height:1;
@@ -189,8 +187,7 @@
   align-items:center;
   justify-content:center;
 }
-#library-management .actions .edit .icon,
-#library-management .actions .delete .icon{
+#library-management .actions .edit .icon{
   width:18px;
   height:18px;
 }

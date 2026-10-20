@@ -469,7 +469,7 @@ function libraryFilteredGroups(){
  },[]);
 }
 function libraryGroupCard(m,ex){
- return `<div class="section card pad library-group"><div class="row"><div class="section-title">${esc(m.name)}</div><div class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openMuscle('${m.id}')"><svg class="icon" aria-hidden="true"><use href="#pencil"/></svg></button><button class="delete" type="button" aria-label="Delete" onclick="deleteMuscle('${m.id}')"><svg class="icon" aria-hidden="true"><use href="#trash"/></svg></button></div></div>${ex.length?ex.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span><span class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openExercise('${e.id}')"><svg class="icon" aria-hidden="true"><use href="#pencil"/></svg></button><button class="delete" type="button" aria-label="Delete" onclick="deleteExercise('${e.id}')"><svg class="icon" aria-hidden="true"><use href="#trash"/></svg></button></span></div>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`;
+ return `<div class="section card pad library-group"><div class="row"><div class="section-title">${esc(m.name)}</div><div class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openMuscle('${m.id}')"><svg class="icon" aria-hidden="true"><use href="#pencil"/></svg></button></div></div>${ex.length?ex.map(e=>`<div class="exercise-row"><span>${esc(e.name)}</span><span class="actions"><button class="edit" type="button" aria-label="Edit" onclick="openExercise('${e.id}')"><svg class="icon" aria-hidden="true"><use href="#pencil"/></svg></button></span></div>`).join(""):`<div class="empty">No exercises in this group.</div>`}</div>`;
 }
 function libraryListHtml(){
  const groups=libraryFilteredGroups();
@@ -600,6 +600,7 @@ function openExercise(id="",muscleId="",draftName){
  const group=muscleId||(e&&e.muscleId)||"";
  const blank=!e&&!group?`<option value="" selected>Muscle group</option>`:"";
  const groupClass=!e&&!group?" is-placeholder":"";
+ const deleteBtn=e?`<button class="outline btn-wide workout-cancel-button" onclick="deleteExercise('${id}')">Delete Exercise</button>`:"";
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
@@ -611,6 +612,7 @@ function openExercise(id="",muscleId="",draftName){
   </div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="saveExercise('${id}')">Save Exercise</button>
+   ${deleteBtn}
    <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Cancel</button>
   </div>
  `,"workout-entry-sheet",{kind:"form"});
@@ -677,9 +679,10 @@ function saveExercise(id){
 function deleteExercise(id){
  let e=state.exercises.find(x=>x.id===id);if(!e)return;
  const used=workoutsUsingExercise(id);
+ const back=()=>openExercise(id);
  const proceed=()=>{moveExerciseToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();};
  if(!used.length){
-  confirmAction(`Delete “${e.name}”? It will be deleted from your library.`,proceed,true);
+  confirmAction(`Delete “${e.name}”? It will be deleted from your library.`,proceed,true,back);
   return;
  }
  confirmHistoryUse(
@@ -687,12 +690,14 @@ function deleteExercise(id){
   used,
   `This exercise has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
   `${used.length===1?"This workout":"These workouts"} will still show “${e.name}”. It will be deleted from your library.`,
-  proceed
+  proceed,
+  back
  );
 }
 function openMuscle(id="",draftName){
  let m=id?state.muscles.find(x=>x.id===id):null;
  const name=draftName!=null?draftName:(m?m.name:"");
+ const deleteBtn=m?`<button class="outline btn-wide workout-cancel-button" onclick="deleteMuscle('${id}')">Delete Muscle Group</button>`:"";
  modal(`
   <div class="workout-entry-header">
    <div class="handle"></div>
@@ -703,6 +708,7 @@ function openMuscle(id="",draftName){
   </div>
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="saveMuscle('${id}')">Save Muscle Group</button>
+   ${deleteBtn}
    <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Cancel</button>
   </div>
  `,"workout-entry-sheet",{kind:"form"});
@@ -741,10 +747,11 @@ function saveMuscle(id){
 function deleteMuscle(id){
  let m=state.muscles.find(x=>x.id===id),n=state.exercises.filter(e=>e.muscleId===id).length;if(!m)return;
  const used=workoutsUsingMuscle(id);
+ const back=()=>openMuscle(id);
  const proceed=()=>{moveMuscleToBin(id);save();if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();renderLibrary();renderExercises();};
  if(!used.length){
   const extra=n===0?"":n===1?" Its 1 exercise will also be deleted from your library.":` Its ${n} exercises will also be deleted from your library.`;
-  confirmAction(`Delete “${m.name}”?${n===0?" It will be deleted from your library.":extra}`,proceed,true);
+  confirmAction(`Delete “${m.name}”?${n===0?" It will be deleted from your library.":extra}`,proceed,true,back);
   return;
  }
  confirmHistoryUse(
@@ -752,6 +759,7 @@ function deleteMuscle(id){
   used,
   `This muscle group has been used in ${used.length} existing workout${used.length===1?"":"s"}:`,
   `${used.length===1?"This workout":"These workouts"} will still show “${m.name}”. It will be deleted from your library.`,
-  proceed
+  proceed,
+  back
  );
 }
