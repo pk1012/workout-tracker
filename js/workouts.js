@@ -549,6 +549,16 @@ function renderSetsForExercise(i){
 function addSet(i){workoutDraft.exercises[i].sets.push({weight:"",reps:""});renderSetsForExercise(i)}
 function removeSet(i,j){if(workoutDraft.exercises[i].sets.length>1)workoutDraft.exercises[i].sets.splice(j,1);renderSetsForExercise(i)}
 
+function timeToMinutes(t){
+ if(!t||typeof t!=="string")return NaN;
+ const parts=t.split(":").map(Number);
+ if(parts.length<2||!Number.isFinite(parts[0])||!Number.isFinite(parts[1]))return NaN;
+ return parts[0]*60+parts[1];
+}
+function backToWorkoutSets(){
+ renderSetDetails();
+ document.body.classList.add("workout-form-open");
+}
 function saveWorkout(){
  const date=workoutDraft.date,muscles=[...new Set(workoutDraft.muscles)].filter(keepDraftMuscle);
  const editing=isEditingWorkout();
@@ -558,20 +568,31 @@ function saveWorkout(){
  if(!muscles.length||!isValidDateString(date)||!workoutDraft.startTime){notify("Complete the workout date, start time and muscle groups.");return}
  if(workoutOnDate(date,workoutDraft.editId)){notify(dateTakenMessage());return}
  if(!workoutDraft.endTime){notify("Enter the end time to complete the workout.");return}
- let startMinutes=Number(workoutDraft.startTime.split(":")[0])*60+Number(workoutDraft.startTime.split(":")[1]);
- let endMinutes=Number(workoutDraft.endTime.split(":")[0])*60+Number(workoutDraft.endTime.split(":")[1]);
+ const startMinutes=timeToMinutes(workoutDraft.startTime);
+ const endMinutes=timeToMinutes(workoutDraft.endTime);
+ if(!Number.isFinite(startMinutes)||!Number.isFinite(endMinutes)){notify("Enter a valid start and end time.");return}
  if(endMinutes===startMinutes){notify("Start and end time cannot be the same.");return}
  if(!exercises.length){notify("Select at least one exercise.");return}
  for(const e of exercises)for(const s of e.sets||[]){let weight=Number(s.weight),reps=Number(s.reps);if(s.weight===""||!Number.isFinite(weight)||weight<0||s.reps===""||!Number.isInteger(reps)||reps<1){notify("Enter valid weight and reps for every set.");return}}
- const want=preferredUnit();
- workoutDraft.unit=want;
- const logged=workoutDraft.storedUnit||old?.unit||want;
- const from=logged==="lb"?"lb":"kg";
- if(editing&&from!==want){
-  confirmAction(`This workout was logged in ${from}. The weights are converted to ${want}. Do you want to save it in ${want}?`,()=>commitWorkoutSave(id,date,muscles,exercises,old,editing),true,()=>{renderSetDetails();document.body.classList.add("workout-form-open")});
+ const finishSave=()=>{
+  const want=preferredUnit();
+  workoutDraft.unit=want;
+  const logged=workoutDraft.storedUnit||old?.unit||want;
+  const from=logged==="lb"?"lb":"kg";
+  if(editing&&from!==want){
+   confirmAction(`This workout was logged in ${from}. The weights are converted to ${want}. Do you want to save it in ${want}?`,()=>commitWorkoutSave(id,date,muscles,exercises,old,editing),true,backToWorkoutSets);
+   return;
+  }
+  commitWorkoutSave(id,date,muscles,exercises,old,editing);
+ };
+ if(endMinutes<startMinutes){
+  const dur=durationLabel((endMinutes+1440)-startMinutes);
+  const startLabel=formatTime(workoutDraft.startTime);
+  const endLabel=formatTime(workoutDraft.endTime);
+  confirmAction(`End time (${endLabel}) is before start time (${startLabel}). Save as an overnight workout (${dur})?`,finishSave,true,backToWorkoutSets);
   return;
  }
- commitWorkoutSave(id,date,muscles,exercises,old,editing);
+ finishSave();
 }
 function commitWorkoutSave(id,date,muscles,exercises,old,editing){
  const unit=preferredUnit();
