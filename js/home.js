@@ -11,13 +11,10 @@ function renderHome(){
  // An unfinished draft remains available to the workout flow, but is not presented as a third home status.
  const status=latest?homeCompleted(latest):homeNotStarted();
  const ws=weekStart(selectedWeekStart);
- document.getElementById("homeView").innerHTML=heroCard(latest)+status+weeklyCard(ws)+quickProgress();
+ document.getElementById("homeView").innerHTML=heroCard()+status+weeklyCard(ws)+quickProgress();
  bindWeekSwipe();
 }
-function heroCard(latest){
- if(latest){
-  return `<section class="hero-card"><div class="hero-copy"><h2>Workout Logged</h2><p>Today's session is saved.<br>Review or edit anytime.</p><button class="hero-btn" onclick="editWorkout('${latest.id}')">Edit Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><img class="hero-art" src="assets/workout-hero.png" alt="" aria-hidden="true"></section>`;
- }
+function heroCard(){
  return `<section class="hero-card"><div class="hero-copy"><h2>Start Workout</h2><p>Log your workout and<br>Keep your streak alive!</p><button class="hero-btn" onclick="openWorkout()">Start Workout <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button></div><img class="hero-art" src="assets/workout-hero.png" alt="" aria-hidden="true"></section>`;
 }
 function homeNotStarted(){return `<section class="home-status card"><h2>Today's Status</h2><div class="status-main"><div class="status-icon neutral"><svg class="icon"><use href="#activity"/></svg></div><div class="status-copy"><strong>No workout yet</strong><span>Ready when you are.</span></div><button class="outline status-action" onclick="openWorkout()">Start Workout</button></div></section>`}
