@@ -3,6 +3,11 @@
   return !!(state&&Array.isArray(state.workouts)&&state.workouts.length>0);
  }
 
+ /* Deleted workouts still in Recycle — recoverable, and included in Drive snapshots. */
+ function hasBinnedWorkouts(state){
+  return !!(state&&state.bin&&Array.isArray(state.bin.workouts)&&state.bin.workouts.length>0);
+ }
+
  function driveSnapshot(state,meta){
   const muscles=Array.isArray(state?.muscles)?state.muscles:[];
   const exercises=Array.isArray(state?.exercises)?state.exercises:[];
@@ -88,7 +93,11 @@
   if(contentSame&&remoteExists)return{action:"idle",sameWriter,otherWriter};
   if(flushEmpty){
    if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};
-   return{action:"upload",sameWriter,otherWriter};
+   /* C: Recycle still holds workouts — upload empty history + bin. */
+   if(input.hasBinnedWorkouts)return{action:"upload",sameWriter,otherWriter};
+   /* A: nothing recoverable left — never silent-upload over a Drive history. */
+   if(remoteExists&&input.remoteHasWorkouts!==false)return{action:"need-confirm",sameWriter,otherWriter};
+   return{action:"idle",sameWriter,otherWriter};
   }
   if(flushLibrary){
    if(otherWriter)return{action:"need-confirm",sameWriter,otherWriter};
@@ -110,7 +119,7 @@
   return{action:"upload",sameWriter,otherWriter};
  }
 
- const api={hasCompletedWorkouts,driveSnapshot,parseDriveBackup,stableStringify,driveContentHash,drivePolicy};
+ const api={hasCompletedWorkouts,hasBinnedWorkouts,driveSnapshot,parseDriveBackup,stableStringify,driveContentHash,drivePolicy};
  if(typeof module==="object"&&module.exports)module.exports=api;
  else Object.assign(root,api);
 })(typeof globalThis!=="undefined"?globalThis:this);

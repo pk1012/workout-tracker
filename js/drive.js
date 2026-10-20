@@ -652,6 +652,7 @@ async function runDriveHandshake(reason){
   const contentSame=!remote.unreadable&&!!remote.state&&driveComparableHash(state)===driveComparableHash(remote.state);
   const decision=drivePolicy({
    hasLocalWorkouts:hasCompletedWorkouts(state),
+   hasBinnedWorkouts:hasBinnedWorkouts(state),
    remoteExists:remote.exists,
    remoteDeviceId:remote.deviceId,
    localDeviceId:getDeviceId(),
@@ -765,6 +766,7 @@ function queueDriveSave(reason){
   const remoteExists=!!lsGet(K_FILE)||!!lsGet(K_REMOTE)||!!lsGet(K_SAVED);
   const preview=drivePolicy({
    hasLocalWorkouts:hasCompletedWorkouts(state),
+   hasBinnedWorkouts:hasBinnedWorkouts(state),
    remoteExists,
    remoteDeviceId:lsGet(K_REMOTE),
    localDeviceId:getDeviceId(),
@@ -776,7 +778,10 @@ function queueDriveSave(reason){
   });
   if(preview.action!=="upload"){
    if(preview.action==="idle"&&!isDriveDirty())setDriveDiverge(false);
-   else if(preview.action==="need-confirm")runDriveHandshake(reason);
+   else if(preview.action==="need-confirm"){
+    setDriveDiverge(true);
+    runDriveHandshake(reason);
+   }
    return;
   }
   setDrivePending(true);
@@ -798,7 +803,15 @@ function driveAfterWorkoutChange(){
   queueDriveSave("auto");
   return;
  }
+ /* Empty history: flushEmpty policy uploads only while Recycle still has
+    workouts (C); otherwise needs Sync confirm and never silent-wipes Drive (A). */
  queueDriveSave("empty");
+}
+function markDriveNeedsSyncConfirm(){
+ if(!isDriveConnected())return;
+ setDriveDiverge(true);
+ setDrivePending(false);
+ if(typeof renderDriveCard==="function")renderDriveCard();
 }
 function driveAfterFileRestore(){
  if(hasCompletedWorkouts(state))clearRestoreNotification();
@@ -811,6 +824,7 @@ function driveAfterFileRestore(){
  }
  const preview=drivePolicy({
   hasLocalWorkouts:hasCompletedWorkouts(state),
+  hasBinnedWorkouts:hasBinnedWorkouts(state),
   remoteExists:!!(lsGet(K_FILE)||lsGet(K_REMOTE)||lsGet(K_SAVED)),
   remoteDeviceId:lsGet(K_REMOTE),
   localDeviceId:getDeviceId(),

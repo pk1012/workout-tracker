@@ -1,11 +1,21 @@
 let recycleState={search:"",filter:"all",sort:"newest"};
 
 function driveAfterBinChange(){
- if(typeof hasCompletedWorkouts==="function"&&hasCompletedWorkouts(state)&&typeof driveAfterWorkoutChange==="function"){
+ const hasLive=typeof hasCompletedWorkouts==="function"&&hasCompletedWorkouts(state);
+ const hasBin=typeof hasBinnedWorkouts==="function"&&hasBinnedWorkouts(state);
+ if((hasLive||hasBin)&&typeof driveAfterWorkoutChange==="function"){
   driveAfterWorkoutChange();
   return;
  }
- if(typeof driveAfterLibraryChange==="function")driveAfterLibraryChange();
+ /* No active or binned workouts left — do not auto-push emptiness to Drive (A).
+    Library-only bin leftovers can still sync; a fully empty bin waits for Sync. */
+ const bin=state.bin||{};
+ const libraryBin=(bin.exercises?.length||0)+(bin.muscles?.length||0);
+ if(libraryBin>0&&typeof driveAfterLibraryChange==="function"){
+  driveAfterLibraryChange();
+  return;
+ }
+ if(typeof markDriveNeedsSyncConfirm==="function")markDriveNeedsSyncConfirm();
 }
 
 function binDaysLeft(deletedAt){
