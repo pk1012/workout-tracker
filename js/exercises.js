@@ -244,7 +244,7 @@ function openExerciseFilter(){
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="applyExerciseHistoryFilter()">Done</button>
   </div>
- `,"workout-entry-sheet exercise-filter-sheet",{swipeDismiss:true});
+ `,"workout-entry-sheet exercise-filter-sheet",{swipeDismiss:true,onEscape:()=>applyExerciseHistoryFilter()});
  document.body.classList.add("workout-form-open");
 }
 
@@ -533,7 +533,7 @@ function openLibraryFilter(){
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="applyLibraryFilter()">Done</button>
   </div>
- `,"workout-entry-sheet exercise-filter-sheet",{swipeDismiss:true});
+ `,"workout-entry-sheet exercise-filter-sheet",{swipeDismiss:true,onEscape:()=>applyLibraryFilter()});
  document.body.classList.add("workout-form-open");
 }
 function setLibraryEmptyGroups(value){
