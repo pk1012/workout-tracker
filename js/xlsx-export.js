@@ -53,7 +53,12 @@
   const file=new File([blob],filename,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
   try{
    if(navigator.canShare&&navigator.canShare({files:[file]})){
-    try{await navigator.share({files:[file],title:filename});return true}catch(err){if(err&&err.name==="AbortError")return false}
+    try{
+     await navigator.share({files:[file],title:filename});
+     return true;
+    }catch(err){
+     /* Share dismissed or failed — fall through to download. */
+    }
    }
   }catch(err){}
   const url=URL.createObjectURL(blob);

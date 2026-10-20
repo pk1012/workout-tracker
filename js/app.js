@@ -312,7 +312,11 @@ function cancelConfirmAction(){
 }
 let savedTheme=localStorage.getItem("wt_theme")||"light";theme(savedTheme);
 if(typeof applyUnitButtons==="function")applyUnitButtons();
-storageReady.then(()=>{renderHome();renderCalendar();initDrive()});
+storageReady.then(()=>{
+ if(typeof refreshAppViews==="function")refreshAppViews();
+ else{renderHome();renderCalendar()}
+ initDrive();
+});
 function appBasePath(){
  if(location.hostname.endsWith("github.io")){
   const segment=location.pathname.split("/").filter(Boolean)[0];
