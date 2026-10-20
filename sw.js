@@ -1,32 +1,32 @@
-const CACHE_NAME = "workout-tracker-v328";
+const CACHE_NAME = "workout-tracker-v329";
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./apple-touch-icon.png",
-  "./css/styles.css?v=1.7.328",
-  "./css/components.css?v=1.7.328",
-  "./css/responsive.css?v=1.7.328",
-  "./css/home.css?v=1.7.328",
-  "./css/workouts.css?v=1.7.328",
-  "./css/progress.css?v=1.7.328",
-  "./css/exercises.css?v=1.7.328",
-  "./css/settings.css?v=1.7.328",
-  "./css/recycle.css?v=1.7.328",
-  "./js/data-rules.js?v=1.7.328",
-  "./js/xlsx-export.js?v=1.7.328",
-  "./js/data.js?v=1.7.328",
-  "./js/workouts.js?v=1.7.328",
-  "./js/home.js?v=1.7.328",
-  "./js/exercises.js?v=1.7.328",
-  "./js/progress.js?v=1.7.328",
-  "./js/settings.js?v=1.7.328",
-  "./js/recycle.js?v=1.7.328",
-  "./js/drive-config.js?v=1.7.328",
-  "./js/drive-policy.js?v=1.7.328",
-  "./js/drive.js?v=1.7.328",
-  "./js/app.js?v=1.7.328",
+  "./css/styles.css?v=1.7.329",
+  "./css/components.css?v=1.7.329",
+  "./css/responsive.css?v=1.7.329",
+  "./css/home.css?v=1.7.329",
+  "./css/workouts.css?v=1.7.329",
+  "./css/progress.css?v=1.7.329",
+  "./css/exercises.css?v=1.7.329",
+  "./css/settings.css?v=1.7.329",
+  "./css/recycle.css?v=1.7.329",
+  "./js/data-rules.js?v=1.7.329",
+  "./js/xlsx-export.js?v=1.7.329",
+  "./js/data.js?v=1.7.329",
+  "./js/workouts.js?v=1.7.329",
+  "./js/home.js?v=1.7.329",
+  "./js/exercises.js?v=1.7.329",
+  "./js/progress.js?v=1.7.329",
+  "./js/settings.js?v=1.7.329",
+  "./js/recycle.js?v=1.7.329",
+  "./js/drive-config.js?v=1.7.329",
+  "./js/drive-policy.js?v=1.7.329",
+  "./js/drive.js?v=1.7.329",
+  "./js/app.js?v=1.7.329",
   "./assets/icons/icon-180.png",
   "./assets/icons/icon-512.png",
   "./assets/workout-hero.png",
@@ -93,9 +93,11 @@ self.addEventListener("fetch", event => {
     event.respondWith(
       fetch(request, { cache: "no-store" })
         .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME)
-            .then(cache => cache.put(request, copy));
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(request, copy));
+          }
           return response;
         })
         .catch(() =>

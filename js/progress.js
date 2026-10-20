@@ -104,19 +104,19 @@ function renderProgress(){
         <div class="progress-stat"><strong>${muscleCount}</strong><span>Muscle groups</span></div>
       </div>
     </section>
-    ${renderRecentWorkouts()}
+    ${renderRecentWorkouts(monthWorkouts)}
   `;
 }
 
 function historyExportWorkouts(){
-  return [...(state.workouts||[])].sort((a,b)=>{
+  return historyMonthWorkouts(historyMonth).slice().sort((a,b)=>{
     const dateDiff=(a.date||"").localeCompare(b.date||"");
     return dateDiff || (a.createdAt||0)-(b.createdAt||0);
   });
 }
 
 function historyExportFileStem(){
-  return `Workout-History-${dateKey(new Date())}`;
+  return `Workout-History-${historyMonthPrefix(historyMonth)}`;
 }
 
 async function exportHistoryXlsx(){

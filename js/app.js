@@ -170,8 +170,15 @@ if("serviceWorker" in navigator){
  };
  checkUpdate();
  window.addEventListener("load",checkUpdate);
+ let lastSeenDateKey=typeof todayDateKey==="function"?todayDateKey():"";
  document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="visible")checkUpdate();
+  if(document.visibilityState!=="visible")return;
+  checkUpdate();
+  const today=typeof todayDateKey==="function"?todayDateKey():"";
+  if(today&&today!==lastSeenDateKey){
+   lastSeenDateKey=today;
+   if(typeof refreshAppViews==="function")refreshAppViews();
+  }
  });
  let reloading=false;
  let waitingForSheet=false;

@@ -185,8 +185,14 @@
   min-width:1.1em;
   padding:0;
   line-height:1;
-  font-size:20px !important;
-  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+#library-management .actions .edit .icon,
+#library-management .actions .delete .icon{
+  width:18px;
+  height:18px;
 }
 
 /* Same 12px stack as View Workout cards: top, title→line, line→row, row→line, bottom. */
