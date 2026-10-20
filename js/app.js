@@ -118,10 +118,27 @@ function trapModalFocus(e){
 let modalEscapeHandler=null;
 const SHEET_SWIPE_THRESHOLD=72;
 
+function isNativePickerField(el){
+ if(!(el instanceof HTMLElement))return false;
+ if(el instanceof HTMLSelectElement)return true;
+ if(el instanceof HTMLInputElement){
+  return /^(date|time|datetime-local|month|week|color)$/.test(el.type);
+ }
+ return false;
+}
 function handleModalKeydown(e){
  if(!isModalOpen())return;
  if(e.key==="Escape"){
   if(e.defaultPrevented)return;
+  /* First Esc closes a native date/time/select picker; don't cancel the sheet. */
+  const field=isNativePickerField(e.target)?e.target
+   :isNativePickerField(document.activeElement)?document.activeElement
+   :null;
+  if(field){
+   e.preventDefault();
+   field.blur();
+   return;
+  }
   e.preventDefault();
   dismissOpenSheet();
   return;
