@@ -2,7 +2,9 @@ function emptyWorkoutDraft(){return {date:"",muscles:[],exercises:[],unit:prefer
 let workoutDraft=emptyWorkoutDraft();
 function isEditingWorkout(){return !!workoutDraft.editId}
 function cancelWorkoutForm(){
- if(isEditingWorkout())workoutDraft=emptyWorkoutDraft();
+ const editId=isEditingWorkout()?workoutDraft.editId:"";
+ workoutDraft=emptyWorkoutDraft();
+ if(editId){viewWorkout(editId);return}
  closeModal();
 }
 function exerciseMuscleId(id){

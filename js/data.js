@@ -1,4 +1,4 @@
-const VERSION="1.7.347",BUILD="2026.10.20";
+const VERSION="1.7.348",BUILD="2026.10.20";
 const defaults={Abs:["Cable Crunch","Hanging Leg Raise","Plank"],Back:["Lat Pulldown","Seated Cable Row","Single Arm Dumbbell Row","T-Bar Row"],Biceps:["Behind-the-Back Cable Curl","Cable Curl","Hammer Curl","Incline Dumbbell Curl"],Calves:["Calf Raise","Seated Calf Raise"],Cardio:["Cycling","Running","Walking"],Chest:["Flat Bench Press","Inclined Dumbbell Press","Pec Deck Fly","Wide Chest Press Machine"],Legs:["Leg Extension","Leg Press","Romanian Deadlift","Squat"],Shoulders:["Dumbbell Lateral Raise","Face Pull","Overhead Press","Rear Delt Fly"],Triceps:["Cable Pushdown","Overhead Cable Extension","Skull Crusher"]};
 const STORE_KEY="wt_state";
 const STORE_BACKUP_KEY="wt_state_backup";
@@ -149,7 +149,10 @@ function persistAll(){
  persistLock=persistLock.then(flushPersist,flushPersist);
  return persistLock;
 }
-function save(){persistAll()}
+function save(){
+ storageMergeBlocked=true;
+ persistAll();
+}
 async function wipeStoredData(){
  persistWanted=false;
  try{await persistLock}catch(err){}
@@ -165,12 +168,18 @@ async function wipeStoredData(){
 }
 
 let state=readLocalState(STORE_KEY)||readLocalState(STORE_BACKUP_KEY);
+/* If the user saves before IDB boot finishes, keep in-memory state. */
+let storageMergeBlocked=false;
 const storageReady=(async()=>{
+ const bootLocalAt=readLocalAt();
  try{
   const db=await openIdb();
   try{
    const idb=await idbGetState(db);
-   state=pickNewerState(state,readLocalAt(),idb.state,idb.at);
+   if(!storageMergeBlocked){
+    const localAt=Math.max(bootLocalAt,readLocalAt());
+    state=pickNewerState(state,localAt,idb.state,idb.at);
+   }
   }finally{closeIdb(db)}
  }catch(err){}
  if(!state)state=seedDefaults();
