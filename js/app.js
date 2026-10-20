@@ -196,8 +196,6 @@ function toggleCollapsibleCard(btn){
  if(body)body.hidden=!expanded;
 }
 function notify(message,type="info"){let host=document.getElementById("toastHost");if(!host){host=document.createElement("div");host.id="toastHost";document.body.appendChild(host)}const toast=document.createElement("div");toast.className=`toast ${type}`;toast.innerHTML=`<svg class="icon"><use href="#${type==="success"?"check":type==="error"?"close":"info"}"/></svg><span>${esc(message)}</span>`;host.appendChild(toast);requestAnimationFrame(()=>toast.classList.add("show"));setTimeout(()=>{toast.classList.remove("show");setTimeout(()=>toast.remove(),220)},2800)}
-let pendingConfirm=null;
-let pendingConfirmBack=null;
 function confirmAction(message,onConfirm,asSheet,onCancel){
  pendingConfirm=onConfirm;
  pendingConfirmBack=typeof onCancel==="function"?onCancel:null;
