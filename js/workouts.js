@@ -270,10 +270,7 @@ function openWeekPicker(){
   <div class="workout-entry-scroll">
    <div class="week-list">${items.map(d=>`<button onclick="chooseWeek('${dateKey(d)}')" class="${dateKey(d)===dateKey(selectedWeekStart)?"chosen":""}"><b>${weekNumberChip(d)}</b><span>${rangeLabel(d)}</span>${iAmThisWeek(d)?'<em>This Week <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
   </div>
-  <div class="modal-actions workout-modal-actions">
-   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Close</button>
-  </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
  pinPickerChoice();
 }
@@ -300,10 +297,7 @@ function openMonthPicker(){
   <div class="workout-entry-scroll">
    <div class="week-list">${items.map(d=>`<button type="button" onclick="chooseMonth('${dateKey(d)}')" class="${dateKey(d)===dateKey(monthStart(selectedMonth))?"chosen":""}"><b>${d.toLocaleDateString("en-IN",{month:"short"})}</b><span>${d.getFullYear()}</span>${iAmThisMonth(d)?'<em>This Month <svg class="icon"><use href="#check"/></svg></em>':""}</button>`).join("")}</div>
   </div>
-  <div class="modal-actions workout-modal-actions">
-   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Close</button>
-  </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
  pinPickerChoice();
 }
@@ -432,7 +426,7 @@ function renderWorkoutBasicsSheet(){
  const gone=(workoutDraft.goneMuscles||[]).filter(id=>!liveIds.has(id));
  const editing=isEditingWorkout();
  const picks=[...ms.map(m=>musclePickButton(m.id,m.name,false)),...gone.map(id=>musclePickButton(id,draftMuscleLabel(id),true))].join("");
- modal(`<div class="workout-entry-header"><div class="handle"></div><h2 class="workout-form-title">${editing?"Edit Workout":"Start Workout"}</h2><div class="muted workout-form-description">Choose the date, start time and muscle groups.</div></div><div class="workout-entry-scroll"><div class="field workout-date-section"><label class="workout-date-label">Date</label><div class="workout-date-field workout-input-wrap"><svg class="workout-date-icon workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input workout-date-input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-section"><div class="field workout-start-time-section"><label class="workout-start-time-label">Start time</label><div class="workout-start-time-field workout-input-wrap"><svg class="workout-start-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input workout-start-time-input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field workout-end-time-section"><label class="workout-end-time-label">End time</label><div class="workout-end-time-field workout-input-wrap"><svg class="workout-end-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input workout-end-time-input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-groups-section"><label class="workout-muscle-groups-label">Muscle groups</label><div class="grid workout-muscle-groups-grid">${picks}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide workout-next-button" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide workout-cancel-button" onclick="cancelWorkoutForm()">Cancel</button></div>`,"workout-entry-sheet");
+ modal(`<div class="workout-entry-header"><h2 class="workout-form-title">${editing?"Edit Workout":"Start Workout"}</h2><div class="muted workout-form-description">Choose the date, start time and muscle groups.</div></div><div class="workout-entry-scroll"><div class="field workout-date-section"><label class="workout-date-label">Date</label><div class="workout-date-field workout-input-wrap"><svg class="workout-date-icon workout-field-icon icon" aria-hidden="true"><use href="#calendar-icon"/></svg><input id="workDate" class="input workout-date-input" type="date" value="${esc(workoutDraft.date)}"></div></div><div class="time-grid workout-time-section"><div class="field workout-start-time-section"><label class="workout-start-time-label">Start time</label><div class="workout-start-time-field workout-input-wrap"><svg class="workout-start-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="startTime" class="input workout-start-time-input" type="time" value="${esc(workoutDraft.startTime)}"></div></div><div class="field workout-end-time-section"><label class="workout-end-time-label">End time</label><div class="workout-end-time-field workout-input-wrap"><svg class="workout-end-time-icon workout-field-icon icon" aria-hidden="true"><use href="#clock"/></svg><input id="endTime" class="input workout-end-time-input" type="time" value="${esc(workoutDraft.endTime)}"></div></div></div><div class="field workout-muscle-groups-section"><label class="workout-muscle-groups-label">Muscle groups</label><div class="grid workout-muscle-groups-grid">${picks}</div></div><div class="workout-selection-hint"><svg class="icon" aria-hidden="true"><use href="#info"/></svg><span>You can select multiple muscle groups</span></div></div><div class="modal-actions workout-modal-actions"><button class="primary btn-wide workout-next-button" onclick="chooseExercises()">Next: Select Exercises <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button><button class="outline btn-wide workout-cancel-button" onclick="cancelWorkoutForm()">Cancel</button></div>`,"workout-entry-sheet",{kind:"form",onEscape:()=>cancelWorkoutForm()});
  document.body.classList.add("workout-form-open");
 }
 function todayDateKey(){const d=new Date();d.setHours(0,0,0,0);return dateKey(d)}
@@ -493,7 +487,6 @@ function renderExerciseSelection(){
 
  modal(`
   <div class="workout-entry-header">
-   <div class="handle"></div>
    <h2>Select Exercises</h2>
    <div class="muted workout-form-description">Select the exercises you performed.</div>
   </div>
@@ -504,7 +497,7 @@ function renderExerciseSelection(){
    <button class="primary btn-wide workout-next-button" onclick="continueToSetDetails()">Next: Enter Weight &amp; Reps <svg class="icon" aria-hidden="true"><use href="#arrow-right"/></svg></button>
    <button class="outline btn-wide workout-cancel-button" onclick="renderWorkoutBasicsSheet()">Back</button>
   </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{kind:"form",onEscape:()=>cancelWorkoutForm()});
 }
 
 function continueToSetDetails(){
@@ -524,7 +517,6 @@ function renderSetDetails(){
 
  modal(`
    <div class="workout-entry-header">
-     <div class="handle"></div>
      <h2>Enter Workout Details</h2>
      <div class="muted workout-form-description">Add the weight and reps for each set.</div>
    </div>
@@ -535,7 +527,7 @@ function renderSetDetails(){
      <button class="primary btn-wide workout-next-button" onclick="saveWorkout()">${isEditingWorkout()?"Save Changes":"Complete Workout"}</button>
      <button class="outline btn-wide workout-cancel-button" onclick="renderExerciseSelection()">Back</button>
    </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{kind:"form",onEscape:()=>cancelWorkoutForm()});
 }
 
 function setRow(exIndex,setIndex,set){const remove=workoutDraft.exercises[exIndex].sets.length>1?`<button class="remove-set" aria-label="Remove set" onclick="removeSet(${exIndex},${setIndex})"><svg class="icon"><use href="#close"/></svg></button>`:`<span class="remove-placeholder"></span>`;return `<div class="set-row"><span class="set-number">${setIndex+1}</span><label class="set-field"><span>Weight</span><input class="input compact" type="number" min="0" step="0.1" value="${esc(set.weight??"")}" oninput="updateSet(${exIndex},${setIndex},'weight',this.value)"></label><label class="set-field"><span>Reps</span><input class="input compact" type="number" min="1" step="1" value="${esc(set.reps??"")}" oninput="updateSet(${exIndex},${setIndex},'reps',this.value)"></label>${remove}</div>`}
@@ -678,7 +670,7 @@ function viewWorkout(id){
    <button class="outline btn-wide workout-cancel-button" onclick="deleteWorkout('${w.id}')">Delete Workout</button>
    <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Done</button>
   </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
 }
 function deleteWorkout(id){confirmAction("Delete this workout? It will be deleted from your history.",()=>{moveWorkoutToBin(id);save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();closeModal();refreshAppViews()},true)}

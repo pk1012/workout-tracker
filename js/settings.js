@@ -48,9 +48,10 @@ function restoreBackup(){
    <button class="primary btn-wide workout-next-button" onclick="backup()">Export Backup</button>
    <button class="outline btn-wide workout-cancel-button" onclick="document.getElementById('restoreFile').click()">Choose Backup File</button>
    ${driveRestore}
+   <button class="outline btn-wide workout-cancel-button" onclick="closeModal()">Close</button>
    <input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreFromFile(this.files[0])">
   </div>
- `,"workout-entry-sheet");
+ `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
 }
 
@@ -92,6 +93,6 @@ function about(){
   <div class="modal-actions workout-modal-actions">
    <button class="primary btn-wide workout-next-button" onclick="closeModal()">Done</button>
   </div>
- `,"workout-entry-sheet about-sheet");
+ `,"workout-entry-sheet about-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
 }

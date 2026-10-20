@@ -496,6 +496,16 @@ body{padding-bottom:0}
   .hero-card .hero-art{right:-2px;width:57%;height:100%}
 }
 
+/* Sheet dismiss: swipe-down feedback on light sheets */
+.modal.modal-swipe .sheet{
+  transition:transform .18s ease;
+  will-change:transform;
+}
+.modal.modal-swipe .handle{
+  touch-action:none;
+  cursor:grab;
+}
+
 /* v30.5 — Start Workout form: date-first layout + navigation-safe actions */
 .workout-entry-sheet{
   padding-bottom:calc(104px + env(safe-area-inset-bottom));
