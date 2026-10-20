@@ -70,7 +70,7 @@ function restoreFromFile(file){
  reader.readAsText(file);
 }
 
-function applyRestore(restored,parsed){state=migrateState(JSON.parse(JSON.stringify(restored)));save();if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);if(parsed?.unit==="kg"||parsed?.unit==="lb")setPreferredUnit(parsed.unit);selected=new Date();selected.setHours(0,0,0,0);if(typeof monthStart==="function")selectedMonth=monthStart(selected);closeModal();go("workouts");notify("Backup restored successfully.","success");if(typeof driveAfterFileRestore==="function")driveAfterFileRestore()}
+function applyRestore(restored,parsed){state=migrateState(JSON.parse(JSON.stringify(restored)));save();if(parsed?.theme==="light"||parsed?.theme==="dark")theme(parsed.theme);if(parsed?.unit==="kg"||parsed?.unit==="lb")setPreferredUnit(parsed.unit);selected=new Date();selected.setHours(0,0,0,0);if(typeof monthStart==="function"){selectedMonth=monthStart(selected);if(typeof historyMonth!=="undefined")historyMonth=monthStart(selected)}closeModal();go("workouts");notify("Backup restored successfully.","success");if(typeof driveAfterFileRestore==="function")driveAfterFileRestore()}
 function clearData(){confirmAction("Delete all data on this phone? Google Drive will not be changed.",()=>{wipeStoredData().then(()=>{resetDriveAfterPhoneWipe();location.reload()})},true)}
 
 function about(){
