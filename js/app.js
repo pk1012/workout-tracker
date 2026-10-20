@@ -63,23 +63,122 @@ function guardModalBackgroundScroll(e){
 }
 document.addEventListener("touchmove",guardModalBackgroundScroll,{passive:false});
 document.addEventListener("wheel",guardModalBackgroundScroll,{passive:false});
+
+let pendingConfirm=null;
+let pendingConfirmBack=null;
+let modalReturnFocus=null;
+function isModalOpen(){
+ return !!document.getElementById("modal")?.classList.contains("show");
+}
+function modalFocusables(){
+ const sheet=document.querySelector("#modal.show .sheet");
+ if(!sheet)return [];
+ const sel='a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+ return [...sheet.querySelectorAll(sel)].filter(el=>{
+  if(el.disabled||el.getAttribute("aria-hidden")==="true")return false;
+  if(el.closest("[hidden]"))return false;
+  const st=getComputedStyle(el);
+  return st.display!=="none"&&st.visibility!=="hidden";
+ });
+}
+function focusModalSheet(){
+ const list=modalFocusables();
+ if(list.length){
+  const preferred=list.find(el=>el.matches("input:not([type='hidden']),select,textarea"))||list[0];
+  try{preferred.focus({preventScroll:true})}catch(_){preferred.focus()}
+  return;
+ }
+ const sheet=document.querySelector("#modal.show .sheet");
+ if(!sheet)return;
+ if(!sheet.hasAttribute("tabindex"))sheet.tabIndex=-1;
+ try{sheet.focus({preventScroll:true})}catch(_){sheet.focus()}
+}
+function trapModalFocus(e){
+ const sheet=document.querySelector("#modal.show .sheet");
+ if(!sheet)return;
+ const list=modalFocusables();
+ if(!list.length){
+  e.preventDefault();
+  focusModalSheet();
+  return;
+ }
+ const first=list[0],last=list[list.length-1];
+ const active=document.activeElement;
+ const outside=!active||!sheet.contains(active);
+ if(e.shiftKey){
+  if(outside||active===first){
+   e.preventDefault();
+   last.focus();
+  }
+ }else if(outside||active===last){
+  e.preventDefault();
+  first.focus();
+ }
+}
+function handleModalKeydown(e){
+ if(!isModalOpen())return;
+ if(e.key==="Escape"){
+  if(e.defaultPrevented)return;
+  e.preventDefault();
+  if(pendingConfirm){
+   cancelConfirmAction();
+   return;
+  }
+  tryDismissModal();
+  return;
+ }
+ if(e.key==="Tab")trapModalFocus(e);
+}
+function keepFocusInModal(e){
+ if(!isModalOpen())return;
+ const host=document.getElementById("modal");
+ if(!host||host.contains(e.target))return;
+ focusModalSheet();
+}
+document.addEventListener("keydown",handleModalKeydown);
+document.addEventListener("focusin",keepFocusInModal);
+
 function modal(html,sheetClass="",opts={}){
  const host=document.getElementById("modal");
+ const wasOpen=host.classList.contains("show");
+ if(!wasOpen){
+  const active=document.activeElement;
+  modalReturnFocus=active instanceof HTMLElement&&active!==document.body?active:null;
+ }
  host.innerHTML=`<div class="sheet ${sheetClass}">${html}</div>`;
+ host.setAttribute("role","dialog");
+ host.setAttribute("aria-modal","true");
  host.classList.toggle("modal-locked",!!opts.lockDismiss);
  host.classList.add("show");
  document.body.classList.add("modal-open");
  lockPageScroll();
+ requestAnimationFrame(focusModalSheet);
 }
 function tryDismissModal(){
  if(document.getElementById("modal")?.classList.contains("modal-locked"))return;
+ if(pendingConfirm){
+  cancelConfirmAction();
+  return;
+ }
  closeModal();
 }
 function closeModal(){
  const host=document.getElementById("modal");
+ const wasOpen=host.classList.contains("show");
  host.classList.remove("show","modal-locked");
+ host.removeAttribute("aria-modal");
+ host.removeAttribute("role");
  document.body.classList.remove("modal-open","workout-form-open");
  unlockPageScroll();
+ if(!wasOpen)return;
+ const back=modalReturnFocus;
+ modalReturnFocus=null;
+ requestAnimationFrame(()=>{
+  if(isModalOpen())return;
+  if(back&&document.contains(back)&&typeof back.focus==="function"){
+   try{back.focus({preventScroll:true})}catch(_){back.focus()}
+  }
+ });
 }
 function collapsibleChevron(){
  return `<span class="collapsible-chevron" aria-hidden="true"><svg class="icon"><use href="#chevron-down"/></svg></span>`;
