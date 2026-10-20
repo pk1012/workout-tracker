@@ -6,10 +6,10 @@ function cancelWorkoutForm(){
  closeModal();
 }
 function exerciseMuscleId(id){
- return catalogExerciseMuscleId(id);
+ return catalogExerciseMuscleId(id,state);
 }
 function inferWorkoutExerciseMuscleId(entry,w){
- return historicalWorkoutExerciseMuscleId(entry,w);
+ return historicalWorkoutExerciseMuscleId(entry,w,state);
 }
 function keepDraftMuscle(id){
  return isLiveMuscle(id)||(workoutDraft.goneMuscles||[]).includes(id);
@@ -525,7 +525,7 @@ function commitWorkoutSave(id,date,muscles,exercises,old,editing){
  const unit=preferredUnit();
  const createdAt=editing?(Number(workoutDraft.createdAt)||Date.now()):Date.now();
  const record={id,date,muscles,muscleNames:muscleNamesForIds(muscles,{muscles:workoutDraft.muscles,muscleNames:workoutDraft.muscleNames}),startTime:workoutDraft.startTime,endTime:workoutDraft.endTime,unit,exercises:exercises.map(e=>{
-  const muscleId=historicalWorkoutExerciseMuscleId(e,{muscles});
+  const muscleId=historicalWorkoutExerciseMuscleId(e,{muscles},state);
   return {exerciseId:e.exerciseId,name:nameForWorkoutExercise(e,old),muscleId,sets:e.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)})),unit};
  }),createdAt};
  if(old){record.createdAt=old.createdAt||createdAt;record.updatedAt=Date.now();Object.assign(old,record)}
