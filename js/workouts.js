@@ -668,4 +668,4 @@ function viewWorkout(id){
  `,"workout-entry-sheet",{swipeDismiss:true});
  document.body.classList.add("workout-form-open");
 }
-function deleteWorkout(id){confirmAction("Delete this workout? It will be deleted from your history.",()=>{moveWorkoutToBin(id);save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();closeModal();refreshAppViews()},true)}
+function deleteWorkout(id){confirmAction("Delete this workout? It will be deleted from your history.",()=>{moveWorkoutToBin(id);save();if(typeof driveAfterWorkoutChange==="function")driveAfterWorkoutChange();closeModal();refreshAppViews()},true,()=>viewWorkout(id))}
