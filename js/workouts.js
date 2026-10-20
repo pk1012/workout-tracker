@@ -305,10 +305,10 @@ function navigateMonth(delta){
   const clear=()=>{monthSwipeAnimating=false};
   if(!neu||!enter){clear();return;}
   neu.addEventListener("animationend",clear,{once:true});
-  setTimeout(clear,360);
+  setTimeout(clear,420);
  };
  monthSwipeAnimating=true;
- monthSwipeLockUntil=Date.now()+500;
+ monthSwipeLockUntil=Date.now()+700;
  const calendar=document.querySelector("#workoutView .workout-month-calendar");
  if(!calendar||prefersReducedMonthMotion()){swap();return;}
  let settled=false;
@@ -325,7 +325,7 @@ function navigateMonth(delta){
   if(e.target!==calendar)return;
   settle();
  },{once:true});
- setTimeout(settle,240);
+ setTimeout(settle,340);
 }
 function bindMonthSwipe(){
  const root=document.querySelector("#workoutView .workout-month");
@@ -345,7 +345,7 @@ function bindMonthSwipe(){
   if(monthSwipeAnimating)return;
   const dx=e.clientX-x0,dy=e.clientY-y0;
   if(Math.abs(dx)<threshold||Math.abs(dx)<=Math.abs(dy))return;
-  monthSwipeLockUntil=Date.now()+500;
+  monthSwipeLockUntil=Date.now()+700;
   navigateMonth(dx<0?1:-1);
  });
  root.addEventListener("pointercancel",()=>{active=false});

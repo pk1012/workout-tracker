@@ -17,29 +17,29 @@
 }
 #workouts .workout-month-calendar.month-swipe-exit-next,
 #workouts .workout-month-calendar.month-swipe-exit-prev{
-  transition:transform .2s ease,opacity .2s ease;
+  transition:transform .32s cubic-bezier(.22,.61,.36,1),opacity .32s cubic-bezier(.22,.61,.36,1);
   will-change:transform,opacity;
 }
 #workouts .workout-month-calendar.month-swipe-exit-next.is-leaving{
-  transform:translateX(-14%);
-  opacity:.42;
+  transform:translateX(-8%);
+  opacity:.72;
 }
 #workouts .workout-month-calendar.month-swipe-exit-prev.is-leaving{
-  transform:translateX(14%);
-  opacity:.42;
+  transform:translateX(8%);
+  opacity:.72;
 }
 #workouts .workout-month-calendar.month-swipe-enter-next{
-  animation:monthSwipeEnterNext .26s ease;
+  animation:monthSwipeEnterNext .36s cubic-bezier(.22,.61,.36,1);
 }
 #workouts .workout-month-calendar.month-swipe-enter-prev{
-  animation:monthSwipeEnterPrev .26s ease;
+  animation:monthSwipeEnterPrev .36s cubic-bezier(.22,.61,.36,1);
 }
 @keyframes monthSwipeEnterNext{
-  from{transform:translateX(16%);opacity:.45}
+  from{transform:translateX(9%);opacity:.7}
   to{transform:none;opacity:1}
 }
 @keyframes monthSwipeEnterPrev{
-  from{transform:translateX(-16%);opacity:.45}
+  from{transform:translateX(-9%);opacity:.7}
   to{transform:none;opacity:1}
 }
 @media (prefers-reduced-motion:reduce){
