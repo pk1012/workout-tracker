@@ -75,7 +75,6 @@ let selectedWeekStart=weekStart(new Date());
 let selectedMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 let monthSwipeLockUntil=0;
 let monthSwipeAnimating=false;
-let monthSwipeEnter=null;
 
 function localTimeValue(d=new Date()){return d.toTimeString().slice(0,5)}
 function formatTime(t){if(!t)return "—";let [h,m]=t.split(":").map(Number);let ap=h>=12?"PM":"AM",hh=h%12||12;return `${hh}:${String(m).padStart(2,"0")} ${ap}`}
@@ -185,22 +184,48 @@ function pinPickerChoice(){
 }
 function weekdayHeads(){return weekDates(weekStart(new Date())).map(d=>d.toLocaleDateString("en-IN",{weekday:"short"}))}
 
-function renderCalendar(){
- const month=monthStart(selectedMonth);
- const days=monthGrid(month);
- const inMonth=monthDates(month);
- const count=inMonth.filter(d=>state.workouts.some(w=>w.date===dateKey(d))).length;
+function monthActivityStats(month){
+ const inMonth=monthDates(monthStart(month));
  const todayKey=dateKey(new Date());
+ const count=inMonth.filter(d=>state.workouts.some(w=>w.date===dateKey(d))).length;
  const restCount=inMonth.filter(d=>{
   const k=dateKey(d);
   return k<todayKey && !state.workouts.some(w=>w.date===k);
  }).length;
- const remaining=remainingDays(inMonth);
+ return {count,restCount,remaining:remainingDays(inMonth)};
+}
+function monthCalendarInnerHtml(month=selectedMonth){
+ const m=monthStart(month);
+ const days=monthGrid(m);
  const sel=dateKey(selected);
  const heads=weekdayHeads();
- const enter=monthSwipeEnter==="next"?" month-swipe-enter-next":monthSwipeEnter==="prev"?" month-swipe-enter-prev":"";
- document.getElementById("workoutView").innerHTML=`<section class="workout-week workout-month card"><div class="section-head"><h2>Monthly Activity</h2><button class="week-select" type="button" onclick="openMonthPicker()" aria-label="Select month"><b>${monthNumberChip(month)}</b><span>${monthRangeLabel(month)}</span><i><svg class="icon" aria-hidden="true"><use href="#chevron-down"/></svg></i></button></div><div class="workout-month-calendar${enter}"><div class="workout-month-weekdays">${heads.map(h=>`<span>${h}</span>`).join("")}</div><div class="workout-days workout-month-days">${days.map(d=>{const k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d),out=inSelectedMonth(d)?"":" out-month";return `<button type="button" class="${k===sel?"selected ":""}${today?"is-today":""}${out}" aria-label="${d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}" onclick="selectWorkoutDay('${k}')"><small>${d.getDate()}</small><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div></div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><div class="week-stats"><span><svg class="icon" aria-hidden="true"><use href="#calendar-icon"/></svg><b>${count} workout${count===1?"":"s"}</b></span><i class="week-stats-rule" aria-hidden="true"></i><span><svg class="icon" aria-hidden="true"><use href="#activity"/></svg><b>${restCount} rest days</b></span><i class="week-stats-rule" aria-hidden="true"></i><span><svg class="icon" aria-hidden="true"><use href="#target"/></svg><b>${remaining} day${remaining===1?"":"s"} remaining</b></span></div></section>${renderSelectedDay(sel)}`;
- monthSwipeEnter=null;
+ return `<div class="workout-month-weekdays">${heads.map(h=>`<span>${h}</span>`).join("")}</div><div class="workout-days workout-month-days">${days.map(d=>{const k=dateKey(d),has=state.workouts.some(w=>w.date===k),today=isToday(d),out=(d.getFullYear()===m.getFullYear()&&d.getMonth()===m.getMonth())?"":" out-month";return `<button type="button" class="${k===sel?"selected ":""}${today?"is-today":""}${out}" aria-label="${d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}" onclick="selectWorkoutDay('${k}')"><small>${d.getDate()}</small><i class="${has?"workout":today?"today":"rest"}">${has?"<svg class=\"icon\"><use href=\"#check\"/></svg>":today?"":"<svg class=\"icon\"><use href=\"#minus\"/></svg>"}</i></button>`}).join("")}</div>`;
+}
+function monthWeekStatsHtml(month=selectedMonth){
+ const {count,restCount,remaining}=monthActivityStats(month);
+ return `<span><svg class="icon" aria-hidden="true"><use href="#calendar-icon"/></svg><b>${count} workout${count===1?"":"s"}</b></span><i class="week-stats-rule" aria-hidden="true"></i><span><svg class="icon" aria-hidden="true"><use href="#activity"/></svg><b>${restCount} rest days</b></span><i class="week-stats-rule" aria-hidden="true"></i><span><svg class="icon" aria-hidden="true"><use href="#target"/></svg><b>${remaining} day${remaining===1?"":"s"} remaining</b></span>`;
+}
+function updateMonthCardChrome(){
+ const month=monthStart(selectedMonth);
+ const card=document.querySelector("#workoutView .workout-month");
+ if(!card)return;
+ const chip=card.querySelector(".week-select b");
+ const range=card.querySelector(".week-select span");
+ if(chip)chip.textContent=monthNumberChip(month);
+ if(range)range.textContent=monthRangeLabel(month);
+ const stats=card.querySelector(".week-stats");
+ if(stats)stats.innerHTML=monthWeekStatsHtml(month);
+ const view=document.getElementById("workoutView");
+ if(!view)return;
+ const dayHtml=renderSelectedDay(dateKey(selected));
+ const existing=view.querySelector(".day-section");
+ if(existing)existing.outerHTML=dayHtml;
+ else view.insertAdjacentHTML("beforeend",dayHtml);
+}
+function renderCalendar(){
+ const month=monthStart(selectedMonth);
+ const sel=dateKey(selected);
+ document.getElementById("workoutView").innerHTML=`<section class="workout-week workout-month card"><div class="section-head"><h2>Monthly Activity</h2><button class="week-select" type="button" onclick="openMonthPicker()" aria-label="Select month"><b>${monthNumberChip(month)}</b><span>${monthRangeLabel(month)}</span><i><svg class="icon" aria-hidden="true"><use href="#chevron-down"/></svg></i></button></div><div class="workout-month-calendar">${monthCalendarInnerHtml(month)}</div><div class="legend"><span><i class="dot workout"></i>Workout</span><span><i class="dot rest"></i>Rest</span><span><i class="dot today"></i>Today</span></div><div class="week-stats">${monthWeekStatsHtml(month)}</div></section>${renderSelectedDay(sel)}`;
  bindMonthSwipe();
 }
 function renderSelectedDay(k){
@@ -295,37 +320,45 @@ function navigateMonth(delta){
  if(next>newest||next<oldest)return;
  const dir=delta>0?"next":"prev";
  const key=dateKey(next);
- const swap=()=>{
-  applySelectedMonth(key);
-  const enter=prefersReducedMonthMotion()?null:dir;
-  monthSwipeEnter=enter;
+ monthSwipeAnimating=true;
+ monthSwipeLockUntil=Date.now()+500;
+ const finish=()=>{
   renderCalendar();
   renderHome();
-  const neu=document.querySelector("#workoutView .workout-month-calendar");
-  const clear=()=>{monthSwipeAnimating=false};
-  if(!neu||!enter){clear();return;}
-  neu.addEventListener("animationend",clear,{once:true});
-  setTimeout(clear,280);
+  monthSwipeAnimating=false;
  };
- monthSwipeAnimating=true;
- monthSwipeLockUntil=Date.now()+450;
  const calendar=document.querySelector("#workoutView .workout-month-calendar");
- if(!calendar||prefersReducedMonthMotion()){swap();return;}
+ if(!calendar||prefersReducedMonthMotion()){
+  applySelectedMonth(key);
+  finish();
+  return;
+ }
+ const outHtml=calendar.innerHTML;
+ const height=calendar.offsetHeight;
+ applySelectedMonth(key);
+ const inHtml=monthCalendarInnerHtml(selectedMonth);
+ updateMonthCardChrome();
+ renderHome();
+ calendar.style.height=`${height}px`;
+ calendar.classList.add("is-swiping",dir==="next"?"swipe-next":"swipe-prev");
+ calendar.innerHTML=`<div class="workout-month-calendar-pane is-out">${outHtml}</div><div class="workout-month-calendar-pane is-in">${inHtml}</div>`;
+ requestAnimationFrame(()=>{
+  requestAnimationFrame(()=>calendar.classList.add("is-animating"));
+ });
  let settled=false;
  const settle=()=>{
   if(settled)return;
   settled=true;
-  swap();
+  finish();
  };
- calendar.classList.add(dir==="next"?"month-swipe-exit-next":"month-swipe-exit-prev");
- requestAnimationFrame(()=>{
-  requestAnimationFrame(()=>calendar.classList.add("is-leaving"));
- });
- calendar.addEventListener("transitionend",e=>{
-  if(e.target!==calendar)return;
-  settle();
- },{once:true});
- setTimeout(settle,200);
+ const inPane=calendar.querySelector(".workout-month-calendar-pane.is-in");
+ if(inPane){
+  inPane.addEventListener("transitionend",e=>{
+   if(e.target!==inPane)return;
+   settle();
+  },{once:true});
+ }
+ setTimeout(settle,320);
 }
 function bindMonthSwipe(){
  const root=document.querySelector("#workoutView .workout-month");
@@ -345,7 +378,7 @@ function bindMonthSwipe(){
   if(monthSwipeAnimating)return;
   const dx=e.clientX-x0,dy=e.clientY-y0;
   if(Math.abs(dx)<threshold||Math.abs(dx)<=Math.abs(dy))return;
-  monthSwipeLockUntil=Date.now()+450;
+  monthSwipeLockUntil=Date.now()+500;
   navigateMonth(dx<0?1:-1);
  });
  root.addEventListener("pointercancel",()=>{active=false});
