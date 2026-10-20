@@ -85,6 +85,7 @@ function about(){
     <div class="detail-set"><span>Version</span><strong>${VERSION}</strong></div>
     <div class="detail-set"><span>Build</span><strong>${BUILD}</strong></div>
     <div class="detail-set"><span>App</span><strong>Workout Tracker</strong></div>
+    <div class="detail-set"><span>User guide</span><a class="about-link" href="user-guide.pdf" target="_blank" rel="noopener">Open</a></div>
     <div class="detail-set"><span>Support</span><a class="about-link" href="mailto:support@workouttracker.app">support@workouttracker.app</a></div>
    </div>
   </div>
