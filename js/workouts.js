@@ -429,10 +429,7 @@ function workoutOnDate(date,exceptId){
 }
 function dateTakenMessage(){return "A workout already exists for this day."}
 function openWorkout(){
- const date=todayDateKey();
- const existing=workoutOnDate(date);
- if(existing){editWorkout(existing.id);return}
- workoutDraft={...emptyWorkoutDraft(),date,startTime:localTimeValue()};
+ workoutDraft={...emptyWorkoutDraft(),date:todayDateKey(),startTime:localTimeValue()};
  renderWorkoutBasicsSheet();
 }
 function editWorkout(id){
