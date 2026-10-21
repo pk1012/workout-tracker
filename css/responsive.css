@@ -501,11 +501,15 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected{
   border:0;
   border-top:1px solid var(--line);
-  border-left:1px solid var(--line);
   border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  border-left:1px solid var(--line);
   border-radius:10px;
   background:var(--soft);
   box-shadow:none;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected + .exercise-row.exercise-pick:not(.selected){
+  border-top-color:transparent;
 }
 [data-theme=dark] .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
   background:transparent;
