@@ -132,20 +132,26 @@ class Guide(FPDF):
         self.cell(self.w - 108, 6, str(self.page_no()), align="R")
 
 
-def image_size(path, max_w, max_h):
+# Every grab is a phone crop. Draw them at one width so a row and a sheet
+# do not jump between a thin strip and a full-page poster.
+FIG_W = 90
+FIG_H_MAX = 148
+
+
+def image_size(path):
     with Image.open(path) as im:
         iw, ih = im.size
-    w = max_w
+    w = FIG_W
     h = w * ih / iw
-    if h > max_h:
-        h = max_h
+    if h > FIG_H_MAX:
+        h = FIG_H_MAX
         w = h * iw / ih
     return w, h
 
 
-def place_image(pdf, path, max_w, max_h):
-    w, h = image_size(path, max_w, max_h)
-    x = 14 + (max_w - w) / 2
+def place_image(pdf, path):
+    w, h = image_size(path)
+    x = (pdf.w - w) / 2
     pdf.image(str(path), x=x, y=pdf.get_y(), w=w, h=h)
     pdf.set_y(pdf.get_y() + h)
 
@@ -208,16 +214,14 @@ def main():
             img = SHOTS / step["shot"]
             if not img.exists():
                 raise SystemExit(f"missing {img}")
-            remain = pdf.h - 16 - pdf.get_y()
-            _, img_h = image_size(img, pw, min(118, max(36, remain - 18)))
+            _, img_h = image_size(img)
             need = 16 + img_h
             if i > 1:
                 ensure_space(pdf, need)
             write_line(pdf, pw, f"{i}. {step['title']}", 12, bold=True, h=6)
             write_line(pdf, pw, step["line"], 10, color=(70, 74, 84), h=5)
             pdf.ln(2)
-            remain = pdf.h - 16 - pdf.get_y()
-            place_image(pdf, img, pw, remain)
+            place_image(pdf, img)
             pdf.ln(6)
 
     pdf.output(OUT)
