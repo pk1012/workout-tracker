@@ -482,8 +482,11 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 
 /* Select Exercises cards: same 12px stack as View Workout and Library. */
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.card{
-  padding:12px 14px;
+  padding:12px 14px 0;
   margin:14px 0;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.is-collapsed{
+  padding-bottom:12px;
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card > .section-title{
   display:flex;
@@ -538,7 +541,10 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 
 /* View Workout cards: 12px on every step — top, title→line, line→set, set→line, bottom. */
 .modal:has(.workout-entry-sheet) .workout-detail{
-  padding:12px 14px;
+  padding:12px 14px 0;
+}
+.modal:has(.workout-entry-sheet) .workout-detail.is-collapsed{
+  padding-bottom:12px;
 }
 .modal:has(.workout-entry-sheet) .workout-detail.is-expanded .collapsible-head{
   padding-bottom:12px;
