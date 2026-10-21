@@ -482,12 +482,28 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   flex:0 0 auto;
 }
 
-/* 1.7.55 — Select Exercises rows: 15px from name to divider */
-.modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
-  height:47px;
-  min-height:47px;
+/* Select Exercises cards: same 12px stack as View Workout and Library. */
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.card{
+  padding:12px 14px;
+  margin:14px 0;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card > .section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
   width:100%;
+  margin-bottom:0;
   padding:0 8px;
+  cursor:pointer;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.is-expanded > .section-title{
+  padding-bottom:12px;
+}
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
+  height:auto;
+  min-height:0;
+  width:100%;
+  padding:12px 8px;
   border:0;
   border-radius:0;
   border-top:1px solid var(--line);
@@ -498,12 +514,12 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   box-sizing:border-box;
   line-height:16px;
 }
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick:last-child{
+  padding-bottom:0;
+}
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected{
-  border:0;
-  border-top:1px solid var(--line);
-  border-right:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-  border-left:1px solid var(--line);
+  padding:12px 8px;
+  border:1px solid var(--line);
   border-radius:10px;
   background:var(--soft);
   box-shadow:none;
@@ -511,15 +527,10 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected + .exercise-row.exercise-pick:not(.selected){
   border-top-color:transparent;
 }
-.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.card{
-  padding:12px 14px;
-}
-.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card > .section-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  width:100%;
-  cursor:pointer;
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card .empty{
+  margin:0;
+  padding:12px 8px 0;
+  border-top:1px solid var(--line);
 }
 [data-theme=dark] .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
   background:transparent;
