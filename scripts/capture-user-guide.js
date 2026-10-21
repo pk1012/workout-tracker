@@ -86,7 +86,8 @@ async function seed(page) {
     dumped.id = "bin-w1";
     dumped.deletedAt = Date.now() - 2 * 86400000;
     state.bin.workouts = [dumped];
-    const d = new Date(2026, 9, 20);
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
     selected = d;
     selectedWeekStart = weekStart(d);
     selectedMonth = monthStart(d);
@@ -98,7 +99,7 @@ async function seed(page) {
   await page.waitForTimeout(400);
 }
 
-function clipFromBoxes(boxes, view) {
+function clipFromBoxes(boxes, view, pad = PAD) {
   let x0 = Infinity, y0 = Infinity, x1 = 0, y1 = 0;
   for (const b of boxes) {
     if (!b) continue;
@@ -107,13 +108,13 @@ function clipFromBoxes(boxes, view) {
     x1 = Math.max(x1, b.x + b.width);
     y1 = Math.max(y1, b.y + b.height);
   }
-  const x = Math.max(0, x0 - PAD);
-  const y = Math.max(0, y0 - PAD);
+  const x = Math.max(0, x0 - pad);
+  const y = Math.max(0, y0 - pad);
   return {
     x,
     y,
-    width: Math.min(view.width - x, x1 - x0 + PAD * 2),
-    height: Math.min(view.height - y, y1 - y0 + PAD * 2),
+    width: Math.min(view.width - x, x1 - x0 + pad * 2),
+    height: Math.min(view.height - y, y1 - y0 + pad * 2),
   };
 }
 
@@ -140,7 +141,7 @@ for p in parts:
   if (r.status !== 0) throw new Error(r.stderr || r.stdout || "stitch failed");
 }
 
-async function shotBoxes(page, name, locators) {
+async function shotBoxes(page, name, locators, pad = PAD) {
   const boxes = [];
   for (const loc of locators) {
     await loc.waitFor({ state: "visible", timeout: 8000 });
@@ -148,20 +149,26 @@ async function shotBoxes(page, name, locators) {
   }
   const view = page.viewportSize();
   const sorted = boxes.filter(Boolean).sort((a, b) => a.y - b.y);
-  let split = false;
+  const clusters = [];
+  let cluster = [sorted[0]];
   for (let i = 1; i < sorted.length; i++) {
-    const prev = sorted[i - 1];
-    if (sorted[i].y > prev.y + prev.height + 48) split = true;
+    const prev = cluster[cluster.length - 1];
+    if (sorted[i].y <= prev.y + prev.height + 48) cluster.push(sorted[i]);
+    else {
+      clusters.push(cluster);
+      cluster = [sorted[i]];
+    }
   }
+  if (cluster.length) clusters.push(cluster);
   const file = path.join(OUT, name + ".png");
-  if (!split) {
-    const clip = clipFromBoxes(sorted, view);
+  if (clusters.length === 1) {
+    const clip = clipFromBoxes(clusters[0], view, pad);
     if (clip.width < 2 || clip.height < 2) throw new Error("empty clip " + name);
     await page.screenshot({ path: file, type: "png", clip });
   } else {
     const parts = [];
-    for (let i = 0; i < sorted.length; i++) {
-      const clip = clipFromBoxes([sorted[i]], view);
+    for (let i = 0; i < clusters.length; i++) {
+      const clip = clipFromBoxes(clusters[i], view, pad);
       const part = path.join(OUT, `${name}-part-${i}.png`);
       await page.screenshot({ path: part, type: "png", clip });
       parts.push(part);
@@ -207,7 +214,15 @@ async function closeSheet(page) {
   await shotBoxes(page, "home-status", [L(page, ".home-status")]);
   await shotBoxes(page, "home-week", [L(page, ".weekly-card")]);
   await shotBoxes(page, "home-progress", [L(page, ".quick")]);
-  await shotBoxes(page, "nav", [L(page, ".bottom-nav")]);
+  await page.evaluate(() => {
+    const el = document.getElementById("homeView");
+    if (el) el.style.visibility = "hidden";
+  });
+  await shotBoxes(page, "nav", [L(page, ".bottom-nav")], 4);
+  await page.evaluate(() => {
+    const el = document.getElementById("homeView");
+    if (el) el.style.visibility = "";
+  });
 
   await page.evaluate(() => go("workouts"));
   await page.waitForTimeout(300);
@@ -299,6 +314,15 @@ async function closeSheet(page) {
   ]);
   await shotBoxes(page, "library-group", [L(page, ".library-group")]);
   await shotBoxes(page, "library-add", [L(page, ".library-actions")]);
+  await page.locator(".library-group .exercise-row .edit").first().click();
+  await page.waitForTimeout(400);
+  await shotBoxes(page, "library-edit", [
+    L(page, "#modal .workout-entry-header"),
+    L(page, "#modal .workout-entry-scroll .field", { nth: 0 }),
+    L(page, "#modal .workout-entry-scroll .field", { nth: 1 }),
+    L(page, "#modal .workout-modal-actions"),
+  ]);
+  await closeSheet(page);
 
   await page.evaluate(() => go("recycle"));
   await page.waitForTimeout(300);
@@ -306,14 +330,11 @@ async function closeSheet(page) {
 
   await page.evaluate(() => go("more"));
   await page.waitForTimeout(300);
-  await shotBoxes(page, "setting-library", [L(page, ".setting", { hasText: "Exercise Library" })]);
   await shotBoxes(page, "setting-theme", [L(page, ".setting", { hasText: "Theme" })]);
   await shotBoxes(page, "setting-unit", [L(page, ".setting", { hasText: "Weight unit" })]);
   await shotBoxes(page, "setting-drive", [L(page, "#driveCard .setting")]);
   await shotBoxes(page, "setting-backup", [L(page, ".setting", { hasText: "Backup & Restore" })]);
   await shotBoxes(page, "setting-clear", [L(page, ".setting", { hasText: "Clear All Data" })]);
-  await shotBoxes(page, "setting-recycle", [L(page, ".setting", { hasText: "Recycle Bin" })]);
-  await shotBoxes(page, "setting-about", [L(page, ".setting", { hasText: "About Workout Tracker" })]);
 
   await page.evaluate(() => restoreBackup());
   await page.waitForTimeout(400);

@@ -9,6 +9,106 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "user-guide.pdf"
 SHOTS = ROOT / "docs" / "guide-shots"
 
+CHAPTERS = [
+    {
+        "title": "1. Get around",
+        "blurb": "Five tabs. More holds Library, Drive, Recycle, and this guide.",
+        "steps": [
+            {"title": "Tabs", "line": "Home, Workouts, Exercises, History, More.", "shot": "nav.png"},
+        ],
+    },
+    {
+        "title": "2. Log a workout",
+        "blurb": "One session per day. Start Workout always opens a new draft. Swipe down to dismiss a sheet.",
+        "steps": [
+            {"title": "Start", "line": "Home > Start Workout.", "shot": "home-start.png"},
+            {"title": "Date and muscles", "line": "Pick the day, times, and groups.", "shot": "log-basics.png"},
+            {"title": "Exercises", "line": "Pick what you trained.", "shot": "log-exercises.png"},
+            {"title": "Sets", "line": "Weight and reps. 0 kg is 0 kg.", "shot": "log-sets.png"},
+        ],
+    },
+    {
+        "title": "3. See this week",
+        "blurb": "Home shows today, the week, and quick totals.",
+        "steps": [
+            {"title": "Today", "line": "Done, or not yet.", "shot": "home-status.png"},
+            {"title": "Weekly Activity", "line": "Green is a workout. Rest is days before today.", "shot": "home-week.png"},
+            {"title": "Quick Progress", "line": "This week's sets and volume.", "shot": "home-progress.png"},
+        ],
+    },
+    {
+        "title": "4. See the month",
+        "blurb": "Workouts tab. Tap a day. Swipe the calendar to change month.",
+        "steps": [
+            {"title": "Monthly Activity", "line": "Green days have a session.", "shot": "workouts-month.png"},
+            {"title": "Rest day", "line": "No session on that date.", "shot": "workouts-rest.png"},
+            {"title": "Workout card", "line": "Tap to open the session.", "shot": "workouts-card.png"},
+        ],
+    },
+    {
+        "title": "5. Open a session",
+        "blurb": "Edit, delete, or export Excel. Deleted sessions go to Recycle for 30 days.",
+        "steps": [
+            {"title": "View workout", "line": "Sets, Edit, Delete, Excel.", "shot": "view-workout.png"},
+        ],
+    },
+    {
+        "title": "6. Track a lift",
+        "blurb": "Exercises tab. Muscle chips after All, A to Z.",
+        "steps": [
+            {"title": "Find a lift", "line": "Search or filter.", "shot": "exercises-search.png"},
+            {"title": "Latest load", "line": "Tap the row for history.", "shot": "exercises-row.png"},
+            {"title": "List", "line": "Every session of that lift.", "shot": "exercise-history.png"},
+            {"title": "Graph", "line": "Day, Week, Month, or Year.", "shot": "exercise-graph.png"},
+        ],
+    },
+    {
+        "title": "7. History and export",
+        "blurb": "Full log. Share icon saves Excel.",
+        "steps": [
+            {"title": "Export", "line": "History > share icon.", "shot": "history-head.png"},
+            {"title": "Month", "line": "Workouts, volume, muscle groups.", "shot": "history-month.png"},
+            {"title": "Log", "line": "Every session, newest first.", "shot": "history-card.png"},
+        ],
+    },
+    {
+        "title": "8. Exercise library",
+        "blurb": "More > Exercise Library. Edit a name to rename, move, or delete.",
+        "steps": [
+            {"title": "Find", "line": "Search or filter groups.", "shot": "library-search.png"},
+            {"title": "A group", "line": "Pencil opens edit.", "shot": "library-group.png"},
+            {"title": "Edit or delete", "line": "Delete lives in the edit sheet.", "shot": "library-edit.png"},
+            {"title": "Add", "line": "New muscle group or exercise.", "shot": "library-add.png"},
+        ],
+    },
+    {
+        "title": "9. Recycle Bin",
+        "blurb": "More > Recycle Bin. Kept 30 days, then gone.",
+        "steps": [
+            {"title": "Restore or delete forever", "line": "Restore puts it back.", "shot": "recycle-card.png"},
+        ],
+    },
+    {
+        "title": "10. Keep a copy",
+        "blurb": "JSON backup is a file on this phone. Drive is this phone to Drive. Restore replaces current data.",
+        "steps": [
+            {"title": "Google Drive", "line": "Connect to keep a copy off this phone.", "shot": "setting-drive.png"},
+            {"title": "Backup & Restore", "line": "More > Backup & Restore.", "shot": "setting-backup.png"},
+            {"title": "Export or restore", "line": "Export, choose a file, or Restore from Drive.", "shot": "backup-sheet.png"},
+        ],
+    },
+    {
+        "title": "11. Phone settings",
+        "blurb": "Theme and kg/lb stay on this phone. They are not in the Drive snapshot.",
+        "steps": [
+            {"title": "Theme", "line": "Light or dark.", "shot": "setting-theme.png"},
+            {"title": "Weight unit", "line": "kg or lb.", "shot": "setting-unit.png"},
+            {"title": "Clear All Data", "line": "Wipes this phone. Drive is unchanged.", "shot": "setting-clear.png"},
+            {"title": "This guide", "line": "More > About > User guide > Open.", "shot": "about-card.png"},
+        ],
+    },
+]
+
 
 def app_version():
     text = (ROOT / "js" / "data.js").read_text()
@@ -16,42 +116,6 @@ def app_version():
     if not match:
         raise SystemExit("VERSION missing in js/data.js")
     return match.group(1)
-
-ITEMS = [
-    {"section": "Home", "title": "Start Workout", "line": "Logs today.", "shot": "home-start.png"},
-    {"section": "Home", "title": "Today's Status", "line": "Done or not yet.", "shot": "home-status.png"},
-    {"section": "Home", "title": "Weekly Activity", "line": "Green is a workout. Rest is days before today.", "shot": "home-week.png"},
-    {"section": "Home", "title": "Quick Progress", "line": "This week's sets and volume.", "shot": "home-progress.png"},
-    {"section": "Home", "title": "Tabs", "line": "Home, Workouts, Exercises, History, More.", "shot": "nav.png"},
-    {"section": "Log a workout", "title": "Date and muscles", "line": "One session per day.", "shot": "log-basics.png"},
-    {"section": "Log a workout", "title": "Exercises", "line": "Pick what you trained.", "shot": "log-exercises.png"},
-    {"section": "Log a workout", "title": "Sets", "line": "Weight and reps. 0 kg is 0 kg.", "shot": "log-sets.png"},
-    {"section": "Workouts", "title": "Monthly Activity", "line": "Green days have a session.", "shot": "workouts-month.png"},
-    {"section": "Workouts", "title": "Rest day", "line": "No session on that date.", "shot": "workouts-rest.png"},
-    {"section": "Workouts", "title": "Workout card", "line": "Tap to view, edit, or delete.", "shot": "workouts-card.png"},
-    {"section": "Workouts", "title": "View workout", "line": "Sets, Edit, Delete, Excel export.", "shot": "view-workout.png"},
-    {"section": "Exercises", "title": "Search and filter", "line": "Muscle chips after All, A to Z.", "shot": "exercises-search.png"},
-    {"section": "Exercises", "title": "A lift", "line": "Latest load. Tap for history.", "shot": "exercises-row.png"},
-    {"section": "Exercises", "title": "History", "line": "Every session of that lift.", "shot": "exercise-history.png"},
-    {"section": "Exercises", "title": "Graph", "line": "Day / Week / Month / Year.", "shot": "exercise-graph.png"},
-    {"section": "History", "title": "Export", "line": "Share icon saves Excel.", "shot": "history-head.png"},
-    {"section": "History", "title": "Month", "line": "Workouts, volume, muscle groups.", "shot": "history-month.png"},
-    {"section": "History", "title": "Log", "line": "Every session, newest first.", "shot": "history-card.png"},
-    {"section": "Library", "title": "Search", "line": "Find a group or lift.", "shot": "library-search.png"},
-    {"section": "Library", "title": "A group", "line": "Edit or delete a muscle or lift.", "shot": "library-group.png"},
-    {"section": "Library", "title": "Add", "line": "New muscle group or exercise.", "shot": "library-add.png"},
-    {"section": "Recycle Bin", "title": "Restore", "line": "Kept 30 days, then gone.", "shot": "recycle-card.png"},
-    {"section": "More", "title": "Exercise Library", "line": "Manage groups and lifts.", "shot": "setting-library.png"},
-    {"section": "More", "title": "Theme", "line": "Light or dark. Stays on this phone.", "shot": "setting-theme.png"},
-    {"section": "More", "title": "Weight unit", "line": "kg or lb. Stays on this phone.", "shot": "setting-unit.png"},
-    {"section": "More", "title": "Google Drive", "line": "A copy off this phone. Sync is this phone to Drive.", "shot": "setting-drive.png"},
-    {"section": "More", "title": "Backup & Restore", "line": "JSON file on this phone.", "shot": "setting-backup.png"},
-    {"section": "More", "title": "Backup sheet", "line": "Export, choose a file, or Restore from Drive.", "shot": "backup-sheet.png"},
-    {"section": "More", "title": "Clear All Data", "line": "Wipes this phone. Drive is unchanged.", "shot": "setting-clear.png"},
-    {"section": "More", "title": "Recycle Bin", "line": "Deleted workouts and exercises.", "shot": "setting-recycle.png"},
-    {"section": "More", "title": "About", "line": "Version and this guide.", "shot": "setting-about.png"},
-    {"section": "More", "title": "User guide", "line": "More > About > User guide > Open.", "shot": "about-card.png"},
-]
 
 
 class Guide(FPDF):
@@ -86,56 +150,75 @@ def place_image(pdf, path, max_w, max_h):
     pdf.set_y(pdf.get_y() + h)
 
 
+def ensure_space(pdf, need):
+    if pdf.get_y() + need > pdf.h - 16:
+        pdf.add_page()
+        pdf.set_xy(14, 14)
+
+
+def write_line(pdf, pw, text, size, bold=False, color=(20, 22, 35), h=6):
+    pdf.set_x(14)
+    pdf.set_font("Helvetica", "B" if bold else "", size)
+    pdf.set_text_color(*color)
+    pdf.multi_cell(pw, h, text)
+    pdf.set_x(14)
+
+
 def main():
     version = app_version()
     pdf = Guide(version, format="A4")
     pdf.set_auto_page_break(auto=False, margin=14)
     pw = pdf.w - 28
-    pdf.add_page()
-    pdf.set_xy(14, 14)
-    pdf.set_font("Helvetica", "B", 18)
-    pdf.set_text_color(20, 22, 35)
-    pdf.cell(pw, 8, "Workout Tracker", new_x="LMARGIN", new_y="NEXT")
-    pdf.set_x(14)
-    pdf.set_font("Helvetica", "", 11)
-    pdf.set_text_color(90, 94, 104)
-    pdf.cell(pw, 6, f"User guide  {version}", new_x="LMARGIN", new_y="NEXT")
-    pdf.ln(3)
 
-    section = None
-    for item in ITEMS:
-        img = SHOTS / item["shot"]
-        if not img.exists():
-            raise SystemExit(f"missing {img}")
-        new_section = item["section"] != section
-        head = (10 if new_section else 0) + 13
-        remain_now = pdf.h - 16 - pdf.get_y()
-        _, img_h = image_size(img, pw, min(118, max(40, remain_now - head)))
-        need = head + img_h + 6
-        if pdf.get_y() + need > pdf.h - 16:
-            pdf.add_page()
-            pdf.set_xy(14, 14)
-            section = None
-            new_section = True
-        if new_section:
-            section = item["section"]
-            pdf.set_x(14)
-            pdf.set_font("Helvetica", "B", 13)
-            pdf.set_text_color(91, 67, 243)
-            pdf.cell(pw, 8, section, new_x="LMARGIN", new_y="NEXT")
-            pdf.ln(1)
-        pdf.set_x(14)
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.set_text_color(20, 22, 35)
-        pdf.cell(pw, 6, item["title"], new_x="LMARGIN", new_y="NEXT")
-        pdf.set_x(14)
-        pdf.set_font("Helvetica", "", 10)
-        pdf.set_text_color(70, 74, 84)
-        pdf.cell(pw, 5, item["line"], new_x="LMARGIN", new_y="NEXT")
-        pdf.ln(2)
-        remain = pdf.h - 16 - pdf.get_y()
-        place_image(pdf, img, pw, remain)
-        pdf.ln(6)
+    pdf.add_page()
+    pdf.set_xy(14, 18)
+    write_line(pdf, pw, "Workout Tracker", 22, bold=True, h=10)
+    write_line(pdf, pw, "User guide", 14, color=(90, 94, 104), h=8)
+    write_line(pdf, pw, f"Version {version}", 12, bold=True, color=(91, 67, 243), h=8)
+    pdf.ln(4)
+    write_line(
+        pdf,
+        pw,
+        "How to log sessions, read history, and keep a copy.",
+        11,
+        color=(55, 58, 66),
+        h=6,
+    )
+    write_line(
+        pdf,
+        pw,
+        "If this version does not match About > Version, this guide is stale.",
+        11,
+        color=(55, 58, 66),
+        h=6,
+    )
+    pdf.ln(8)
+    write_line(pdf, pw, "Contents", 13, bold=True, color=(91, 67, 243), h=8)
+    pdf.ln(2)
+    for chapter in CHAPTERS:
+        write_line(pdf, pw, chapter["title"], 11, color=(20, 22, 35), h=7)
+
+    for chapter in CHAPTERS:
+        pdf.add_page()
+        pdf.set_xy(14, 14)
+        write_line(pdf, pw, chapter["title"], 14, bold=True, color=(91, 67, 243), h=8)
+        write_line(pdf, pw, chapter["blurb"], 10, color=(70, 74, 84), h=5)
+        pdf.ln(4)
+        for i, step in enumerate(chapter["steps"], start=1):
+            img = SHOTS / step["shot"]
+            if not img.exists():
+                raise SystemExit(f"missing {img}")
+            remain = pdf.h - 16 - pdf.get_y()
+            _, img_h = image_size(img, pw, min(118, max(36, remain - 18)))
+            need = 16 + img_h
+            if i > 1:
+                ensure_space(pdf, need)
+            write_line(pdf, pw, f"{i}. {step['title']}", 12, bold=True, h=6)
+            write_line(pdf, pw, step["line"], 10, color=(70, 74, 84), h=5)
+            pdf.ln(2)
+            remain = pdf.h - 16 - pdf.get_y()
+            place_image(pdf, img, pw, remain)
+            pdf.ln(6)
 
     pdf.output(OUT)
     print(f"wrote {OUT} ({pdf.page_no()} pages)")
