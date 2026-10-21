@@ -487,18 +487,19 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   height:47px;
   min-height:47px;
   width:100%;
-  padding:0;
+  padding:0 8px;
   border:0;
   border-radius:0;
   border-top:1px solid var(--line);
+  border-left:2px solid transparent;
+  border-right:2px solid transparent;
   background:transparent;
   box-shadow:none;
   box-sizing:border-box;
   line-height:16px;
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected{
-  border:0;
-  border-top:1px solid var(--line);
+  border:2px solid var(--primary);
   border-radius:0;
   background:var(--soft);
   box-shadow:none;
