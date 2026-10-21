@@ -482,11 +482,8 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 
 /* Select Exercises cards: same 12px stack as View Workout and Library. */
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.card{
-  padding:12px 14px 0;
+  padding:12px 14px;
   margin:14px 0;
-}
-.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.is-collapsed{
-  padding-bottom:12px;
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card > .section-title{
   display:flex;
@@ -515,6 +512,9 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   box-sizing:border-box;
   line-height:16px;
 }
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick:last-child:not(.selected){
+  border-bottom:1px solid var(--line);
+}
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected{
   padding:12px 8px;
   border:1px solid var(--line);
@@ -527,7 +527,7 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card .empty{
   margin:0;
-  padding:12px 8px 0;
+  padding:12px 8px;
   border-top:1px solid var(--line);
 }
 [data-theme=dark] .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
@@ -541,10 +541,7 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 
 /* View Workout cards: 12px on every step — top, title→line, line→set, set→line, bottom. */
 .modal:has(.workout-entry-sheet) .workout-detail{
-  padding:12px 14px 0;
-}
-.modal:has(.workout-entry-sheet) .workout-detail.is-collapsed{
-  padding-bottom:12px;
+  padding:12px 14px;
 }
 .modal:has(.workout-entry-sheet) .workout-detail.is-expanded .collapsible-head{
   padding-bottom:12px;
@@ -552,6 +549,9 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 .modal:has(.workout-entry-sheet) .detail-set{
   margin-top:0;
   padding:12px 0;
+}
+.modal:has(.workout-entry-sheet) .detail-set:last-child{
+  border-bottom:1px solid var(--line);
 }
 
 /* Page cards share one corner radius (--radius: 16 phone / 18 desktop). */
