@@ -205,7 +205,7 @@
   border-top:1px solid var(--line);
 }
 #library-management .library-group .exercise-row:last-child{
-  border-bottom:1px solid var(--line);
+  padding-bottom:14px;
 }
 #library-management .library-group .empty{
   margin:0;
