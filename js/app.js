@@ -348,10 +348,10 @@ if("serviceWorker" in navigator){
  };
  checkUpdate();
  window.addEventListener("load",checkUpdate);
- window.addEventListener("focus",checkUpdate);
+ window.addEventListener("pageshow",checkUpdate);
  setInterval(()=>{
   if(document.visibilityState==="visible")checkUpdate();
- },20000);
+ },60*60*1000);
  let lastSeenDateKey=typeof todayDateKey==="function"?todayDateKey():"";
  document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState!=="visible")return;
