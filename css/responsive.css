@@ -513,7 +513,7 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   line-height:16px;
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick:last-child:not(.selected){
-  padding-bottom:2px;
+  padding-bottom:4px;
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected{
   padding:12px 8px;
@@ -551,7 +551,7 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   padding:12px 0;
 }
 .modal:has(.workout-entry-sheet) .detail-set:last-child{
-  padding-bottom:2px;
+  padding-bottom:4px;
 }
 
 /* Page cards share one corner radius (--radius: 16 phone / 18 desktop). */
