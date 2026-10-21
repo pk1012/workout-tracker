@@ -475,7 +475,7 @@ function renderExerciseSelection(){
     ghosts.push(e);
    }
    const rows=[...live.map(e=>exercisePickButton(e.id,e.name,false)),...ghosts.map(e=>exercisePickButton(e.exerciseId,e.name||"Deleted exercise",true))].join("");
-   return collapsibleCard(esc(draftMuscleLabel(id)),rows||`<div class="empty">No exercises in this group.</div>`,{cardClass:"field",headClass:"section-title collapsible-head",expanded:true});
+   return `<div class="field collapsible-card is-expanded"><div class="section-title" role="button" aria-expanded="true" onclick="toggleCollapsibleCard(this)">${esc(draftMuscleLabel(id))}${collapsibleChevron()}</div><div class="collapsible-body">${rows||`<div class="empty">No exercises in this group.</div>`}</div></div>`;
  }).join("");
 
  modal(`

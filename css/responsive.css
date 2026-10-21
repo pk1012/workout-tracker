@@ -511,12 +511,12 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected + .exercise-row.exercise-pick:not(.selected){
   border-top-color:transparent;
 }
-.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card > .section-title.collapsible-head{
-  margin-bottom:8px;
-}
-.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card > .section-title.collapsible-head strong{
-  color:inherit;
-  font-weight:inherit;
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card > .section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  cursor:pointer;
 }
 [data-theme=dark] .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
   background:transparent;
