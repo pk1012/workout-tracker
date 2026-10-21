@@ -259,8 +259,9 @@ function closeModal(){
 function collapsibleChevron(){
  return `<span class="collapsible-chevron" aria-hidden="true"><svg class="icon"><use href="#chevron-down"/></svg></span>`;
 }
-function collapsibleCard(title,body,{cardClass="workout-detail card",headClass="collapsible-head"}={}){
- return `<div class="${cardClass} collapsible-card is-collapsed"><button type="button" class="${headClass}" aria-expanded="false" onclick="toggleCollapsibleCard(this)"><strong>${title}</strong>${collapsibleChevron()}</button><div class="collapsible-body" hidden>${body}</div></div>`;
+function collapsibleCard(title,body,{cardClass="workout-detail card",headClass="collapsible-head",expanded=false}={}){
+ const open=!!expanded;
+ return `<div class="${cardClass} collapsible-card ${open?"is-expanded":"is-collapsed"}"><button type="button" class="${headClass}" aria-expanded="${open?"true":"false"}" onclick="toggleCollapsibleCard(this)"><strong>${title}</strong>${collapsibleChevron()}</button><div class="collapsible-body"${open?"":" hidden"}>${body}</div></div>`;
 }
 function toggleCollapsibleCard(btn){
  const card=btn?.closest(".collapsible-card");
