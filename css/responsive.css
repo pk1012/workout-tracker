@@ -501,7 +501,7 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   height:auto;
   min-height:0;
   width:100%;
-  padding:12px 0;
+  padding:12px 8px;
   border:0;
   border-radius:0;
   border-top:1px solid var(--line);
@@ -527,7 +527,7 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 }
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card .empty{
   margin:0;
-  padding:12px 0 0;
+  padding:12px 8px 0;
   border-top:1px solid var(--line);
 }
 [data-theme=dark] .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
