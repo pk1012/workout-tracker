@@ -511,6 +511,9 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick.selected + .exercise-row.exercise-pick:not(.selected){
   border-top-color:transparent;
 }
+.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.card{
+  padding:12px 14px;
+}
 .modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card > .section-title{
   display:flex;
   align-items:center;
