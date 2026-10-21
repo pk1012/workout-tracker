@@ -11,16 +11,10 @@ SHOTS = ROOT / "docs" / "guide-shots"
 
 CHAPTERS = [
     {
-        "title": "1. Get around",
-        "blurb": "Five tabs. More holds Library, Drive, Recycle, and this guide.",
+        "title": "1. Log a workout",
+        "blurb": "Five tabs at the bottom. One session per day. Start Workout always opens a new draft. Swipe down to dismiss a sheet.",
         "steps": [
             {"title": "Tabs", "line": "Home, Workouts, Exercises, History, More.", "shot": "nav.png"},
-        ],
-    },
-    {
-        "title": "2. Log a workout",
-        "blurb": "One session per day. Start Workout always opens a new draft. Swipe down to dismiss a sheet.",
-        "steps": [
             {"title": "Start", "line": "Home > Start Workout.", "shot": "home-start.png"},
             {"title": "Date and muscles", "line": "Pick the day, times, and groups.", "shot": "log-basics.png"},
             {"title": "Exercises", "line": "Pick what you trained.", "shot": "log-exercises.png"},
@@ -28,7 +22,7 @@ CHAPTERS = [
         ],
     },
     {
-        "title": "3. See this week",
+        "title": "2. See this week",
         "blurb": "Home shows today, the week, and quick totals.",
         "steps": [
             {"title": "Today", "line": "Done, or not yet.", "shot": "home-status.png"},
@@ -37,7 +31,7 @@ CHAPTERS = [
         ],
     },
     {
-        "title": "4. See the month",
+        "title": "3. See the month",
         "blurb": "Workouts tab. Tap a day. Swipe the calendar to change month.",
         "steps": [
             {"title": "Monthly Activity", "line": "Green days have a session.", "shot": "workouts-month.png"},
@@ -46,14 +40,14 @@ CHAPTERS = [
         ],
     },
     {
-        "title": "5. Open a session",
+        "title": "4. Open a session",
         "blurb": "Edit, delete, or export Excel. Deleted sessions go to Recycle for 30 days.",
         "steps": [
             {"title": "View workout", "line": "Sets, Edit, Delete, Excel.", "shot": "view-workout.png"},
         ],
     },
     {
-        "title": "6. Track a lift",
+        "title": "5. Track a lift",
         "blurb": "Exercises tab. Muscle chips after All, A to Z.",
         "steps": [
             {"title": "Find a lift", "line": "Search or filter.", "shot": "exercises-search.png"},
@@ -63,7 +57,7 @@ CHAPTERS = [
         ],
     },
     {
-        "title": "7. History and export",
+        "title": "6. History and export",
         "blurb": "Full log. Share icon saves Excel.",
         "steps": [
             {"title": "Export", "line": "History > share icon.", "shot": "history-head.png"},
@@ -72,24 +66,18 @@ CHAPTERS = [
         ],
     },
     {
-        "title": "8. Exercise library",
-        "blurb": "More > Exercise Library. Edit a name to rename, move, or delete.",
+        "title": "7. Exercise library",
+        "blurb": "More > Exercise Library. Edit a name to rename, move, or delete. Recycle keeps deleted items 30 days.",
         "steps": [
             {"title": "Find", "line": "Search or filter groups.", "shot": "library-search.png"},
             {"title": "A group", "line": "Pencil opens edit.", "shot": "library-group.png"},
             {"title": "Edit or delete", "line": "Delete lives in the edit sheet.", "shot": "library-edit.png"},
             {"title": "Add", "line": "New muscle group or exercise.", "shot": "library-add.png"},
+            {"title": "Recycle Bin", "line": "Restore or delete forever. Gone after 30 days.", "shot": "recycle-card.png"},
         ],
     },
     {
-        "title": "9. Recycle Bin",
-        "blurb": "More > Recycle Bin. Kept 30 days, then gone.",
-        "steps": [
-            {"title": "Restore or delete forever", "line": "Restore puts it back.", "shot": "recycle-card.png"},
-        ],
-    },
-    {
-        "title": "10. Keep a copy",
+        "title": "8. Keep a copy",
         "blurb": "JSON backup is a file on this phone. Drive is this phone to Drive. Restore replaces current data.",
         "steps": [
             {"title": "Google Drive", "line": "Connect to keep a copy off this phone.", "shot": "setting-drive.png"},
@@ -98,7 +86,7 @@ CHAPTERS = [
         ],
     },
     {
-        "title": "11. Phone settings",
+        "title": "9. Phone settings",
         "blurb": "Theme and kg/lb stay on this phone. They are not in the Drive snapshot.",
         "steps": [
             {"title": "Theme", "line": "Light or dark.", "shot": "setting-theme.png"},

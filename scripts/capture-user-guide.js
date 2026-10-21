@@ -125,7 +125,7 @@ from pathlib import Path
 parts = ${JSON.stringify(parts)}
 imgs = [Image.open(p).convert("RGBA") for p in parts]
 w = max(im.width for im in imgs)
-gap = 24
+gap = 12
 h = sum(im.height for im in imgs) + gap * (len(imgs) - 1)
 out = Image.new("RGBA", (w, h), (248, 249, 252, 255))
 y = 0
@@ -141,9 +141,38 @@ for p in parts:
   if (r.status !== 0) throw new Error(r.stderr || r.stdout || "stitch failed");
 }
 
+async function innerBox(page, sel) {
+  return page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    if (!el) return null;
+    const kids = [...el.children].filter((k) => {
+      const r = k.getBoundingClientRect();
+      return r.width >= 1 && r.height >= 1 && getComputedStyle(k).display !== "none";
+    });
+    if (!kids.length) return null;
+    let x0 = Infinity, y0 = Infinity, x1 = 0, y1 = 0;
+    for (const k of kids) {
+      const r = k.getBoundingClientRect();
+      x0 = Math.min(x0, r.x);
+      y0 = Math.min(y0, r.y);
+      x1 = Math.max(x1, r.right);
+      y1 = Math.max(y1, r.bottom);
+    }
+    return { x: x0, y: y0, width: x1 - x0, height: y1 - y0 };
+  }, sel);
+}
+
+function isBox(item) {
+  return item && typeof item.x === "number" && typeof item.width === "number";
+}
+
 async function shotBoxes(page, name, locators, pad = PAD) {
   const boxes = [];
   for (const loc of locators) {
+    if (isBox(loc)) {
+      boxes.push(loc);
+      continue;
+    }
     await loc.waitFor({ state: "visible", timeout: 8000 });
     boxes.push(await loc.boundingBox());
   }
@@ -184,6 +213,16 @@ function L(page, sel, opts = {}) {
   if (opts.hasText) loc = loc.filter({ hasText: opts.hasText });
   if (opts.nth != null) loc = loc.nth(opts.nth);
   return loc.first();
+}
+
+async function shotSheet(page, name) {
+  const header = L(page, "#modal .workout-entry-header");
+  const actions = L(page, "#modal .workout-modal-actions");
+  const parts = [header];
+  const inner = await innerBox(page, "#modal .workout-entry-scroll");
+  if (inner && inner.height > 8) parts.push(inner);
+  if ((await actions.count()) > 0) parts.push(actions);
+  await shotBoxes(page, name, parts);
 }
 
 async function closeSheet(page) {
@@ -257,10 +296,7 @@ async function closeSheet(page) {
     row && row.click();
   });
   await page.waitForTimeout(400);
-  await shotBoxes(page, "exercise-history", [
-    L(page, "#modal .workout-entry-header"),
-    L(page, "#modal .workout-entry-scroll"),
-  ]);
+  await shotSheet(page, "exercise-history");
   await page.evaluate(() => setExerciseHistoryView("graph"));
   await page.waitForTimeout(500);
   await shotBoxes(page, "exercise-graph", [
@@ -281,20 +317,12 @@ async function closeSheet(page) {
   await page.waitForTimeout(400);
   await page.locator(".workout-muscle-chest").click();
   await page.waitForTimeout(150);
-  await shotBoxes(page, "log-basics", [
-    L(page, "#modal .workout-entry-header"),
-    L(page, "#modal .workout-entry-scroll"),
-    L(page, "#modal .workout-modal-actions"),
-  ]);
+  await shotSheet(page, "log-basics");
   await page.evaluate(() => chooseExercises());
   await page.waitForTimeout(400);
   await page.locator(".exercise-pick").first().click();
   await page.waitForTimeout(150);
-  await shotBoxes(page, "log-exercises", [
-    L(page, "#modal .workout-entry-header"),
-    L(page, "#modal .workout-entry-scroll"),
-    L(page, "#modal .workout-modal-actions"),
-  ]);
+  await shotSheet(page, "log-exercises");
   await page.evaluate(() => continueToSetDetails());
   await page.waitForTimeout(400);
   await page.locator("#modal .set-editor-head").first().click();
@@ -316,12 +344,7 @@ async function closeSheet(page) {
   await shotBoxes(page, "library-add", [L(page, ".library-actions")]);
   await page.locator(".library-group .exercise-row .edit").first().click();
   await page.waitForTimeout(400);
-  await shotBoxes(page, "library-edit", [
-    L(page, "#modal .workout-entry-header"),
-    L(page, "#modal .workout-entry-scroll .field", { nth: 0 }),
-    L(page, "#modal .workout-entry-scroll .field", { nth: 1 }),
-    L(page, "#modal .workout-modal-actions"),
-  ]);
+  await shotSheet(page, "library-edit");
   await closeSheet(page);
 
   await page.evaluate(() => go("recycle"));
@@ -338,10 +361,7 @@ async function closeSheet(page) {
 
   await page.evaluate(() => restoreBackup());
   await page.waitForTimeout(400);
-  await shotBoxes(page, "backup-sheet", [
-    L(page, "#modal .workout-entry-header"),
-    L(page, "#modal .workout-modal-actions"),
-  ]);
+  await shotSheet(page, "backup-sheet");
   await closeSheet(page);
 
   await page.evaluate(() => about());
