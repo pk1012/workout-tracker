@@ -518,9 +518,6 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   color:inherit;
   font-weight:inherit;
 }
-.modal:has(.workout-entry-sheet) .workout-entry-scroll .field.collapsible-card.is-collapsed > .section-title.collapsible-head{
-  margin-bottom:0;
-}
 [data-theme=dark] .modal:has(.workout-entry-sheet) .workout-entry-scroll .exercise-row.exercise-pick{
   background:transparent;
   box-shadow:none;
