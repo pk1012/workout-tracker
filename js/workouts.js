@@ -34,7 +34,7 @@ function musclePickButton(id,name,gone){
 }
 function exercisePickButton(id,name,gone){
  const on=(workoutDraft.exercises||[]).some(x=>x.exerciseId===id);
- return `<button type="button" class="exercise-row exercise-pick pick${on?" selected":""}${gone?" library-gone":""}" data-exercise="${esc(id)}" onclick="toggleDraftExercise('${esc(id)}')"><span>${esc(name)}</span><span class="pick-plus"><svg class="icon" aria-hidden="true"><use href="#plus"/></svg></span></button>`;
+ return `<button type="button" class="exercise-row exercise-pick pick${on?" selected":""}${gone?" library-gone":""}" data-exercise="${esc(id)}" onclick="toggleDraftExercise('${esc(id)}')"><span>${esc(name)}</span></button>`;
 }
 function selectedPickIds(attr){
  return [...document.querySelectorAll(`[data-${attr}].selected`)].map(el=>el.getAttribute(`data-${attr}`)).filter(Boolean);

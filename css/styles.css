@@ -67,9 +67,6 @@ button .icon{pointer-events:none}
 .time-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .time-grid .field{min-width:0}
 .modal-actions{position:sticky;bottom:0;background:var(--card);padding-top:12px;margin-top:18px;z-index:3}
-.pick-plus{font-size:0!important;width:30px!important;height:30px!important;flex:none}
-.pick-plus .icon{width:20px;height:20px}
-
 /* 1.7.3 premium polish overrides */
 .home-head h1{font-size:24px;font-weight:760;letter-spacing:-.55px}
 .home-head p{font-size:15px}
