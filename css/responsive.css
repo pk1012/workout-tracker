@@ -503,7 +503,7 @@ body.workout-form-open .modal:has(.workout-entry-sheet) .sheet.workout-entry-she
   border-top:1px solid var(--line);
   border-left:1px solid var(--line);
   border-right:1px solid var(--line);
-  border-radius:8px;
+  border-radius:10px;
   background:var(--soft);
   box-shadow:none;
 }
